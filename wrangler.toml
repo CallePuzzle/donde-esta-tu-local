@@ -1,0 +1,10 @@
+name = "donde-esta-tu-local"
+account_id = "173bf7921f79923475ce95a48b845583"
+
+main = "./.cloudflare/worker.js"
+site.bucket = "./.cloudflare/public"
+
+build.command = "npm run build"
+
+compatibility_date = "2021-11-12"
+workers_dev = true
