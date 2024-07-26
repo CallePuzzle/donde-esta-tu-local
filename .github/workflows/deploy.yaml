@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   deploy:
@@ -23,3 +23,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           wranglerVersion: 3.63.1
+          secrets: |
+            MONGO_URI
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
