@@ -2,17 +2,7 @@ import { lucia } from '$lib/server/auth';
 import { fail, redirect } from '@sveltejs/kit';
 import { logger } from '$lib/server/logger';
 
-import type { Actions, PageServerLoad } from './$types';
-
-export const load: PageServerLoad = async (event) => {
-	if (!event.locals.user) {
-		logger.warn('User is not logged in');
-		return redirect(302, '/login');
-	}
-	return {
-		user: event.locals.user
-	};
-};
+import type { Actions } from './$types';
 
 export const actions: Actions = {
 	default: async (event) => {
