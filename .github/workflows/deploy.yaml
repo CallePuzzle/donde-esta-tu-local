@@ -18,16 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Create .env file
+        uses: CallePuzzle/envvar-to-dotenv-action@v1.2.1
+        with:
+          variableNames: MONGO_URI,AUTH0_CLIENT_ID,AUTH0_CLIENT_SECRET,AUTH0_REDIRECT_URI
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
 
       - run: yarn install --pure-lockfile
-
-      - name: Create .env file
-        uses: CallePuzzle/envvar-to-dotenv-action@v1.2.1
-        with:
-          variableNames: MONGO_URI,AUTH0_CLIENT_ID,AUTH0_CLIENT_SECRET,AUTH0_REDIRECT_URI
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
