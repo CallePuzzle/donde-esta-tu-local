@@ -441,6 +441,11 @@
   resolved "https://registry.yarnpkg.com/@lucia-auth/adapter-mongodb/-/adapter-mongodb-1.0.3.tgz#0ee9ecb878d3b9d783e56e12d48eb6785d66e900"
   integrity sha512-cqbMT6Q4fQei6tYvHNkcVEnioBsDwDNn68+Wo9BYnIsji7zvpzg9EF6yHj2jkiVnudF/6Uv/40cfsPrGcCevUQ==
 
+"@lucia-auth/adapter-sqlite@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@lucia-auth/adapter-sqlite/-/adapter-sqlite-3.0.2.tgz#c7105f61875ac72869bdb07a2c9ccc90a6fcf1da"
+  integrity sha512-UlXpF+2UoFEdm1AsriJii5BOARwqko6SX29rQ8T8Za7rnjj9KLXLaRVQUgBhGmggAyvzCtguJ2+XOZDsfWm6Sw==
+
 "@mongodb-js/saslprep@^1.1.5":
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/@mongodb-js/saslprep/-/saslprep-1.1.8.tgz#d39744540be8800d17749990b0da95b4271840d1"

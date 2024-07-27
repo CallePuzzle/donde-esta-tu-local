@@ -8,3 +8,8 @@ build.command = "npm run build"
 
 compatibility_date = "2021-11-12"
 workers_dev = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "donde-esta-tu-local"
+database_id = "787be1af-7e5d-4d0b-b132-89754e638924"
