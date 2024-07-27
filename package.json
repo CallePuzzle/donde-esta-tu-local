@@ -15,7 +15,6 @@
 		"test:unit": "vitest"
 	},
 	"devDependencies": {
-		"@lucia-auth/adapter-mongodb": "^1.0.3",
 		"@playwright/test": "^1.28.1",
 		"@skeletonlabs/skeleton": "^2.10.2",
 		"@skeletonlabs/tw-plugin": "^0.4.0",
@@ -33,8 +32,7 @@
 		"eslint-plugin-svelte": "^2.36.0",
 		"globals": "^15.0.0",
 		"leaflet": "^1.9.4",
-		"lucia": "^3.2.0",
-		"mongoose": "^8.5.1",
+		"pino-pretty": "^11.2.2",
 		"postcss": "^8.4.38",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
@@ -49,5 +47,12 @@
 		"vitest": "^1.2.0",
 		"wrangler": "^3.63.1"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@lucia-auth/adapter-mongodb": "^1.0.3",
+		"arctic": "^1.9.2",
+		"lucia": "^3.2.0",
+		"mongoose": "^8.5.1",
+		"pino": "^9.3.2"
+	}
 }
