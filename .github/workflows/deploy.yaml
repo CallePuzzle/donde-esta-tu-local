@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - 6-cloudflare-d1
+      - main
 
 env:
   AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
