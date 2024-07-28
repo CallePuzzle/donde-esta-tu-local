@@ -1,7 +1,6 @@
-import { auth0, lucia, Auth0AppDomain } from '$lib/server/auth';
-import { User } from '$lib/server/auth-mongoose-models';
+import { auth0, initializeLucia, Auth0AppDomain } from '$lib/server/auth';
+import { initializePrisma } from '$lib/server/db';
 import { OAuth2RequestError } from 'arctic';
-import { generateId } from 'lucia';
 import { logger } from '$lib/server/logger';
 
 import type { RequestEvent } from '@sveltejs/kit';
@@ -16,6 +15,10 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 	}
 
+	const db = event.platform!.env.DB;
+	const lucia = initializeLucia(db);
+	const prisma = initializePrisma(db);
+
 	try {
 		const tokens = await auth0.validateAuthorizationCode(code);
 		const response = await fetch(Auth0AppDomain + '/userinfo', {
@@ -25,7 +28,11 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 		const user = await response.json();
 		logger.info(user, 'user info from auth0');
-		const existingUser = await User.findById(user.sub).exec();
+		const existingUser = await prisma.user.findUnique({
+			where: {
+				id: user.sub
+			}
+		});
 		logger.debug(existingUser, 'existing user');
 		if (existingUser) {
 			const session = await lucia.createSession(existingUser.id, {});
@@ -35,12 +42,13 @@ export async function GET(event: RequestEvent): Promise<Response> {
 				...sessionCookie.attributes
 			});
 		} else {
-			const userId = generateId(15);
-			await User.create({
-				_id: user.sub,
-				email: user.email
+			await prisma.user.create({
+				data: {
+					id: user.sub,
+					email: user.email
+				}
 			});
-			const session = await lucia.createSession(userId, {});
+			const session = await lucia.createSession(user.sub, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);
 			event.cookies.set(sessionCookie.name, sessionCookie.value, {
 				path: '.',

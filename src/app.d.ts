@@ -11,13 +11,14 @@ declare global {
 		// interface PageState {}
 		interface Platform {
 			env: {
-			  DB: D1Database;
+				DB: D1Database;
 			};
 			context: {
-			  waitUntil(promise: Promise<any>): void;
+				/* eslint-disable  @typescript-eslint/no-explicit-any */
+				waitUntil(promise: Promise<any>): void;
 			};
 			caches: CacheStorage & { default: Cache };
-		  }
+		}
 	}
 }
 

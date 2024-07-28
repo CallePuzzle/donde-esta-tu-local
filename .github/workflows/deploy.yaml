@@ -3,20 +3,19 @@ name: Deploy
 on:
   push:
     branches:
-      - develop
+      - 6-cloudflare-d1
 
 env:
-  MONGO_URI: ${{ secrets.MONGO_URI }}
-  AUTH0_CLIENT_ID: xxxx
-  AUTH0_CLIENT_SECRET: xxxx
-  AUTH0_REDIRECT_URI: http://localhost:5173/login/callback
+  AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+  AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+  AUTH0_REDIRECT_URI: https://donde-esta-tu-local.callepuzzle-rkjp.workers.dev/login/callback
+  DATABASE_URL: file:./dev.db
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
     steps:
-
       - uses: actions/checkout@v4
 
       - name: Create .env file
@@ -29,6 +28,13 @@ jobs:
           node-version: 20
 
       - run: yarn install --pure-lockfile
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          wranglerVersion: 3.63.1
+          command: d1 migrations apply donde-esta-tu-local --remote
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
