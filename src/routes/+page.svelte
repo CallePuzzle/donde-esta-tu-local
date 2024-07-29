@@ -3,5 +3,5 @@
 </script>
 
 <form method="post" use:enhance>
-	<button>Sign out</button>
+      <button>Sign out</button>
 </form>

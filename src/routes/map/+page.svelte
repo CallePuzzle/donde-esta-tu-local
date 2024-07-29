@@ -1,4 +1,8 @@
 <script lang="ts">
+	import type { PageData } from './$types';
+	
+	export let data: PageData;
+
 	import { onMount } from 'svelte';
 
 	onMount(async () => {
@@ -23,6 +27,9 @@
 	integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
 	crossorigin=""
 />
+
+<p>{data?.user.email}</p>
+<p>{data?.user.id}</p>
 
 <style>
 	#map {
