@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	
+
 	export let data: PageData;
 
 	import { onMount } from 'svelte';
@@ -30,6 +30,10 @@
 
 <p>{data?.user.email}</p>
 <p>{data?.user.id}</p>
+<p>{data?.tokens}</p>
+<p>{data?.tokens?.accessToken}</p>
+<p>{data?.tokens?.refreshToken}</p>
+<p>{data?.tokens?.idToken}</p>
 
 <style>
 	#map {

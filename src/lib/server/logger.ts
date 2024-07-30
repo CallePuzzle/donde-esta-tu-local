@@ -3,7 +3,7 @@ import { dev } from '$app/environment';
 
 let options: pino.LoggerOptions = {};
 
-if (dev) {
+if (true) {
 	options = {
 		level: 'debug',
 		transport: {

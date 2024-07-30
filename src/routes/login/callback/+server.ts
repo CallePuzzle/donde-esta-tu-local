@@ -2,6 +2,7 @@ import { auth0, initializeLucia, Auth0AppDomain } from '$lib/server/auth';
 import { initializePrisma } from '$lib/server/db';
 import { OAuth2RequestError } from 'arctic';
 import { logger } from '$lib/server/logger';
+import { Auth0Tokens } from '$lib/server/store';
 
 import type { RequestEvent } from '@sveltejs/kit';
 
@@ -21,6 +22,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	try {
 		const tokens = await auth0.validateAuthorizationCode(code);
+		Auth0Tokens.set(tokens);
 		const response = await fetch(Auth0AppDomain + '/userinfo', {
 			headers: {
 				Authorization: `Bearer ${tokens.accessToken}`
