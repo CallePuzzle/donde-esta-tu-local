@@ -41,11 +41,23 @@ export async function GET(event: RequestEvent): Promise<Response> {
 				path: '.',
 				...sessionCookie.attributes
 			});
+			await prisma.user.update({
+				where: {
+					id: user.sub
+				},
+				data: {
+					name: user.nickname,
+					picture: user.picture
+				}
+			});
+			logger.debug('user updated');
 		} else {
 			await prisma.user.create({
 				data: {
 					id: user.sub,
-					email: user.email
+					email: user.email,
+					name: user.nickname,
+					picture: user.picture
 				}
 			});
 			const session = await lucia.createSession(user.sub, {});

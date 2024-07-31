@@ -9,3 +9,18 @@ yarn install
 npx wrangler d1 migrations apply donde-esta-tu-local --local
 npx wrangler dev
 ```
+
+## Migraciones
+
+```bash
+npx wrangler d1 migrations create donde-esta-tu-local migration_name
+npx prisma migrate diff \
+  --from-local-d1 \
+  --to-schema-datamodel ./prisma/schema.prisma \
+  --script \
+  --output migrations/migration_name.sql
+npx wrangler d1 migrations apply donde-esta-tu-local --local
+npx prisma generate
+```
+
+Kill vite server and run `yarn dev` again.
