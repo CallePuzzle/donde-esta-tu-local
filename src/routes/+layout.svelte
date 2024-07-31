@@ -1,6 +1,8 @@
 <script>
 	import '../app.css';
 	import { goto } from '$app/navigation';
+	import { Icon } from 'svelte-icons-pack';
+	import { BiMenu } from 'svelte-icons-pack/bi';
 
 	export let data;
 
@@ -18,33 +20,30 @@
 
 <div class="navbar bg-base-100">
 	<div class="flex-1">
-		<a href="/" class="btn btn-ghost text-xl">Peñas Montemayor</a>
-	</div>
-	<div class="flex-none gap-2">
-		<ul class="menu menu-horizontal px-1">
-			<li><button class="btn" on:click={addGang}>Añadir peña</button></li>
+		<ul class="menu menu-horizontal px-1 z-50">
+			<li class="z-50">
+				<details>
+					<summary><Icon src={BiMenu} size="32" /></summary>
+					<ul class="bg-base-100 rounded-t-none p-2 no-absolute">
+						<li><button class="btn"><a href="/">Inicio</a></button></li>
+						<li><button class="btn" on:click={addGang}>Añadir peña</button></li>
+						<li>
+							<div class="form-control">
+								<input
+									type="text"
+									placeholder="Buscador de peñas"
+									class="input input-bordered w-24 md:w-auto"
+								/>
+							</div>
+						</li>
+					</ul>
+				</details>
+			</li>
 		</ul>
+	</div>
+	<div class="flex gap-2">
+		<a href="/" class="btn btn-ghost text-xl">Peñas Montemayor</a>
 
-		<dialog id="add_gang" class="modal">
-			<div class="modal-box">
-				<h3 class="text-lg font-bold">Para añadir una peña tienes que estar logado</h3>
-				<button class="btn btn-accent" on:click={gotoLogin}>Login</button>
-				<div class="modal-action">
-					<form method="dialog">
-						<!-- if there is a button in form, it will close the modal -->
-						<button class="btn">Cerrar</button>
-					</form>
-				</div>
-			</div>
-		</dialog>
-
-		<div class="form-control">
-			<input
-				type="text"
-				placeholder="Buscador de peñas"
-				class="input input-bordered w-24 md:w-auto"
-			/>
-		</div>
 		{#if data.userIsLogged}
 			<div class="dropdown dropdown-end">
 				<div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
@@ -67,5 +66,18 @@
 		{/if}
 	</div>
 </div>
+
+<dialog id="add_gang" class="modal">
+	<div class="modal-box">
+		<h3 class="text-lg font-bold">Para añadir una peña tienes que estar logado</h3>
+		<button class="btn btn-accent" on:click={gotoLogin}>Login</button>
+		<div class="modal-action">
+			<form method="dialog">
+				<!-- if there is a button in form, it will close the modal -->
+				<button class="btn">Cerrar</button>
+			</form>
+		</div>
+	</div>
+</dialog>
 
 <slot />
