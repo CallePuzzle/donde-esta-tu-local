@@ -1,5 +1,6 @@
 <script>
 	import '../app.css';
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { Icon } from 'svelte-icons-pack';
 	import { BiMenu } from 'svelte-icons-pack/bi';
@@ -10,7 +11,7 @@
 		if (!data.userIsLogged) {
 			document.getElementById('add_gang').showModal();
 		} else {
-			goto('/gangs/add');
+			goto('/gangs');
 		}
 	}
 	function gotoLogin() {
@@ -36,6 +37,13 @@
 								/>
 							</div>
 						</li>
+						{#if data.userIsLogged}
+							<li>
+								<form method="post" use:enhance action="/logout">
+									<button class="btn">Logout</button>
+								</form>
+							</li>
+						{/if}
 					</ul>
 				</details>
 			</li>
