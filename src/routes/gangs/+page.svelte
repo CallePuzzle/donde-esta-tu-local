@@ -69,6 +69,7 @@
 <dialog id="add_gang" class="modal">
 	<div class="modal-box">
 		<h3 class="text-lg font-bold">Añadir peña</h3>
+
 		<div class="container pt-6">
 			<form method="POST" action="?/new">
 				<label
@@ -97,10 +98,10 @@
 						name="name"
 					/></label
 				>
-				<button type="submit" class="btn btn-accent">Añadir</button>
+				<button type="submit" class="btn btn-accent m-6">Añadir</button>
 			</form>
 		</div>
-		<div class="modal-action">
+		<div class="modal-action m-0">
 			<form method="dialog">
 				<!-- if there is a button in form, it will close the modal -->
 				<button class="btn">Close</button>
