@@ -1,5 +1,6 @@
 <script>
 	import '../app.css';
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { Icon } from 'svelte-icons-pack';
 	import { BiMenu } from 'svelte-icons-pack/bi';
@@ -8,9 +9,9 @@
 
 	function addGang(event) {
 		if (!data.userIsLogged) {
-			document.getElementById('add_gang').showModal();
+			document.getElementById('nav_add_gang').showModal();
 		} else {
-			goto('/gangs/add');
+			goto('/gangs');
 		}
 	}
 	function gotoLogin() {
@@ -31,11 +32,18 @@
 							<div class="form-control">
 								<input
 									type="text"
-									placeholder="Buscador de peñas"
-									class="input input-bordered w-24 md:w-auto"
+									placeholder="Buscador"
+									class="input input-bordered w-24 md:w-auto p-3"
 								/>
 							</div>
 						</li>
+						{#if data.userIsLogged}
+							<li>
+								<form method="post" use:enhance action="/logout">
+									<button class="btn">Logout</button>
+								</form>
+							</li>
+						{/if}
 					</ul>
 				</details>
 			</li>
@@ -67,11 +75,13 @@
 	</div>
 </div>
 
-<dialog id="add_gang" class="modal">
+<dialog id="nav_add_gang" class="modal">
 	<div class="modal-box">
-		<h3 class="text-lg font-bold">Para añadir una peña tienes que estar logado</h3>
-		<button class="btn btn-accent" on:click={gotoLogin}>Login</button>
-		<div class="modal-action">
+		<div class="flex flex-col items-center">
+			<h3 class="text-lg font-bold">Para añadir una peña tienes que estar logado</h3>
+			<button class="btn btn-accent mt-6 w-24" on:click={gotoLogin}>Login</button>
+		</div>
+		<div class="modal-action m-0">
 			<form method="dialog">
 				<!-- if there is a button in form, it will close the modal -->
 				<button class="btn">Cerrar</button>

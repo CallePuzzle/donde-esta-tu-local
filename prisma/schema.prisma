@@ -14,12 +14,22 @@ model User {
   name  String?
   picture  String?
   sessions Session[]
+  gangId   Int?
+  gang Gang? @relation(fields: [gangId], references: [id])
+  isGangLeader Boolean?
 }
 
 model Session {
   id        String   @id
   user_id    String
-  expires_at DateTime
-
   user      User     @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  expires_at DateTime
+}
+
+model Gang {
+  id        Int   @id @default(autoincrement())
+  name      String
+  latitude  Float
+  longitude Float
+  members   User[]
 }
