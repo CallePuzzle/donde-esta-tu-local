@@ -9,7 +9,7 @@
 
 	function addGang(event) {
 		if (!data.userIsLogged) {
-			document.getElementById('add_gang').showModal();
+			document.getElementById('nav_add_gang').showModal();
 		} else {
 			goto('/gangs');
 		}
@@ -75,7 +75,7 @@
 	</div>
 </div>
 
-<dialog id="add_gang" class="modal">
+<dialog id="nav_add_gang" class="modal">
 	<div class="modal-box">
 		<h3 class="text-lg font-bold">Para añadir una peña tienes que estar logado</h3>
 		<button class="btn btn-accent" on:click={gotoLogin}>Login</button>
