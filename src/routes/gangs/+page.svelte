@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	export let form: ActionData;
+
+	import type { ActionData } from './$types';
 
 	interface LatLng {
 		lat: number;
@@ -34,14 +37,34 @@
 	});
 </script>
 
-<div id="map" class="z-0"></div>
+{#if !form?.success}
+	<div id="map" class="z-0"></div>
 
-<link
-	rel="stylesheet"
-	href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-	integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-	crossorigin=""
-/>
+	<link
+		rel="stylesheet"
+		href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+		crossorigin=""
+	/>
+{/if}
+{#if form?.success}
+	<div role="alert" class="alert alert-success">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			class="h-6 w-6 shrink-0 stroke-current"
+			fill="none"
+			viewBox="0 0 24 24"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+			/>
+		</svg>
+		<span>Peña añadida, a la espera de revisión por un administrador</span>
+	</div>
+{/if}
 
 <dialog id="add_gang" class="modal">
 	<div class="modal-box">
@@ -77,7 +100,6 @@
 				<button type="submit" class="btn btn-accent">Añadir</button>
 			</form>
 		</div>
-
 		<div class="modal-action">
 			<form method="dialog">
 				<!-- if there is a button in form, it will close the modal -->

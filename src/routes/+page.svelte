@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
+	import type { PageData } from './$types';
+	export let data: PageData;
+
 	onMount(async () => {
 		const L = (await import('leaflet')).default;
 		const map = L.map('map').setView([41.50878286958457, -4.458162378583092], 17);
@@ -9,7 +12,9 @@
 				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 		}).addTo(map);
 
-		L.marker([41.507893235550306, -4.461463703773325]).addTo(map).bindPopup('KPY').openPopup();
+		(await data.gangs).map((gang) => {
+			L.marker([gang.latitude, gang.longitude]).addTo(map).bindPopup(gang.name);
+		});
 	});
 </script>
 
