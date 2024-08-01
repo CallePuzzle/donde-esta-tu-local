@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	export let form: ActionData;
 
 	import type { ActionData } from './$types';
@@ -12,6 +13,7 @@
 	export let latlng = {} as LatLng;
 
 	onMount(async () => {
+		if (form?.success) return;
 		document.getElementById('add_gang_info').showModal();
 
 		const L = (await import('leaflet')).default;
@@ -37,6 +39,18 @@
 				.openOn(map);
 		}
 	});
+
+	function loadSucess(node) {
+		// wait 10 seconds and redirect to home
+		setTimeout(() => {
+			goto('/');
+		}, 5000);
+		return {
+			destroy() {
+				// the node has been removed from the DOM
+			}
+		};
+	}
 </script>
 
 {#if !form?.success}
@@ -50,7 +64,7 @@
 	/>
 {/if}
 {#if form?.success}
-	<div role="alert" class="alert alert-success">
+	<div role="alert" class="alert alert-success" use:loadSucess>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			class="h-6 w-6 shrink-0 stroke-current"
