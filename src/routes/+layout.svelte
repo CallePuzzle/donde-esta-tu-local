@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { Icon } from 'svelte-icons-pack';
 	import { BiMenu } from 'svelte-icons-pack/bi';
+	import { clickOutside } from '$lib/clickOutside';
 
 	export let data;
 
@@ -11,11 +12,16 @@
 		if (!data.userIsLogged) {
 			document.getElementById('nav_add_gang').showModal();
 		} else {
+			document.getElementById('nav_details').open = false;
 			goto('/gangs');
 		}
 	}
 	function gotoLogin() {
 		goto('/login');
+	}
+
+	function closeNav(event) {
+		event.target.open = false;
 	}
 </script>
 
@@ -23,9 +29,9 @@
 	<div class="flex-1">
 		<ul class="menu menu-horizontal px-1 z-50">
 			<li class="z-50">
-				<details>
+				<details use:clickOutside on:click_outside={closeNav} id="nav_details">
 					<summary><Icon src={BiMenu} size="32" /></summary>
-					<ul class="bg-base-100 rounded-t-none p-2 no-absolute">
+					<ul class="bg-base-100 rounded-t-none p-2">
 						<li><button class="btn"><a href="/">Inicio</a></button></li>
 						<li><button class="btn" on:click={addGang}>Añadir peña</button></li>
 						<li>
@@ -40,7 +46,7 @@
 						{#if data.userIsLogged}
 							<li>
 								<form method="post" use:enhance action="/logout">
-									<button class="btn">Logout</button>
+									<button class="btn" type="submit">Logout</button>
 								</form>
 							</li>
 						{/if}

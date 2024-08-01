@@ -12,6 +12,8 @@
 	export let latlng = {} as LatLng;
 
 	onMount(async () => {
+		document.getElementById('add_gang_info').showModal();
+
 		const L = (await import('leaflet')).default;
 		const map = L.map('map').setView([41.50878286958457, -4.458162378583092], 17);
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -108,6 +110,15 @@
 			</form>
 		</div>
 	</div>
+</dialog>
+
+<dialog id="add_gang_info" class="modal">
+	<div class="modal-box max-w-md flex justify-center">
+		<p class="py-4">Haz click en la ubicación de la peña para añadirla</p>
+	</div>
+	<form method="dialog" class="modal-backdrop">
+		<button>close</button>
+	</form>
 </dialog>
 
 <style>
