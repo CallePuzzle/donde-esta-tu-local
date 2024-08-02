@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	export let form: ActionData;
+	import { showMyPosition } from '$lib/utils/showMyPosition';
+	import { coordsMonte } from '$lib/utils/coordsMonte';
 
 	import type { ActionData } from './$types';
 
@@ -10,6 +11,7 @@
 		lng: number;
 	}
 
+	export let form: ActionData;
 	export let latlng = {} as LatLng;
 
 	onMount(async () => {
@@ -17,11 +19,13 @@
 		document.getElementById('add_gang_info').showModal();
 
 		const L = (await import('leaflet')).default;
-		const map = L.map('map').setView([41.50878286958457, -4.458162378583092], 17);
+		const map = L.map('map').setView(coordsMonte, 17);
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution:
 				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 		}).addTo(map);
+
+		showMyPosition(L, map, coordsMonte);
 
 		map.on('click', addGang);
 
