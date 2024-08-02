@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { Icon } from 'svelte-icons-pack';
 	import { BiMenu } from 'svelte-icons-pack/bi';
-	import { clickOutside } from '$lib/clickOutside';
+	import { clickOutside } from '$lib/utils/clickOutside';
 
 	export let data;
 
