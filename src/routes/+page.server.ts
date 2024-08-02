@@ -7,9 +7,7 @@ export const load: PageServerLoad = async (event) => {
 	const db = event.platform!.env.DB;
 	const prisma = initializePrisma(db);
 
-	let gangs = prisma.gang.findMany();
-
 	return {
-		gangs: gangs
+		gangs: prisma.gang.findMany()
 	};
 };

@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { Icon } from 'svelte-icons-pack';
 	import { BiMenu } from 'svelte-icons-pack/bi';
-	import { clickOutside } from '$lib/utils/clickOutside';
+	import { clickOutside } from '$lib/utils/click-outside';
 
 	export let data;
 
@@ -95,5 +95,13 @@
 		</div>
 	</div>
 </dialog>
-
-<slot />
+{#if data.isProtectedRoute && !data.userIsLogged}
+	<div class="alert alert-error">
+		<p>{data.protectedRouteMessage}</p>
+		<p>
+			<a href="/login" class="btn btn-accent">Iniciar sesión</a>
+		</p>
+	</div>
+{:else}
+	<slot />
+{/if}

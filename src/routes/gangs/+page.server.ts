@@ -2,6 +2,7 @@ import { logger } from '$lib/server/logger';
 import { initializePrisma } from '$lib/server/db';
 
 import type { Actions } from './$types';
+import type { PageServerLoad } from './$types';
 
 export const actions: Actions = {
 	new: async (event) => {
@@ -10,9 +11,7 @@ export const actions: Actions = {
 		const lat = formData.get('lat');
 		const lng = formData.get('lng');
 
-		logger.debug(name);
-		logger.debug(lat);
-		logger.debug(lng);
+		logger.info({ name, lat, lng }, 'new gang datas');
 
 		const db = event.platform!.env.DB;
 		const prisma = initializePrisma(db);
@@ -32,4 +31,10 @@ export const actions: Actions = {
 			return { success: false, error: error };
 		}
 	}
+};
+
+export const load: PageServerLoad = async (event) => {
+	return {
+		userIsLogged: event.locals.user ? true : false
+	};
 };

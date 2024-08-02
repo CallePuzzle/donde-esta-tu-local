@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { showMyPosition } from '$lib/utils/showMyPosition';
-	import { coordsMonte } from '$lib/utils/coordsMonte';
+	import { showMyPosition } from '$lib/utils/show-my-position';
+	import { coordsMonte } from '$lib/utils/coords-monte';
 
 	import type { PageData } from './$types';
 
