@@ -7,7 +7,7 @@ Aplicación para saber donde están las peñas de tu pueblo.
 ```bash
 yarn install
 npx wrangler d1 migrations apply donde-esta-tu-local --local
-npx wrangler dev
+yarn dev
 ```
 
 ## Migraciones

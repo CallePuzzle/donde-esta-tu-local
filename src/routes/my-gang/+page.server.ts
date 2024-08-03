@@ -5,27 +5,32 @@ import type { Actions } from './$types';
 import type { PageServerLoad } from './$types';
 
 export const actions: Actions = {
-	new: async (event) => {
-		const formData = await event.request.formData();
-		const name = formData.get('name');
-		const lat = formData.get('lat');
-		const lng = formData.get('lng');
+	join: async (event) => {
+		if (!event.locals.user) {
+			logger.error('Not logged in');
+			return { success: false, error: 'Not logged in' };
+		}
 
-		logger.info({ name, lat, lng }, 'new gang datas');
+		const formData = await event.request.formData();
+		const id = formData.get('id');
+		logger.info({ gang: id, user: event.locals.user.id }, 'the user wants to join a gang');
 
 		const db = event.platform!.env.DB;
 		const prisma = initializePrisma(db);
 
 		try {
-			const gang = await prisma.gang.create({
+			// update user with gangId
+			const user = await prisma.user.update({
+				where: {
+					id: event.locals.user.id
+				},
 				data: {
-					name: name as string,
-					latitude: parseFloat(lat as string),
-					longitude: parseFloat(lng as string)
+					gangId: parseInt(id as string)
 				}
 			});
-			logger.debug(gang, 'new gang');
-			return { success: true, data: gang };
+
+			logger.debug(user, 'user updated with gangId');
+			return { success: true, data: user };
 		} catch (error) {
 			logger.error(error);
 			return { success: false, error: error };
@@ -38,6 +43,7 @@ export const load: PageServerLoad = async (event) => {
 	const prisma = initializePrisma(db);
 
 	let user = null;
+	let gang = null;
 	if (event.locals.user) {
 		const db = event.platform!.env.DB;
 		const prisma = initializePrisma(db);
@@ -48,10 +54,20 @@ export const load: PageServerLoad = async (event) => {
 		});
 	}
 
+	const userHasGang = user?.gangId ? true : false;
+	if (userHasGang) {
+		gang = await prisma.gang.findUnique({
+			where: {
+				id: user.gangId
+			}
+		});
+	}
+
 	return {
 		gangs: await prisma.gang.findMany(),
 		userIsLogged: event.locals.user ? true : false,
-		userHasGang: user?.gangId ? true : false,
+		userHasGang: userHasGang,
 		user: user,
+		gang: gang
 	};
 };
