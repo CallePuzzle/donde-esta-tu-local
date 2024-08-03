@@ -1,10 +1,10 @@
 <script>
 	import '../app.css';
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
 	import { Icon } from 'svelte-icons-pack';
 	import { BiMenu } from 'svelte-icons-pack/bi';
 	import { clickOutside } from '$lib/utils/click-outside';
+	import { Routes } from './routes';
 
 	export let data;
 
@@ -20,9 +20,13 @@
 				<details use:clickOutside on:click_outside={closeNav} id="nav_details">
 					<summary><Icon src={BiMenu} size="32" /></summary>
 					<ul class="bg-base-100 rounded-t-none p-2">
-						<li><button class="btn"><a href="/">Inicio</a></button></li>
-						<li><button class="btn"><a href="/my-gang">Mi peña</a></button></li>
-						<li><button class="btn"><a href="/gangs">Añadir peña</a></button></li>
+						<li><button class="btn"><a href={Routes.home.url}>{Routes.home.name}</a></button></li>
+						<li>
+							<button class="btn"><a href={Routes.my_gang.url}>{Routes.my_gang.name}</a></button>
+						</li>
+						<li>
+							<button class="btn"><a href={Routes.add_gang.url}>{Routes.add_gang.name}</a></button>
+						</li>
 						<!--<li>
 							<div class="form-control">
 								<input
@@ -34,8 +38,8 @@
 						</li>-->
 						{#if data.userIsLogged}
 							<li>
-								<form method="post" use:enhance action="/logout">
-									<button class="btn" type="submit">Logout</button>
+								<form method="post" use:enhance action={Routes.logout.url}>
+									<button class="btn" type="submit">{Routes.logout.name}</button>
 								</form>
 							</li>
 						{/if}

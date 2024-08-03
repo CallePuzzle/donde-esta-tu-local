@@ -1,6 +1,6 @@
 import { logger } from '$lib/server/logger';
 import { initializePrisma } from '$lib/server/db';
-import { ProtectedRoutes } from './protected-routes';
+import { ProtectedRoutes } from './routes';
 
 import type { PageServerLoad } from './$types';
 
