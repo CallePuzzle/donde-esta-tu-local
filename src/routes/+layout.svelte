@@ -8,18 +8,6 @@
 
 	export let data;
 
-	function addGang(event) {
-		if (!data.userIsLogged) {
-			document.getElementById('nav_add_gang').showModal();
-		} else {
-			document.getElementById('nav_details').open = false;
-			goto('/gangs');
-		}
-	}
-	function gotoLogin() {
-		goto('/login');
-	}
-
 	function closeNav(event) {
 		event.target.open = false;
 	}
@@ -33,8 +21,9 @@
 					<summary><Icon src={BiMenu} size="32" /></summary>
 					<ul class="bg-base-100 rounded-t-none p-2">
 						<li><button class="btn"><a href="/">Inicio</a></button></li>
-						<li><button class="btn" on:click={addGang}>Añadir peña</button></li>
-						<li>
+						<li><button class="btn"><a href="/my-gang">Mi peña</a></button></li>
+						<li><button class="btn"><a href="/gangs">Añadir peña</a></button></li>
+						<!--<li>
 							<div class="form-control">
 								<input
 									type="text"
@@ -42,7 +31,7 @@
 									class="input input-bordered w-24 md:w-auto p-3"
 								/>
 							</div>
-						</li>
+						</li>-->
 						{#if data.userIsLogged}
 							<li>
 								<form method="post" use:enhance action="/logout">
@@ -81,20 +70,6 @@
 	</div>
 </div>
 
-<dialog id="nav_add_gang" class="modal">
-	<div class="modal-box">
-		<div class="flex flex-col items-center">
-			<h3 class="text-lg font-bold">Para añadir una peña tienes que estar logado</h3>
-			<button class="btn btn-accent mt-6 w-24" on:click={gotoLogin}>Login</button>
-		</div>
-		<div class="modal-action m-0">
-			<form method="dialog">
-				<!-- if there is a button in form, it will close the modal -->
-				<button class="btn">Cerrar</button>
-			</form>
-		</div>
-	</div>
-</dialog>
 {#if data.isProtectedRoute && !data.userIsLogged}
 	<div class="alert alert-error">
 		<p>{data.protectedRouteMessage}</p>
