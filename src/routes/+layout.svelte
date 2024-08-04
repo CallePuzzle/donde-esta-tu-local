@@ -1,12 +1,25 @@
 <script>
 	import '../app.css';
 	import { enhance } from '$app/forms';
+	import { onMount } from 'svelte';
 	import { Icon } from 'svelte-icons-pack';
 	import { BiMenu } from 'svelte-icons-pack/bi';
 	import { clickOutside } from '$lib/utils/click-outside';
 	import { Routes } from './routes';
 
 	export let data;
+
+	onMount(async () => {
+		const status = await Notification.requestPermission();
+		if (status !== 'granted')
+			alert('Please allow notifications to make sure that the application works.');
+
+		if ('serviceWorker' in navigator) {
+			const reg = await navigator.serviceWorker.ready;
+      		const sub = await reg.pushManager.getSubscription();
+			console.log(sub);
+		}
+	});
 
 	function closeNav(event) {
 		event.target.open = false;
