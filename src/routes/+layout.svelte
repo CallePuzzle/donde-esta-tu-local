@@ -16,8 +16,27 @@
 
 		if ('serviceWorker' in navigator) {
 			const reg = await navigator.serviceWorker.ready;
-      		const sub = await reg.pushManager.getSubscription();
+			let sub = await reg.pushManager.getSubscription();
 			console.log(sub);
+			if (!sub) {
+				// Fetch VAPID public key
+				const res = await fetch(Routes.notification_vapidkeys.url);
+				const data = await res.text();
+				sub = await reg.pushManager.subscribe({
+					userVisibleOnly: true,
+					applicationServerKey: data
+				});
+			}
+			if (sub && data.userIsLogged) {
+				const res = await fetch(Routes.notification_subscribe.url, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ sub: sub, userId: data.user.id })
+				});
+				console.log(res);
+			}
 		}
 	});
 

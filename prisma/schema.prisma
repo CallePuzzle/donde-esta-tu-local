@@ -17,6 +17,7 @@ model User {
   gangId   Int?
   gang Gang? @relation(fields: [gangId], references: [id])
   isGangLeader Boolean?
+  suscription String?
 }
 
 model Session {

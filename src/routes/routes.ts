@@ -43,5 +43,13 @@ export const Routes: Routes = {
 	my_gang: {
 		name: 'Mi Peña',
 		url: '/gang/my'
+	},
+	notification_vapidkeys: {
+		name: 'Vapid Keys',
+		url: '/notification/vapidkeys'
+	},
+	notification_subscribe: {
+		name: 'Subscribe',
+		url: '/notification/subscribe'
 	}
 };

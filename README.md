@@ -24,3 +24,9 @@ npx prisma generate
 ```
 
 Kill vite server and run `yarn dev` again.
+
+## Test notifications
+
+```bash
+curl -v http://localhost:5173/notification/send
+```
