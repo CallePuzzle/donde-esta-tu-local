@@ -11,6 +11,7 @@ env:
   AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
   AUTH0_REDIRECT_URI: https://donde-esta-tu-local.callepuzzle-rkjp.workers.dev/login/callback
   DATABASE_URL: file:./dev.db
+  JWK: ${{ secrets.JWK }}
 
 jobs:
   deploy:
