@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import '../app.css';
 	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
@@ -24,7 +24,7 @@
 				const data = await res.text();
 				sub = await reg.pushManager.subscribe({
 					userVisibleOnly: true,
-					applicationServerKey: data
+					applicationServerKey: urlBase64ToUint8Array(data)
 				});
 			}
 			if (sub && data.userIsLogged) {
@@ -42,6 +42,22 @@
 
 	function closeNav(event) {
 		event.target.open = false;
+	}
+
+	// This function is needed because Chrome doesn't accept a base64 encoded string
+	// as value for applicationServerKey in pushManager.subscribe yet
+	// https://bugs.chromium.org/p/chromium/issues/detail?id=802280
+	function urlBase64ToUint8Array(base64String: string) {
+		var padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+		var base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+
+		var rawData = window.atob(base64);
+		var outputArray = new Uint8Array(rawData.length);
+
+		for (var i = 0; i < rawData.length; ++i) {
+			outputArray[i] = rawData.charCodeAt(i);
+		}
+		return outputArray;
 	}
 </script>
 

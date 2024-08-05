@@ -15,8 +15,8 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	webpush.setVapidDetails('mailto:example@example.com', VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
 	for (const user of users) {
-		if (user.suscription) {
-			const subscription = JSON.parse(user.suscription);
+		if (user.subscription) {
+			const subscription = JSON.parse(user.subscription);
 			const payload = JSON.stringify({ title: 'Hello!', body: 'It works!' });
 
 			try {

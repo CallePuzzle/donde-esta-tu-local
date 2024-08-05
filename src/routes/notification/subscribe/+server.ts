@@ -17,7 +17,7 @@ export async function POST(event: RequestEvent): Promise<Response> {
 				id: data.userId
 			},
 			data: {
-				suscription: JSON.stringify(data.sub)
+				subscription: JSON.stringify(data.sub)
 			}
 		});
 

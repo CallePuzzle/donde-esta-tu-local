@@ -11,9 +11,17 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('push', (event) => {
-	console.log('Push received');
-	const data = event.data.json();
-	console.log(data);
+
+	event.waitUntil(
+		// Show a notification with title 'ServiceWorker Cookbook' and body 'Alea iacta est'.
+		self.registration.showNotification('ServiceWorker Cookbook', {
+		  body: 'Alea iacta est',
+		})
+	  );
+
+	  console.log('Push received');
+	  const data = event.data.json();
+	  console.log(data);
 });
 
 self.addEventListener('notificationclick', (event) => {
