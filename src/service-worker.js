@@ -9,3 +9,14 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
 	console.log('Fetch:', event.request);
 });
+
+self.addEventListener('push', (event) => {
+	console.log('Push received');
+	const data = event.data.json();
+	console.log(data);
+});
+
+self.addEventListener('notificationclick', (event) => {
+	event.notification.close();
+	event.waitUntil(clients.openWindow('/'));
+});
