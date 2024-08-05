@@ -1,6 +1,8 @@
 import { logger } from '$lib/server/logger';
 import { initializePrisma } from '$lib/server/db';
 import { ProtectedRoutes } from './routes';
+import { JWK } from '$env/static/private';
+import { getPublicKeyFromJwk } from 'cf-webpush';
 
 import type { PageServerLoad } from './$types';
 
@@ -23,6 +25,7 @@ export const load: PageServerLoad = async (event) => {
 		userIsLogged: event.locals.user ? true : false,
 		user: user,
 		isProtectedRoute: ProtectedRoutes.some((route) => route.path === path),
-		protectedRouteMessage: ProtectedRoutes.find((route) => route.path === path)?.message
+		protectedRouteMessage: ProtectedRoutes.find((route) => route.path === path)?.message,
+		JWKpublicKey: getPublicKeyFromJwk(JSON.parse(JWK))
 	};
 };

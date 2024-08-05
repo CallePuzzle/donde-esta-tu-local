@@ -55,8 +55,8 @@
 		"@prisma/adapter-d1": "^5.17.0",
 		"@prisma/client": "5.17.0",
 		"arctic": "^1.9.2",
+		"cf-webpush": "^1.1.4",
 		"lucia": "^3.2.0",
-		"pino": "^9.3.2",
-		"web-push": "^3.6.7"
+		"pino": "^9.3.2"
 	}
 }

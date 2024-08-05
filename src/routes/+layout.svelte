@@ -17,14 +17,10 @@
 		if ('serviceWorker' in navigator) {
 			const reg = await navigator.serviceWorker.ready;
 			let sub = await reg.pushManager.getSubscription();
-			console.log(sub);
 			if (!sub) {
-				// Fetch VAPID public key
-				const res = await fetch(Routes.notification_vapidkeys.url);
-				const data = await res.text();
 				sub = await reg.pushManager.subscribe({
 					userVisibleOnly: true,
-					applicationServerKey: urlBase64ToUint8Array(data)
+					applicationServerKey: urlBase64ToUint8Array(data.JWKpublicKey)
 				});
 			}
 			if (sub && data.userIsLogged) {
@@ -35,7 +31,6 @@
 					},
 					body: JSON.stringify({ sub: sub, userId: data.user.id })
 				});
-				console.log(res);
 			}
 		}
 	});
