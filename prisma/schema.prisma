@@ -18,6 +18,7 @@ model User {
   gang Gang? @relation(fields: [gangId], references: [id])
   isGangLeader Boolean?
   subscription String?
+  notifications Notification[]
 }
 
 model Session {
@@ -33,4 +34,12 @@ model Gang {
   latitude  Float
   longitude Float
   members   User[]
+  isValidated Boolean @default(false)
+}
+
+model Notification {
+  id Int   @id @default(autoincrement())
+  title String
+  body String
+  users User[]
 }

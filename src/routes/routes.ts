@@ -44,9 +44,9 @@ export const Routes: Routes = {
 		name: 'Mi Peña',
 		url: '/gang/my'
 	},
-	notification_vapidkeys: {
-		name: 'Vapid Keys',
-		url: '/notification/vapidkeys'
+	notification_my: {
+		name: 'Mis notificaciones',
+		url: '/notification/my'
 	},
 	notification_subscribe: {
 		name: 'Subscribe',

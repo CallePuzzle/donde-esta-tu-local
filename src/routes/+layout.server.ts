@@ -8,6 +8,8 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	let user = null;
+	let notifications = null;
+
 	if (event.locals.user) {
 		const db = event.platform!.env.DB;
 		const prisma = initializePrisma(db);
@@ -16,7 +18,16 @@ export const load: PageServerLoad = async (event) => {
 				id: event.locals.user.id
 			}
 		});
-		logger.debug(user?.picture, 'user');
+		notifications = await prisma.notification.findMany({
+			where: {
+				users: {
+					some: {
+						id: event.locals.user.id
+					}
+				}
+			}
+		});
+		logger.debug(notifications, 'notifications');
 	}
 
 	let path = event.route.id;
@@ -26,6 +37,9 @@ export const load: PageServerLoad = async (event) => {
 		user: user,
 		isProtectedRoute: ProtectedRoutes.some((route) => route.path === path),
 		protectedRouteMessage: ProtectedRoutes.find((route) => route.path === path)?.message,
-		JWKpublicKey: getPublicKeyFromJwk(JSON.parse(JWK))
+		JWKpublicKey: getPublicKeyFromJwk(JSON.parse(JWK)),
+		notifications: notifications,
+		notificationsCount: notifications ? Object.keys(notifications).length : 0,
+		path: path
 	};
 };

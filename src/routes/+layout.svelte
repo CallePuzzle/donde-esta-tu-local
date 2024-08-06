@@ -5,32 +5,30 @@
 	import { Icon } from 'svelte-icons-pack';
 	import { BiMenu } from 'svelte-icons-pack/bi';
 	import { clickOutside } from '$lib/utils/click-outside';
+	import { SubscribeUser } from '$lib/utils/notification-subscribe-user';
 	import { Routes } from './routes';
+	import toast, { Toaster } from 'svelte-french-toast';
 
-	export let data;
+	import type { PageData } from './$types';
+
+	export let data: PageData;
 
 	onMount(async () => {
 		const status = await Notification.requestPermission();
-		if (status !== 'granted')
-			alert('Please allow notifications to make sure that the application works.');
+		if (status !== 'granted') alert('Por favor, activa las notificaciones para recibir los avisos');
 
 		if ('serviceWorker' in navigator) {
 			const reg = await navigator.serviceWorker.ready;
-			let sub = await reg.pushManager.getSubscription();
-			if (!sub) {
-				sub = await reg.pushManager.subscribe({
-					userVisibleOnly: true,
-					applicationServerKey: urlBase64ToUint8Array(data.JWKpublicKey)
+			await SubscribeUser(data.userIsLogged, data.user.id, reg, data.JWKpublicKey);
+		}
+
+		if (data.notifications && data.path !== Routes.notification_my.url) {
+			if (data.notificationsCount == 1) {
+				toast('Tienes una notificación sin leer', {
+					icon: '🔔',
 				});
-			}
-			if (sub && data.userIsLogged) {
-				const res = await fetch(Routes.notification_subscribe.url, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ sub: sub, userId: data.user.id })
-				});
+			} else if (data.notificationsCount > 1) {
+				toast.success(`Tienes ${data.notificationsCount} notificaciones sin leer`);
 			}
 		}
 	});
@@ -38,23 +36,9 @@
 	function closeNav(event) {
 		event.target.open = false;
 	}
-
-	// This function is needed because Chrome doesn't accept a base64 encoded string
-	// as value for applicationServerKey in pushManager.subscribe yet
-	// https://bugs.chromium.org/p/chromium/issues/detail?id=802280
-	function urlBase64ToUint8Array(base64String: string) {
-		var padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-		var base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
-
-		var rawData = window.atob(base64);
-		var outputArray = new Uint8Array(rawData.length);
-
-		for (var i = 0; i < rawData.length; ++i) {
-			outputArray[i] = rawData.charCodeAt(i);
-		}
-		return outputArray;
-	}
 </script>
+
+<Toaster />
 
 <div class="navbar bg-base-100">
 	<div class="flex-1">
@@ -95,20 +79,11 @@
 		<a href="/" class="btn btn-ghost text-xl">Peñas Montemayor</a>
 
 		{#if data.userIsLogged}
-			<div class="dropdown dropdown-end">
-				<div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+				<div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar {data.notificationsCount? 'online' : ''}">
 					<div class="w-10 rounded-full">
-						<img alt="Profile image" src={data.user.picture} />
+						<a href="{Routes.notification_my.url}"><img alt="Profile image" src={data.user.picture} /></a>
 					</div>
 				</div>
-
-				<ul
-					tabindex="0"
-					class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-				>
-					<li><a>Mi peña</a></li>
-				</ul>
-			</div>
 		{:else}
 			<ul class="menu menu-horizontal px-1">
 				<li><a href="/login">Login</a></li>

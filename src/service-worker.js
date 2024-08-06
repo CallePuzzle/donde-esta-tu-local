@@ -1,3 +1,5 @@
+import { Routes } from './routes/routes';
+
 self.addEventListener('install', (event) => {
 	//console.log('Installed SW');
 });
@@ -11,19 +13,15 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('push', (event) => {
+	const data = event.data.json();
 	event.waitUntil(
-		// Show a notification with title 'ServiceWorker Cookbook' and body 'Alea iacta est'.
-		self.registration.showNotification('ServiceWorker Cookbook', {
-			body: 'Alea iacta est'
+		self.registration.showNotification(data.title, {
+			body: data.body
 		})
 	);
-
-	console.log('Push received');
-	const data = event.data.json();
-	console.log(data);
 });
 
 self.addEventListener('notificationclick', (event) => {
 	event.notification.close();
-	event.waitUntil(clients.openWindow('/'));
+	event.waitUntil(clients.openWindow(Routes.notification_my.url));
 });
