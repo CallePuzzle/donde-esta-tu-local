@@ -10,6 +10,11 @@ export interface Payload {
 	body: string;
 }
 
+export interface NotificationExtraData {
+	type: string;
+	data: any;
+}
+
 async function sendNotifications(user: User, payload: Payload): Promise<boolean> {
 	if (user.subscription) {
 		const subscription: PushSubscription = JSON.parse(user.subscription);
@@ -49,6 +54,7 @@ async function sendNotifications(user: User, payload: Payload): Promise<boolean>
 async function createNotification(
 	users: User[],
 	payload: Payload,
+	extraData: NotificationExtraData,
 	db: D1Database
 ): Promise<boolean> {
 	const prisma = initializePrisma(db);
@@ -58,6 +64,8 @@ async function createNotification(
 			data: {
 				title: payload.title,
 				body: payload.body,
+				type: extraData.type,
+				data: JSON.stringify(extraData.data),
 				users: {
 					connect: users.map((user) => ({ id: user.id }))
 				}
@@ -71,25 +79,34 @@ async function createNotification(
 	}
 }
 
-async function newNotification(users: User[], payload: Payload, db: D1Database): Promise<boolean> {
+async function newNotification(
+	users: User[],
+	payload: Payload,
+	extraData: NotificationExtraData,
+	db: D1Database
+): Promise<boolean> {
 	for (const user of users) {
 		if (!(await sendNotifications(user, payload))) {
 			return false;
 		}
 	}
 
-	if (!(await createNotification(users, payload, db))) {
+	if (!(await createNotification(users, payload, extraData, db))) {
 		return false;
 	}
 	return true;
 }
 
-async function NewNotificationForAll(payload: Payload, db: D1Database): Promise<boolean> {
+async function NewNotificationForAll(
+	payload: Payload,
+	extraData: NotificationExtraData,
+	db: D1Database
+): Promise<boolean> {
 	const prisma = initializePrisma(db);
 
 	const users = await prisma.user.findMany();
 
-	return newNotification(users, payload, db);
+	return newNotification(users, payload, extraData, db);
 }
 
 export { NewNotificationForAll };

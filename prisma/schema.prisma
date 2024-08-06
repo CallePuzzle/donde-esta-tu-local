@@ -41,5 +41,7 @@ model Notification {
   id Int   @id @default(autoincrement())
   title String
   body String
+  type String?
+  data String?
   users User[]
 }

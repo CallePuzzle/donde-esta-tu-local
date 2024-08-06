@@ -3,7 +3,7 @@ import { initializePrisma } from '$lib/server/db';
 import { NewNotificationForAll, type Payload } from '$lib/utils/notifications';
 
 import type { Actions } from './$types';
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad, NotificationExtraData } from './$types';
 
 export const actions: Actions = {
 	new: async (event) => {
@@ -28,18 +28,26 @@ export const actions: Actions = {
 			logger.info(gang, 'new gang created');
 
 			const payload: Payload = {
-				title: 'New gang',
-				body: `A new gang has been created: ${gang.name}`
+				title: 'Nueva peña',
+				body: `Se ha añadido una nueva peña: ${name}`
 			};
 
-			if (!(await NewNotificationForAll(payload, db))) {
+			const extraData: NotificationExtraData = {
+				type: 'gang-added',
+				data: {
+					gangId: gang.id,
+					addedBy: event.locals.user!.id
+				}
+			};
+
+			if (!(await NewNotificationForAll(payload, extraData, db))) {
 				return { success: false, error: 'Error sending notification' };
 			}
 
 			return {
 				success: true,
 				data: gang,
-				mensaje: 'Peña añadida, a la espera de revisión por un administrador'
+				message: 'Peña añadida, a la espera de revisión por un administrador'
 			};
 		} catch (error) {
 			logger.error(error);
@@ -49,6 +57,8 @@ export const actions: Actions = {
 	validate: async (event) => {
 		const formData = await event.request.formData();
 		const gangId = formData.get('gangId');
+		const notificationId = formData.get('notificationId');
+		const userId = formData.get('userId');
 
 		logger.debug(gangId, 'validating gang');
 
@@ -64,6 +74,19 @@ export const actions: Actions = {
 					isValidated: true
 				}
 			});
+			const user = await prisma.user.update({
+				where: {
+					id: userId as string
+				},
+				data: {
+					notifications: {
+						disconnect: {
+							id: parseInt(notificationId as string)
+						}
+					}
+				}
+			});
+
 			return { success: true, data: gang, message: 'Peña validada, gracias!' };
 		} catch (error) {
 			logger.error(error);
