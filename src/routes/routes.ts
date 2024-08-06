@@ -14,12 +14,16 @@ interface Routes {
 
 export const ProtectedRoutes: ProtectedRoute[] = [
 	{
-		path: '/gangs',
+		path: '/gang/add',
 		message: 'No tienes permisos para añadir una peña, por favor inicia sesión'
 	},
 	{
-		path: '/my-gang',
+		path: '/gang/my',
 		message: 'Para ver tu peña necesitas iniciar sesión'
+	},
+	{
+		path: '/notification/my',
+		message: 'Para ver tus notificaciones necesitas iniciar sesión'
 	}
 ];
 

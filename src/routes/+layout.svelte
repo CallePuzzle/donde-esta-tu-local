@@ -25,7 +25,7 @@
 		if (data.notifications && data.path !== Routes.notification_my.url) {
 			if (data.notificationsCount == 1) {
 				toast('Tienes una notificación sin leer', {
-					icon: '🔔',
+					icon: '🔔'
 				});
 			} else if (data.notificationsCount > 1) {
 				toast.success(`Tienes ${data.notificationsCount} notificaciones sin leer`);
@@ -79,11 +79,16 @@
 		<a href="/" class="btn btn-ghost text-xl">Peñas Montemayor</a>
 
 		{#if data.userIsLogged}
-				<div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar {data.notificationsCount? 'online' : ''}">
-					<div class="w-10 rounded-full">
-						<a href="{Routes.notification_my.url}"><img alt="Profile image" src={data.user.picture} /></a>
-					</div>
+			<div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar indicator">
+				{#if data.notificationsCount}<span class="indicator-item badge badge-warning"
+						>{data.notificationsCount}</span
+					>{/if}
+				<div class="w-10 rounded-full">
+					<a href={Routes.notification_my.url}
+						><img alt="Profile image" src={data.user.picture} /></a
+					>
 				</div>
+			</div>
 		{:else}
 			<ul class="menu menu-horizontal px-1">
 				<li><a href="/login">Login</a></li>
