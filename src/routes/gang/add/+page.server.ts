@@ -36,7 +36,35 @@ export const actions: Actions = {
 				return { success: false, error: 'Error sending notification' };
 			}
 
-			return { success: true, data: gang };
+			return {
+				success: true,
+				data: gang,
+				mensaje: 'Peña añadida, a la espera de revisión por un administrador'
+			};
+		} catch (error) {
+			logger.error(error);
+			return { success: false, error: error };
+		}
+	},
+	validate: async (event) => {
+		const formData = await event.request.formData();
+		const gangId = formData.get('gangId');
+
+		logger.debug(gangId, 'validating gang');
+
+		const db = event.platform!.env.DB;
+		const prisma = initializePrisma(db);
+
+		try {
+			const gang = await prisma.gang.update({
+				where: {
+					id: parseInt(gangId as string)
+				},
+				data: {
+					isValidated: true
+				}
+			});
+			return { success: true, data: gang, message: 'Peña validada, gracias!' };
 		} catch (error) {
 			logger.error(error);
 			return { success: false, error: error };

@@ -6,8 +6,10 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async (event) => {
 	const db = event.platform!.env.DB;
 	const prisma = initializePrisma(db);
+	const gangs = await prisma.gang.findMany();
 
+	logger.debug(gangs, 'Gangs');
 	return {
-		gangs: prisma.gang.findMany()
+		gangs: gangs
 	};
 };
