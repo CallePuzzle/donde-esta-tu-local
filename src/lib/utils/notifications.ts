@@ -100,11 +100,18 @@ async function newNotification(
 async function NewNotificationForAll(
 	payload: Payload,
 	extraData: NotificationExtraData,
+	userId: string,
 	db: D1Database
 ): Promise<boolean> {
 	const prisma = initializePrisma(db);
 
-	const users = await prisma.user.findMany();
+	const users = await prisma.user.findMany({
+		where: {
+			id: {
+				not: userId
+			}
+		}
+	});
 
 	return newNotification(users, payload, extraData, db);
 }

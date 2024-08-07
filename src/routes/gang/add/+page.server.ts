@@ -40,7 +40,7 @@ export const actions: Actions = {
 				}
 			};
 
-			if (!(await NewNotificationForAll(payload, extraData, db))) {
+			if (!(await NewNotificationForAll(payload, extraData, event.locals.user!.id, db))) {
 				return { success: false, error: 'Error sending notification' };
 			}
 
