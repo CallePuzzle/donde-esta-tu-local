@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { Routes } from '../../routes';
+	import { Routes } from '$lib/routes';
 
 	export let data: PageData;
 </script>

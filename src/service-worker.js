@@ -1,4 +1,4 @@
-import { Routes } from './routes/routes';
+import { Routes } from '$lib/routes';
 
 self.addEventListener('install', (event) => {
 	//console.log('Installed SW');

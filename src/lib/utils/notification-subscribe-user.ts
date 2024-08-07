@@ -1,4 +1,4 @@
-import { Routes } from '../../routes/routes';
+import { Routes } from '$lib/routes';
 
 async function SubscribeUser(
 	userIsLogged: boolean,

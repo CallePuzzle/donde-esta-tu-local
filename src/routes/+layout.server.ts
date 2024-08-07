@@ -1,4 +1,4 @@
-import { ProtectedRoutes } from './routes';
+import { ProtectedRoutes } from '$lib/routes';
 import { JWK } from '$env/static/private';
 import { getPublicKeyFromJwk } from 'cf-webpush';
 import { getUserNotifications } from '$lib/utils/get-user-notifications';
