@@ -12,4 +12,4 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "donde-esta-tu-local"
-database_id = "787be1af-7e5d-4d0b-b132-89754e638924"
+database_id = "6487b948-d8d4-4076-8445-12e932d99b08"
