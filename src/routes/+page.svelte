@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { showMyPosition } from '$lib/utils/showMyPosition';
-	import { coordsMonte } from '$lib/utils/coordsMonte';
+	import { showMyPosition } from '$lib/utils/show-my-position';
+	import { coordsMonte } from '$lib/utils/coords-monte';
 
 	import type { PageData } from './$types';
 
@@ -17,8 +17,15 @@
 
 		showMyPosition(L, map, coordsMonte);
 
-		(await data.gangs).map((gang) => {
-			L.marker([gang.latitude, gang.longitude]).addTo(map).bindPopup(gang.name);
+		data.gangs.map((gang) => {
+			let message = '<a href="/gang/' + gang.id + '">' + gang.name + '</a>';
+
+			message = gang.isValidated ? message : message + ' (sin validar)';
+			L.marker([gang.latitude, gang.longitude], {
+				opacity: gang.isValidated ? 1 : 0.6
+			})
+				.addTo(map)
+				.bindPopup(message);
 		});
 	});
 </script>

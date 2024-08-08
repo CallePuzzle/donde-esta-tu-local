@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { showMyPosition } from '$lib/utils/showMyPosition';
-	import { coordsMonte } from '$lib/utils/coordsMonte';
+	import { showMyPosition } from '$lib/utils/show-my-position';
+	import { coordsMonte } from '$lib/utils/coords-monte';
 
 	import type { ActionData } from './$types';
 
@@ -12,6 +12,7 @@
 	}
 
 	export let form: ActionData;
+	export let data: PageData;
 	export let latlng = {} as LatLng;
 
 	onMount(async () => {
@@ -48,7 +49,7 @@
 		// wait 10 seconds and redirect to home
 		setTimeout(() => {
 			goto('/');
-		}, 5000);
+		}, 3000);
 		return {
 			destroy() {
 				// the node has been removed from the DOM
@@ -82,7 +83,7 @@
 				d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
 			/>
 		</svg>
-		<span>Peña añadida, a la espera de revisión por un administrador</span>
+		<span>{form?.message}</span>
 	</div>
 {/if}
 

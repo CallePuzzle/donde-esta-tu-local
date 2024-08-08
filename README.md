@@ -7,7 +7,7 @@ Aplicación para saber donde están las peñas de tu pueblo.
 ```bash
 yarn install
 npx wrangler d1 migrations apply donde-esta-tu-local --local
-npx wrangler dev
+yarn dev
 ```
 
 ## Migraciones
@@ -24,3 +24,9 @@ npx prisma generate
 ```
 
 Kill vite server and run `yarn dev` again.
+
+## Test notifications
+
+```bash
+curl -v http://localhost:5173/notification/send
+```
