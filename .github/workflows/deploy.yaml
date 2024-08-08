@@ -10,18 +10,20 @@ env:
   AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
   AUTH0_REDIRECT_URI: https://donde-esta-tu-local.callepuzzle-rkjp.workers.dev/login/callback
   DATABASE_URL: file:./dev.db
+  JWK: ${{ secrets.JWK }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
     steps:
+
       - uses: actions/checkout@v4
 
       - name: Create .env file
         uses: CallePuzzle/envvar-to-dotenv-action@v1.2.1
         with:
-          variableNames: MONGO_URI,AUTH0_CLIENT_ID,AUTH0_CLIENT_SECRET,AUTH0_REDIRECT_URI
+          variableNames: DATABASE_URL,AUTH0_DOMAIN,AUTH0_CLIENT_ID,AUTH0_CLIENT_SECRET,JWK
 
       - uses: actions/setup-node@v4
         with:
