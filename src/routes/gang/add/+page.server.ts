@@ -74,18 +74,13 @@ export const actions: Actions = {
 					isValidated: true
 				}
 			});
-			const user = await prisma.user.update({
+			logger.info(gang, 'gang validated');
+			const notification = await prisma.notification.delete({
 				where: {
-					id: userId as string
-				},
-				data: {
-					notifications: {
-						disconnect: {
-							id: parseInt(notificationId as string)
-						}
-					}
+					id: parseInt(notificationId as string)
 				}
 			});
+			logger.info(notification, 'notification deleted');
 
 			return { success: true, data: gang, message: 'Peña validada, gracias!' };
 		} catch (error) {
