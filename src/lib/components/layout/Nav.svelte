@@ -22,9 +22,10 @@
 					<summary><Icon src={BiMenu} size="32" /></summary>
 					<ul class="bg-base-100 rounded-t-none p-2">
 						<li><button class="btn"><a href={Routes.home.url}>{Routes.home.name}</a></button></li>
-						<li>
+						<!--					<li>
 							<button class="btn"><a href={Routes.my_gang.url}>{Routes.my_gang.name}</a></button>
 						</li>
+-->
 						<li>
 							<button class="btn"><a href={Routes.add_gang.url}>{Routes.add_gang.name}</a></button>
 						</li>
