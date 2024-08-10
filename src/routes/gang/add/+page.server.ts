@@ -1,9 +1,12 @@
 import { logger } from '$lib/server/logger';
 import { initializePrisma } from '$lib/server/db';
-import { NewNotificationForAll, type Payload } from '$lib/utils/notifications';
+import {
+	NewNotificationForAll,
+	type Payload,
+	type NotificationExtraData
+} from '$lib/utils/notifications';
 
-import type { Actions } from './$types';
-import type { PageServerLoad, NotificationExtraData } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
 export const actions: Actions = {
 	new: async (event) => {
@@ -34,6 +37,7 @@ export const actions: Actions = {
 
 			const extraData: NotificationExtraData = {
 				type: 'gang-added',
+				status: 'pending',
 				data: {
 					gangId: gang.id,
 					addedBy: event.locals.user!.id

@@ -12,12 +12,11 @@
 	}
 
 	export let form: ActionData;
-	export let data: PageData;
 	export let latlng = {} as LatLng;
 
 	onMount(async () => {
 		if (form?.success) return;
-		document.getElementById('add_gang_info').showModal();
+		document.getElementById('add_gang_info')?.showModal();
 
 		const L = (await import('leaflet')).default;
 		const map = L.map('map').setView(coordsMonte, 17);
@@ -26,7 +25,7 @@
 				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 		}).addTo(map);
 
-		showMyPosition(L, map, coordsMonte);
+		showMyPosition(L, map, coordsMonte, false);
 
 		map.on('click', addGang);
 
