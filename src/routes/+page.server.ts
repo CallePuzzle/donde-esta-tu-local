@@ -8,7 +8,6 @@ export const load: PageServerLoad = async (event) => {
 	const prisma = initializePrisma(db);
 	const gangs = await prisma.gang.findMany();
 
-	logger.debug(gangs, 'Gangs');
 	return {
 		gangs: gangs
 	};

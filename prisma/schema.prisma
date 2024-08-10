@@ -43,5 +43,7 @@ model Notification {
   body String
   type String?
   data String?
+  status String?
+  createdAt DateTime @default(now())
   users User[]
 }

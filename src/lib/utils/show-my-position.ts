@@ -2,7 +2,7 @@ import meIconUrl from '$lib/assets/person-arms-up.svg';
 
 import type { Marker, Map, LatLngTuple } from 'leaflet';
 
-export function showMyPosition(L: any, map: Map, origin: LatLngTuple) {
+export function showMyPosition(L: any, map: Map, origin: LatLngTuple, focus: boolean = true) {
 	let me: Marker;
 
 	if (navigator.geolocation) {
@@ -56,7 +56,8 @@ export function showMyPosition(L: any, map: Map, origin: LatLngTuple) {
 		});
 
 		if (!me) {
-			me = L.marker([lat, lon], { icon: meIcon }).addTo(map).bindPopup('Estás aquí').openPopup();
+			me = L.marker([lat, lon], { icon: meIcon }).addTo(map).bindPopup('Estás aquí');
+			if (focus) me.openPopup();
 		} else {
 			me.setLatLng([lat, lon]);
 		}

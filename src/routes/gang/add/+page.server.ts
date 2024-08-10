@@ -1,9 +1,12 @@
 import { logger } from '$lib/server/logger';
 import { initializePrisma } from '$lib/server/db';
-import { NewNotificationForAll, type Payload } from '$lib/utils/notifications';
+import {
+	NewNotificationForAll,
+	type Payload,
+	type NotificationExtraData
+} from '$lib/utils/notifications';
 
-import type { Actions } from './$types';
-import type { PageServerLoad, NotificationExtraData } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
 export const actions: Actions = {
 	new: async (event) => {
@@ -34,6 +37,7 @@ export const actions: Actions = {
 
 			const extraData: NotificationExtraData = {
 				type: 'gang-added',
+				status: 'pending',
 				data: {
 					gangId: gang.id,
 					addedBy: event.locals.user!.id
@@ -74,18 +78,16 @@ export const actions: Actions = {
 					isValidated: true
 				}
 			});
-			const user = await prisma.user.update({
+			logger.info(gang, 'gang validated');
+			const notification = await prisma.notification.update({
 				where: {
-					id: userId as string
+					id: parseInt(notificationId as string)
 				},
 				data: {
-					notifications: {
-						disconnect: {
-							id: parseInt(notificationId as string)
-						}
-					}
+					status: 'validated'
 				}
 			});
+			logger.info(notification, 'notification updated');
 
 			return { success: true, data: gang, message: 'Peña validada, gracias!' };
 		} catch (error) {

@@ -12,6 +12,7 @@ export interface Payload {
 
 export interface NotificationExtraData {
 	type: string;
+	status: string;
 	data: any;
 }
 
@@ -65,6 +66,7 @@ async function createNotification(
 				title: payload.title,
 				body: payload.body,
 				type: extraData.type,
+				status: extraData.status,
 				data: JSON.stringify(extraData.data),
 				users: {
 					connect: users.map((user) => ({ id: user.id }))
