@@ -56,7 +56,7 @@ export function showMyPosition(L: any, map: Map, origin: LatLngTuple) {
 		});
 
 		if (!me) {
-			me = L.marker([lat, lon], { icon: meIcon }).addTo(map).bindPopup('Estás aquí').openPopup();
+			me = L.marker([lat, lon], { icon: meIcon }).addTo(map).bindPopup('Estás aquí');
 		} else {
 			me.setLatLng([lat, lon]);
 		}
