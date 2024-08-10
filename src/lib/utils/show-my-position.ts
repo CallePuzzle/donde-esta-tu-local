@@ -23,7 +23,7 @@ export function showMyPosition(L: any, map: Map, origin: LatLngTuple) {
 		if (distancia < 5) {
 			navigator.geolocation.watchPosition(showPosition, positionError, {
 				enableHighAccuracy: true, // Habilitar alta precisión
-				maximumAge: 10, // No usar caché
+				maximumAge: 10, // Cache 10ms
 				timeout: 5000 // Tiempo de espera para obtener la ubicación
 			});
 		}
