@@ -51,7 +51,11 @@
 									value={JSON.parse(notification.data).gangId}
 								/></label
 							>
-							<button type="submit" class="btn btn-accent m-6">Validar</button>
+							{#if notification.status === 'pending'}
+								<button type="submit" class="btn btn-accent m-6">Validar</button>
+							{:else}
+								<button class="btn btn-accent m-6" disabled>Validada</button>
+							{/if}
 						</form>
 					{:else}
 						<h2>{notification.title}</h2>

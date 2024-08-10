@@ -5,13 +5,11 @@ import { initializePrisma } from '$lib/server/db';
 export const actions: Actions = {};
 
 export const load: PageServerLoad = async (event) => {
-	let user = null;
 	let notifications = null;
 
 	if (event.locals.user) {
 		const db = event.platform!.env.DB;
 		const userNotifications = await getUserNotifications(event.locals.user.id, db);
-		user = userNotifications.user;
 		notifications = userNotifications.notifications;
 
 		const prisma = initializePrisma(db);
@@ -31,7 +29,6 @@ export const load: PageServerLoad = async (event) => {
 	}
 
 	return {
-		user: user,
 		notifications: notifications
 	};
 };

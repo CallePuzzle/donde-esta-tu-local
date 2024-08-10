@@ -79,12 +79,15 @@ export const actions: Actions = {
 				}
 			});
 			logger.info(gang, 'gang validated');
-			const notification = await prisma.notification.delete({
+			const notification = await prisma.notification.update({
 				where: {
 					id: parseInt(notificationId as string)
+				},
+				data: {
+					status: 'validated'
 				}
 			});
-			logger.info(notification, 'notification deleted');
+			logger.info(notification, 'notification updated');
 
 			return { success: true, data: gang, message: 'Peña validada, gracias!' };
 		} catch (error) {
