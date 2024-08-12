@@ -54,11 +54,15 @@
 			{#each data.notifications as notification}
 				<li>
 					{#if notification.type === 'gang-added'}
-						<span>{notification.data.addedBy} ha añadido una peña nueva: </span><span>{notification.data.gang.name}</span>
+						<span>{notification.data.addedBy.name} ha añadido una peña nueva: </span><span
+							>{notification.data.gang.name}</span
+						>
 						{#if notification.status === 'pending'}
 							<button class="btn btn-accent m-6" on:click={showModal(notification)}>Validar</button>
 						{:else if notification.status === 'validated'}
-							<button class="btn btn-accent m-6" disabled>Validada por {notification.data.validatedBy}</button>
+							<button class="btn btn-accent m-6" disabled
+								>Validada por {notification.data.validatedBy?.name}</button
+							>
 						{/if}
 					{:else}
 						<h2>{notification.title}</h2>

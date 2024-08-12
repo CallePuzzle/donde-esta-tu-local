@@ -23,6 +23,18 @@ export const load: PageServerLoad = async (event) => {
 				});
 				notificationData.gang = gang;
 				notification.data = notificationData;
+				if (notificationData.addedBy) {
+					const addedBy = await prisma.user.findUnique({
+						where: { id: notificationData.addedBy }
+					});
+					notification.data.addedBy = addedBy;
+				}
+				if (notificationData.validatedBy) {
+					const validatedBy = await prisma.user.findUnique({
+						where: { id: notificationData.validatedBy }
+					});
+					notification.data.validatedBy = validatedBy;
+				}
 			}
 		}
 	}
