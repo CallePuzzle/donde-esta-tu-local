@@ -79,12 +79,20 @@ export const actions: Actions = {
 				}
 			});
 			logger.info(gang, 'gang validated');
-			const notification = await prisma.notification.update({
+			let notification = await prisma.notification.findUnique({
+				where: {
+					id: parseInt(notificationId as string)
+				}
+			});
+			const data = JSON.parse(notification?.data);
+			data.validatedBy = userId;
+			notification = await prisma.notification.update({
 				where: {
 					id: parseInt(notificationId as string)
 				},
 				data: {
-					status: 'validated'
+					status: 'validated',
+					data: JSON.stringify(data)
 				}
 			});
 			logger.info(notification, 'notification updated');

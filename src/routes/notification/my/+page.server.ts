@@ -19,11 +19,10 @@ export const load: PageServerLoad = async (event) => {
 				const notificationData = JSON.parse(notification.data);
 				const gangId = notificationData.gangId;
 				const gang = await prisma.gang.findUnique({
-					where: { id: gangId },
-					select: { name: true }
+					where: { id: gangId }
 				});
-				notificationData.gangName = gang.name;
-				notification.data = JSON.stringify(notificationData);
+				notificationData.gang = gang;
+				notification.data = notificationData;
 			}
 		}
 	}
