@@ -46,7 +46,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 					id: user.sub
 				},
 				data: {
-					name: user.nickname,
 					picture: user.picture
 				}
 			});
@@ -56,7 +55,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 				data: {
 					id: user.sub,
 					email: user.email,
-					name: user.nickname,
 					picture: user.picture
 				}
 			});
