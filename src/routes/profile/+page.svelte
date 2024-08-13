@@ -1,9 +1,25 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { Routes } from '$lib/routes';
+	import wellcome from '$lib/stores/wellcome';
 
-	import type { PageData } from './$types';
+	import type { PageData, ActionData } from './$types';
 
 	export let data: PageData;
+	export let form: ActionData;
+
+	if (form?.success) {
+		const redirect = !$wellcome.profileName;
+		wellcome.update((value) => {
+			return {
+				...value,
+				profileName: true
+			};
+		});
+		if (redirect) {
+			goto(Routes.wellcome.url);
+		}
+	}
 </script>
 
 <div class="flex flex-col">

@@ -63,5 +63,9 @@ export const Routes: Routes = {
 	profile: {
 		name: 'Perfil',
 		url: '/profile'
+	},
+	wellcome: {
+		name: 'Bienvenido',
+		url: '/wellcome'
 	}
 };

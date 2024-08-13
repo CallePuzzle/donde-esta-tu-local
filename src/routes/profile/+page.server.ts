@@ -23,7 +23,7 @@ export const actions: Actions = {
 				}
 			});
 			logger.info(user, 'profile updated');
-			return { susccess: true, data: user };
+			return { success: true, data: user };
 		} catch (error) {
 			logger.error(error);
 			return { success: false, error: error };

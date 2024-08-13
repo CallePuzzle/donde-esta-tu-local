@@ -4,6 +4,7 @@ import { OAuth2RequestError } from 'arctic';
 import { logger } from '$lib/server/logger';
 
 import type { RequestEvent } from '@sveltejs/kit';
+import { Routes } from '$lib/routes';
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	const code = event.url.searchParams.get('code');
@@ -65,10 +66,11 @@ export async function GET(event: RequestEvent): Promise<Response> {
 				...sessionCookie.attributes
 			});
 		}
+
 		return new Response(null, {
 			status: 302,
 			headers: {
-				Location: '/'
+				Location: Routes.wellcome.url
 			}
 		});
 	} catch (e) {
