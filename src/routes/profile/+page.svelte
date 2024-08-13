@@ -8,9 +8,7 @@
 	export let data: PageData;
 	export let form: ActionData;
 
-	console.log(form);
 	if (form?.success) {
-		console.log('form success');
 		const redirect = !$wellcome.profileName;
 		wellcome.update((value) => {
 			return {

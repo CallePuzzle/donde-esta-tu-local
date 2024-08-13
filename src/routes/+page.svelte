@@ -2,16 +2,24 @@
 	import { onMount } from 'svelte';
 	import { showMyPosition } from '$lib/utils/show-my-position';
 	import { coordsMonte } from '$lib/utils/coords-monte';
-	import type { Map } from 'leaflet';
 	import { Icon } from 'svelte-icons-pack';
 	import { BiCurrentLocation } from 'svelte-icons-pack/bi';
+	import { goto } from '$app/navigation';
+	import { Routes } from '$lib/routes';
+	import wellcome from '$lib/stores/wellcome';
+	import { defaultValue as firstTime } from '$lib/stores/wellcome';
 
 	import type { PageData } from './$types';
+	import type { Map } from 'leaflet';
 
 	export let data: PageData;
 	let L: any;
 	let map: Map;
 	let showImHere = false;
+
+	if ($wellcome == firstTime) {
+		goto(Routes.wellcome.url);
+	}
 
 	onMount(async () => {
 		L = (await import('leaflet')).default;

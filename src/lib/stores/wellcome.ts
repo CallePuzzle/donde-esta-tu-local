@@ -8,7 +8,7 @@ interface Wellcome {
 	reviewGang: boolean;
 }
 
-const defaultValue = {
+export const defaultValue = {
 	login: false,
 	profileName: false,
 	addGang: false,
