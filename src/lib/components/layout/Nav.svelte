@@ -50,7 +50,7 @@
 						>{notificationsCount}</span
 					>{/if}
 				<div class="w-10 rounded-full">
-					<a href={Routes.notification_my.url}><img alt="Profile image" src={userPicture} /></a>
+					<a href={Routes.profile.url}><img alt="Profile image" src={userPicture} /></a>
 				</div>
 			</div>
 		{:else}

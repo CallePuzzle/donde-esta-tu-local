@@ -24,6 +24,10 @@ export const ProtectedRoutes: ProtectedRoute[] = [
 	{
 		path: '/notification/my',
 		message: 'Para ver tus notificaciones necesitas iniciar sesión'
+	},
+	{
+		path: '/profile',
+		message: 'Para ver tu perfil necesitas iniciar sesión'
 	}
 ];
 
@@ -55,5 +59,9 @@ export const Routes: Routes = {
 	notification_subscribe: {
 		name: 'Subscribe',
 		url: '/notification/subscribe'
+	},
+	profile: {
+		name: 'Perfil',
+		url: '/profile'
 	}
 };
