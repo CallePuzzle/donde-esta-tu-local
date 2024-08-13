@@ -102,6 +102,48 @@ export const actions: Actions = {
 			logger.error(error);
 			return { success: false, error: error };
 		}
+	},
+	refuse: async (event) => {
+		const formData = await event.request.formData();
+		const gangId = formData.get('gangId');
+		const notificationId = formData.get('notificationId');
+		const userId = formData.get('userId');
+
+		logger.debug(gangId, 'refusing gang');
+
+		const db = event.platform!.env.DB;
+		const prisma = initializePrisma(db);
+
+		try {
+			const gang = await prisma.gang.delete({
+				where: {
+					id: parseInt(gangId as string)
+				}
+			});
+			logger.info(gang, 'gang refused');
+			let notification = await prisma.notification.findUnique({
+				where: {
+					id: parseInt(notificationId as string)
+				}
+			});
+			const data = JSON.parse(notification?.data);
+			data.refusedBy = userId;
+			notification = await prisma.notification.update({
+				where: {
+					id: parseInt(notificationId as string)
+				},
+				data: {
+					status: 'refused',
+					data: JSON.stringify(data)
+				}
+			});
+			logger.info(notification, 'notification updated');
+
+			return { success: true, data: gang, message: 'Peña rechazada, gracias!' };
+		} catch (error) {
+			logger.error(error);
+			return { success: false, error: error };
+		}
 	}
 };
 

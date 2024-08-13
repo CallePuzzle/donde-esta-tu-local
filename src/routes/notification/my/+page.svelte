@@ -79,10 +79,9 @@
 <dialog id="validate_modal" class="modal">
 	<div class="modal-box">
 		<h3 class="text-lg font-bold">Validar peña {currentNotification?.data?.gang.name}</h3>
+		<div id="map" class="z-0"></div>
+		<p>{currentNotification?.data?.addedBy?.name} ha añadido una peña nueva: <span class="">{currentNotification?.data?.gang.name}</span></p>
 		<form method="POST" action="{Routes.add_gang.url}?/validate" class="">
-			<span class="">{currentNotification?.data?.addedBy} ha añadido una peña nueva: </span><span
-				class="">{currentNotification?.data?.gang.name}</span
-			>
 			<label
 				><input
 					type="hidden"
@@ -107,12 +106,34 @@
 					value={currentNotification?.data?.gangId}
 				/></label
 			>
-			<div id="map" class="z-0"></div>
-
 			<button type="submit" class="btn btn-accent m-6">Validar</button>
 		</form>
 		<form method="POST" action="{Routes.add_gang.url}?/refuse" class="">
-			<button type="submit" class="btn btn-accent m-6">Rechazar</button>
+			<label
+				><input
+					type="hidden"
+					class="input w-full max-w-xs"
+					name="userId"
+					value={data.user.id}
+				/></label
+			>
+			<label
+				><input
+					type="hidden"
+					class="input w-full max-w-xs"
+					name="notificationId"
+					value={currentNotification?.id}
+				/></label
+			>
+			<label
+				><input
+					type="hidden"
+					class="input w-full max-w-xs"
+					name="gangId"
+					value={currentNotification?.data?.gangId}
+				/></label
+			>
+			<button type="submit" class="btn btn-error m-6">Rechazar</button>
 		</form>
 	</div>
 	<form method="dialog" class="modal-backdrop">
