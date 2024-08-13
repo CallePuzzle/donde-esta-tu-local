@@ -39,7 +39,7 @@ export async function getUserNotifications(
 	let notifications: Notification[] = [];
 	for (const _notification of _notifications) {
 		if (_notification.type == 'gang-added') {
-			notifications.concat(await getGangAddedNotificationDetails(_notification, prisma));
+			notifications = notifications.concat(await getGangAddedNotificationDetails(_notification, prisma));
 		}
 	}
 	logger.debug(notifications, 'notifications');
