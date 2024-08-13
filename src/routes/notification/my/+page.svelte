@@ -49,23 +49,27 @@
 			</div>
 		</div>
 	</div>
-	<div class="">
+	<div class="container mx-auto px-4">
 		<ul>
 			{#each data.notifications as notification}
 				<li>
 					{#if notification.type === 'gang-added'}
 						<span>{notification.data.addedBy.name} ha añadido una peña nueva: </span><span
-							>{notification.data.gang.name}</span
+							class="underline decoration-sky-500 font-bold">{notification.data.gang.name}</span
 						>
 						{#if notification.status === 'PENDING'}
 							<button class="btn btn-accent m-6" on:click={showModal(notification)}>Validar</button>
 						{:else if notification.status === 'VALIDATED'}
-							<button class="btn btn-accent m-6" disabled
-								>Validada por {notification.data.reviewedBy?.name}</button
+							<span class="m-3 text-green-500"
+								>Validada por {notification.data.reviewedBy?.name}</span
+							>
+							<button class="btn btn-accent m-6" on:click={showModal(notification)}
+								>Ver detalles</button
 							>
 						{:else if notification.status === 'REFUSED'}
-							<button class="btn btn-accent m-6" disabled
-								>Rechazada por {notification.data.reviewedBy?.name}</button
+							<span class="m-3 text-red-500">Rechazada por {notification.data.reviewedBy?.name}</span>
+							<button class="btn btn-accent m-6" on:click={showModal(notification)}
+								>Ver detalles</button
 							>
 						{/if}
 					{:else}
@@ -82,66 +86,70 @@
 
 <dialog id="validate_modal" class="modal">
 	<div class="modal-box">
-		<h3 class="text-lg font-bold">Validar peña {currentNotification?.data?.gang.name}</h3>
+		<h3 class="text-lg font-bold py-4">Validar peña {currentNotification?.data?.gang.name}</h3>
 		<div id="map" class="z-0"></div>
-		<p>
+		<p class="pt-4">
 			{currentNotification?.data?.addedBy?.name} ha añadido una peña nueva:
 			<span class="">{currentNotification?.data?.gang.name}</span>
 		</p>
-		<form method="POST" action="{Routes.add_gang.url}?/validate" class="">
-			<label
-				><input
-					type="hidden"
-					class="input w-full max-w-xs"
-					name="userId"
-					value={data.user.id}
-				/></label
-			>
-			<label
-				><input
-					type="hidden"
-					class="input w-full max-w-xs"
-					name="notificationId"
-					value={currentNotification?.id}
-				/></label
-			>
-			<label
-				><input
-					type="hidden"
-					class="input w-full max-w-xs"
-					name="gangId"
-					value={currentNotification?.data?.gangId}
-				/></label
-			>
-			<button type="submit" class="btn btn-accent m-6">Validar</button>
-		</form>
-		<form method="POST" action="{Routes.add_gang.url}?/refuse" class="">
-			<label
-				><input
-					type="hidden"
-					class="input w-full max-w-xs"
-					name="userId"
-					value={data.user.id}
-				/></label
-			>
-			<label
-				><input
-					type="hidden"
-					class="input w-full max-w-xs"
-					name="notificationId"
-					value={currentNotification?.id}
-				/></label
-			>
-			<label
-				><input
-					type="hidden"
-					class="input w-full max-w-xs"
-					name="gangId"
-					value={currentNotification?.data?.gangId}
-				/></label
-			>
-			<button type="submit" class="btn btn-error m-6">Rechazar</button>
-		</form>
+		{#if currentNotification?.status === 'PENDING'}
+			<div class="flex items-stretch">
+				<form method="POST" action="{Routes.add_gang.url}?/validate" class="grow m-3">
+					<label
+						><input
+							type="hidden"
+							class="input w-full max-w-xs"
+							name="userId"
+							value={data.user.id}
+						/></label
+					>
+					<label
+						><input
+							type="hidden"
+							class="input w-full max-w-xs"
+							name="notificationId"
+							value={currentNotification?.id}
+						/></label
+					>
+					<label
+						><input
+							type="hidden"
+							class="input w-full max-w-xs"
+							name="gangId"
+							value={currentNotification?.data?.gangId}
+						/></label
+					>
+					<button type="submit" class="btn btn-accent w-full">Validar</button>
+				</form>
+				<form method="POST" action="{Routes.add_gang.url}?/refuse" class="grow m-3">
+					<label
+						><input
+							type="hidden"
+							class="input w-full max-w-xs"
+							name="userId"
+							value={data.user.id}
+						/></label
+					>
+					<label
+						><input
+							type="hidden"
+							class="input w-full max-w-xs"
+							name="notificationId"
+							value={currentNotification?.id}
+						/></label
+					>
+					<label
+						><input
+							type="hidden"
+							class="input w-full max-w-xs"
+							name="gangId"
+							value={currentNotification?.data?.gangId}
+						/></label
+					>
+					<button type="submit" class="btn btn-error w-full">Rechazar</button>
+				</form>
+			</div>
+		{/if}
 	</div>
 	<form method="dialog" class="modal-backdrop">
 		<button>close</button>
