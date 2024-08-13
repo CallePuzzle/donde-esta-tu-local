@@ -24,9 +24,9 @@
 		data.gangs.map((gang) => {
 			let message = '<a href="/gang/' + gang.id + '">' + gang.name + '</a>';
 
-			message = gang.isValidated ? message : message + ' (sin validar)';
+			message = gang.status == 'VALIDATED' ? message : message + ' (sin validar)';
 			L.marker([gang.latitude, gang.longitude], {
-				opacity: gang.isValidated ? 1 : 0.6
+				opacity: gang.status == 'VALIDATED' ? 1 : 0.6
 			})
 				.addTo(map)
 				.bindPopup(message);

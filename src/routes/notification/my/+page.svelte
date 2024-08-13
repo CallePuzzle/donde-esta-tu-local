@@ -57,11 +57,15 @@
 						<span>{notification.data.addedBy.name} ha añadido una peña nueva: </span><span
 							>{notification.data.gang.name}</span
 						>
-						{#if notification.status === 'pending'}
+						{#if notification.status === 'PENDING'}
 							<button class="btn btn-accent m-6" on:click={showModal(notification)}>Validar</button>
-						{:else if notification.status === 'validated'}
+						{:else if notification.status === 'VALIDATED'}
 							<button class="btn btn-accent m-6" disabled
-								>Validada por {notification.data.validatedBy?.name}</button
+								>Validada por {notification.data.reviewedBy?.name}</button
+							>
+						{:else if notification.status === 'REFUSED'}
+							<button class="btn btn-accent m-6" disabled
+								>Rechazada por {notification.data.reviewedBy?.name}</button
 							>
 						{/if}
 					{:else}
@@ -80,7 +84,10 @@
 	<div class="modal-box">
 		<h3 class="text-lg font-bold">Validar peña {currentNotification?.data?.gang.name}</h3>
 		<div id="map" class="z-0"></div>
-		<p>{currentNotification?.data?.addedBy?.name} ha añadido una peña nueva: <span class="">{currentNotification?.data?.gang.name}</span></p>
+		<p>
+			{currentNotification?.data?.addedBy?.name} ha añadido una peña nueva:
+			<span class="">{currentNotification?.data?.gang.name}</span>
+		</p>
 		<form method="POST" action="{Routes.add_gang.url}?/validate" class="">
 			<label
 				><input
