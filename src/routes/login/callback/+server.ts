@@ -2,8 +2,10 @@ import { auth0, initializeLucia, Auth0AppDomain } from '$lib/server/auth';
 import { initializePrisma } from '$lib/server/db';
 import { OAuth2RequestError } from 'arctic';
 import { logger } from '$lib/server/logger';
+import wellcome from '$lib/stores/wellcome';
 
 import type { RequestEvent } from '@sveltejs/kit';
+import { Routes } from '$lib/routes';
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	const code = event.url.searchParams.get('code');
@@ -65,10 +67,11 @@ export async function GET(event: RequestEvent): Promise<Response> {
 				...sessionCookie.attributes
 			});
 		}
+
 		return new Response(null, {
 			status: 302,
 			headers: {
-				Location: '/'
+				Location: Routes.wellcome.url
 			}
 		});
 	} catch (e) {
