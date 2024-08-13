@@ -34,7 +34,7 @@ model Gang {
   latitude  Float
   longitude Float
   members   User[]
-  isValidated Boolean @default(false)
+  status  String @default("PENDING")
 }
 
 model Notification {
@@ -43,7 +43,7 @@ model Notification {
   body String
   type String?
   data String?
-  status String?
+  status  String @default("PENDING")
   createdAt DateTime @default(now())
   users User[]
 }

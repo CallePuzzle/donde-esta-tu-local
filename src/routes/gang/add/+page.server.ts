@@ -6,7 +6,7 @@ import {
 	type NotificationExtraData
 } from '$lib/utils/notifications';
 
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 
 export const actions: Actions = {
 	new: async (event) => {
@@ -37,7 +37,7 @@ export const actions: Actions = {
 
 			const extraData: NotificationExtraData = {
 				type: 'gang-added',
-				status: 'pending',
+				status: 'PENDING',
 				data: {
 					gangId: gang.id,
 					addedBy: event.locals.user!.id
@@ -59,46 +59,61 @@ export const actions: Actions = {
 		}
 	},
 	validate: async (event) => {
-		const formData = await event.request.formData();
-		const gangId = formData.get('gangId');
-		const notificationId = formData.get('notificationId');
-		const userId = formData.get('userId');
-
-		logger.debug(gangId, 'validating gang');
-
-		const db = event.platform!.env.DB;
-		const prisma = initializePrisma(db);
-
-		try {
-			const gang = await prisma.gang.update({
-				where: {
-					id: parseInt(gangId as string)
-				},
-				data: {
-					isValidated: true
-				}
-			});
-			logger.info(gang, 'gang validated');
-			const notification = await prisma.notification.update({
-				where: {
-					id: parseInt(notificationId as string)
-				},
-				data: {
-					status: 'validated'
-				}
-			});
-			logger.info(notification, 'notification updated');
-
-			return { success: true, data: gang, message: 'Peña validada, gracias!' };
-		} catch (error) {
-			logger.error(error);
-			return { success: false, error: error };
-		}
+		return await validateRefuseGang(event, 'validate');
+	},
+	refuse: async (event) => {
+		return await validateRefuseGang(event, 'refuse');
 	}
 };
 
-export const load: PageServerLoad = async (event) => {
-	return {
-		userIsLogged: event.locals.user ? true : false
-	};
-};
+async function validateRefuseGang(event, action: string) {
+	if (action !== 'validate' && action !== 'refuse') {
+		return { success: false, error: 'Invalid action' };
+	}
+
+	const status = action === 'validate' ? 'VALIDATED' : 'REFUSED';
+	const message = action === 'validate' ? 'Peña validada, gracias!' : 'Peña rechazada, gracias!';
+	const formData = await event.request.formData();
+	const gangId = formData.get('gangId');
+	const notificationId = formData.get('notificationId');
+	const userId = formData.get('userId');
+
+	logger.debug(gangId, 'action: ' + action);
+
+	const db = event.platform!.env.DB;
+	const prisma = initializePrisma(db);
+
+	try {
+		const gang = await prisma.gang.update({
+			where: {
+				id: parseInt(gangId as string)
+			},
+			data: {
+				status: status
+			}
+		});
+		logger.info(gang, 'gang ' + action);
+		let notification = await prisma.notification.findUnique({
+			where: {
+				id: parseInt(notificationId as string)
+			}
+		});
+		const data = JSON.parse(notification?.data);
+		data.reviewedBy = userId;
+		notification = await prisma.notification.update({
+			where: {
+				id: parseInt(notificationId as string)
+			},
+			data: {
+				status: status,
+				data: JSON.stringify(data)
+			}
+		});
+		logger.info(notification, 'notification ' + action);
+
+		return { success: true, data: gang, message: message };
+	} catch (error) {
+		logger.error(error);
+		return { success: false, error: error };
+	}
+}
