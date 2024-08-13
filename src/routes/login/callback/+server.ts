@@ -2,7 +2,6 @@ import { auth0, initializeLucia, Auth0AppDomain } from '$lib/server/auth';
 import { initializePrisma } from '$lib/server/db';
 import { OAuth2RequestError } from 'arctic';
 import { logger } from '$lib/server/logger';
-import wellcome from '$lib/stores/wellcome';
 
 import type { RequestEvent } from '@sveltejs/kit';
 import { Routes } from '$lib/routes';
