@@ -45,4 +45,3 @@
 	</div>
 </div>
 
-<p>{JSON.stringify($wellcome)}</p>
