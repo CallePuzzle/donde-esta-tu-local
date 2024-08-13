@@ -67,7 +67,9 @@
 								>Ver detalles</button
 							>
 						{:else if notification.status === 'REFUSED'}
-							<span class="m-3 text-red-500">Rechazada por {notification.data.reviewedBy?.name}</span>
+							<span class="m-3 text-red-500"
+								>Rechazada por {notification.data.reviewedBy?.name}</span
+							>
 							<button class="btn btn-accent m-6" on:click={showModal(notification)}
 								>Ver detalles</button
 							>

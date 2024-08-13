@@ -66,7 +66,7 @@ export const actions: Actions = {
 	}
 };
 
-async function validateRefuseGang(event, action: String) {
+async function validateRefuseGang(event, action: string) {
 	if (action !== 'validate' && action !== 'refuse') {
 		return { success: false, error: 'Invalid action' };
 	}

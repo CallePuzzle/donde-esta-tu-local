@@ -2,7 +2,7 @@ import type { D1Database } from '@cloudflare/workers-types';
 import { initializePrisma } from '$lib/server/db';
 import { logger } from '$lib/server/logger';
 
-import type { User, Notification } from '@prisma/client';
+import type { User, Notification, PrismaClient } from '@prisma/client';
 
 interface UserNotifications {
 	user: User;
@@ -22,7 +22,7 @@ export async function getUserNotifications(
 		}
 	});
 	logger.debug(user, 'current user');
-	const notifications = await prisma.notification.findMany({
+	const _notifications = await prisma.notification.findMany({
 		where: {
 			users: {
 				some: {
@@ -36,9 +36,10 @@ export async function getUserNotifications(
 			}
 		]
 	});
-	for (let notification of notifications) {
-		if (notification.type == 'gang-added') {
-			notification = await getGangAddedNotificationDetails(notification, prisma);
+	let notifications: Notification[] = [];
+	for (const _notification of _notifications) {
+		if (_notification.type == 'gang-added') {
+			notifications.concat(await getGangAddedNotificationDetails(_notification, prisma));
 		}
 	}
 	logger.debug(notifications, 'notifications');
@@ -63,7 +64,7 @@ export async function getUserNotifications(
 async function getGangAddedNotificationDetails(
 	notification: Notification,
 	prisma: PrismaClient
-): Notification {
+): Promise<Notification> {
 	const notificationData = JSON.parse(notification.data);
 	const gangId = notificationData.gangId;
 	const gang = await prisma.gang.findUnique({
