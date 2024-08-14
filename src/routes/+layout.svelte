@@ -38,28 +38,42 @@
 
 <Toaster />
 
-<Nav
-	userIsLogged={data.userIsLogged}
-	notificationsCount={data.notificationsCount}
-	userPicture={data.user?.picture}
-/>
+<div class="h-screen">
+	<Nav
+		userIsLogged={data.userIsLogged}
+		notificationsCount={data.notificationsCount}
+		userPicture={data.user?.picture}
+	/>
 
-{#if data.isProtectedRoute && !data.userIsLogged}
-	<div class="alert alert-error">
-		<p>{data.protectedRouteMessage}</p>
-		<p>
-			<a href="/login" class="btn btn-accent">Iniciar sesión</a>
+	{#if data.isProtectedRoute && !data.userIsLogged}
+		<div class="alert alert-error">
+			<p>{data.protectedRouteMessage}</p>
+			<p>
+				<a href="/login" class="btn btn-accent">Iniciar sesión</a>
+			</p>
+		</div>
+	{:else}
+		<slot />
+	{/if}
+
+	<footer class="container mx-auto flex justify-around absolute bottom-0 justify-center">
+		<p class="md:flex-1 m-4 flex items-center justify-center">
+			<span class="mr-2">Made with</span><Icon src={BiSolidHeart} size="16" color="red" /><span
+				class="ml-2">by Callepuzzle members</span
+			>
 		</p>
-	</div>
-{:else}
-	<slot />
-{/if}
+		<a
+			class="md:flex-1 m-4 flex items-center justify-center"
+			href="https://github.com/CallePuzzle/donde-esta-tu-local"
+			target="_blank"
+			rel="noopener noreferrer"><Icon src={BiLogoGithub} size="32" /></a
+		>
+	</footer>
+</div>
 
-<footer class="container mx-auto mt-4 flex justify-around">
-	<p class="flex-1 flex items-center">
-		Made with &nbsp;<Icon src={BiSolidHeart} size="16" color="red" />&nbsp; by Callepuzzle members
-	</p>
-	<a class="flex-1" href="https://github.com/CallePuzzle/donde-esta-tu-local"
-		><Icon src={BiLogoGithub} size="32" /></a
-	>
-</footer>
+<style>
+	footer {
+		left: 50%;
+		transform: translateX(-50%);
+	}
+</style>
