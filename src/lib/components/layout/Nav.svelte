@@ -4,6 +4,7 @@
 	import { BiMenu } from 'svelte-icons-pack/bi';
 	import { clickOutside } from '$lib/utils/click-outside';
 	import { Routes } from '$lib/routes';
+	import Logo from '$lib/assets/logo.png';
 
 	export let userIsLogged: boolean;
 	export let notificationsCount: number;
@@ -40,9 +41,13 @@
 				</details>
 			</li>
 		</ul>
+		<a href={Routes.home.url}><img src={Logo} alt="Icono cabecera" class="max-w-14" /></a>
 	</div>
+
 	<div class="flex gap-2">
-		<a href="/" class="btn btn-ghost text-xl">Peñas Montemayor</a>
+		<a href={Routes.home.url} class="btn btn-ghost text-xl"
+			>Peñas <span class="md:block hidden">Montemayor</span></a
+		>
 
 		{#if userIsLogged}
 			<div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar indicator">
