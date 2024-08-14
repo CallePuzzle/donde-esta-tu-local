@@ -8,6 +8,7 @@
 	import { Routes } from '$lib/routes';
 	import wellcome from '$lib/stores/wellcome';
 	import { defaultValue as firstTime } from '$lib/stores/wellcome';
+	import { isEqual } from 'lodash-es';
 
 	import type { PageData } from './$types';
 	import type { Map } from 'leaflet';
@@ -18,7 +19,8 @@
 	let showImHere = false;
 
 	onMount(async () => {
-		if ($wellcome == firstTime) {
+		if (isEqual($wellcome, firstTime)) {
+			console.log('firstTime');
 			goto(Routes.wellcome.url);
 		}
 		L = (await import('leaflet')).default;

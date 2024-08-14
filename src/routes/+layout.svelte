@@ -14,7 +14,7 @@
 		const status = await Notification.requestPermission();
 		if (status !== 'granted') alert('Por favor, activa las notificaciones para recibir los avisos');
 
-		if ('serviceWorker' in navigator) {
+		if ('serviceWorker' in navigator && data.userIsLogged) {
 			const reg = await navigator.serviceWorker.ready;
 			await SubscribeUser(data.userIsLogged, data.user.id, reg, data.JWKpublicKey);
 		}
