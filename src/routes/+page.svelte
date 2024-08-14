@@ -55,7 +55,7 @@
 	<button
 		id="imhere"
 		on:click={imHere}
-		class="btn btn-circle absolute bottom-0 right-0 btn-active btn-primary"
+		class="btn btn-circle absolute bottom-16 md:bottom-3 right-3 btn-active btn-primary"
 		><Icon src={BiCurrentLocation} /></button
 	>
 {/if}
