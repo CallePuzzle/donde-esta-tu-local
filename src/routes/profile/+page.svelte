@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { Routes } from '$lib/routes';
 	import wellcome from '$lib/stores/wellcome';
@@ -8,18 +9,20 @@
 	export let data: PageData;
 	export let form: ActionData;
 
-	if (form?.success) {
-		const redirect = !$wellcome.profileName;
-		wellcome.update((value) => {
-			return {
-				...value,
-				profileName: true
-			};
-		});
-		if (redirect) {
-			goto(Routes.wellcome.url);
+	onMount(async () => {
+		if (form?.success) {
+			const redirect = !$wellcome.profileName;
+			wellcome.update((value) => {
+				return {
+					...value,
+					profileName: true
+				};
+			});
+			if (redirect) {
+				goto(Routes.wellcome.url);
+			}
 		}
-	}
+	});
 </script>
 
 <div class="flex flex-col">

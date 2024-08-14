@@ -17,11 +17,10 @@
 	let map: Map;
 	let showImHere = false;
 
-	if ($wellcome == firstTime) {
-		goto(Routes.wellcome.url);
-	}
-
 	onMount(async () => {
+		if ($wellcome == firstTime) {
+			goto(Routes.wellcome.url);
+		}
 		L = (await import('leaflet')).default;
 		map = L.map('map').setView(coordsMonte, 17);
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
