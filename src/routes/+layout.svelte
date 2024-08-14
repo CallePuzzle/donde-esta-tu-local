@@ -5,6 +5,9 @@
 	import { Routes } from '$lib/routes';
 	import toast, { Toaster } from 'svelte-french-toast';
 	import Nav from '$lib/components/layout/Nav.svelte';
+	import { Icon } from 'svelte-icons-pack';
+	import { BiSolidHeart } from 'svelte-icons-pack/bi';
+	import { BiLogoGithub } from 'svelte-icons-pack/bi';
 
 	import type { PageData } from './$types';
 
@@ -51,3 +54,12 @@
 {:else}
 	<slot />
 {/if}
+
+<footer class="container mx-auto mt-4 flex justify-around">
+	<p class="flex-1 flex items-center">
+		Made with &nbsp;<Icon src={BiSolidHeart} size="16" color="red" />&nbsp; by Callepuzzle members
+	</p>
+	<a class="flex-1" href="https://github.com/CallePuzzle/donde-esta-tu-local"
+		><Icon src={BiLogoGithub} size="32" /></a
+	>
+</footer>
