@@ -20,8 +20,7 @@
 
 	onMount(async () => {
 		if (isEqual($wellcome, firstTime)) {
-			console.log('firstTime');
-			goto(Routes.wellcome.url);
+			document.getElementById('wellcomeModal').showModal();
 		}
 		L = (await import('leaflet')).default;
 		map = L.map('map').setView(coordsMonte, 17);
@@ -47,6 +46,20 @@
 	function imHere() {
 		showMyPosition(L, map, coordsMonte);
 	}
+
+	function goWellcome() {
+		goto(Routes.wellcome.url);
+	}
+
+	function noWellcome() {
+		wellcome.update((value) => {
+				return {
+					...value,
+					wellcome: true
+				};
+			});
+		document.getElementById('wellcomeModal').close();
+	}
 </script>
 
 <div id="map" class="z-0"></div>
@@ -59,6 +72,22 @@
 		><Icon src={BiCurrentLocation} /></button
 	>
 {/if}
+
+<dialog id="wellcomeModal" class="modal">
+	<div class="modal-box">
+		<h3 class="text-lg font-bold">Hola</h3>
+		<p class="py-4">Bienvenido/a a Peñas de Montemayor de Pililla.</p>
+		<p class="py-4">Un mapa con todas las peñas del pueblo.</p>
+		<div class="modal-action flex flex-wrap justify-center">
+			<button class="btn btn-success p-1 m-1" on:click={goWellcome}>Pantalla de bienvenida</button>
+			<form method="dialog">
+				<!-- if there is a button in form, it will close the modal -->
+				<button class="btn btn-warning p-1 m-1">Ver mapa / cerrar</button>
+			</form>
+			<button class="btn btn-error p-1 m-1" on:click={noWellcome}>No volver a mostrar</button>
+		</div>
+	</div>
+</dialog>
 
 <link
 	rel="stylesheet"
