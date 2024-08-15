@@ -38,7 +38,7 @@
 
 <Toaster />
 
-<div class="h-screen">
+<div class="h-screen main-div">
 	<Nav
 		userIsLogged={data.userIsLogged}
 		notificationsCount={data.notificationsCount}
@@ -59,7 +59,7 @@
 	<footer class="container mx-auto flex justify-around absolute bottom-0 justify-center">
 		<p class="md:flex-1 m-4 flex items-center justify-center">
 			<span class="mr-2">Made with</span><Icon src={BiSolidHeart} size="16" color="red" /><span
-				class="ml-2">by Callepuzzle members</span
+				class="ml-2">by KPY</span
 			>
 		</p>
 		<a
@@ -75,5 +75,8 @@
 	footer {
 		left: 50%;
 		transform: translateX(-50%);
+	}
+	.main-div {
+		min-width: 353px;
 	}
 </style>
