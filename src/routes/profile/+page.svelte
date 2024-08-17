@@ -46,7 +46,7 @@
 	<div class="container mx-auto px-4">
 		<form class="mt-8" method="POST" action="?/save">
 			<div class="mb-4">
-				<label for="name" class="">Nombre:</label>
+				<label for="name" class="my-2">Nombre:</label>
 				<input
 					type="text"
 					name="name"
@@ -56,25 +56,20 @@
 				/>
 			</div>
 			<div class="mb-4">
-				<label for="gang" class="">Peña:</label>
-				<button on:click={showMyGangModal} class="btn">{data.user?.gang?.name || 'Añadir una peña'}</button>
+				<label for="gangId" class="my-2">Mi peña:</label>
+				<select name="gangId" class="input w-full max-w-xs border-solid border-slate-600">
+					{#if data.user?.gangId === null}
+						<option value="" selected>Selecciona una peña</option>
+					{/if}
+					{#each data.gangs as gang}
+						<option value={gang.id} selected={gang.id === data.user?.gangId}>{gang.name}</option>
+					{/each}
+				</select>
 			</div>
+
 			<div class="flex items-center justify-between">
 				<button type="submit" class="btn btn-accent">Guardar</button>
 			</div>
 		</form>
 	</div>
 </div>
-
-<dialog id="my_gang" class="modal">
-  <div class="modal-box">
-    <h3 class="text-lg font-bold">Hello!</h3>
-    <p class="py-4">Press ESC key or click the button below to close</p>
-    <div class="modal-action">
-      <form method="dialog">
-        <!-- if there is a button in form, it will close the modal -->
-        <button class="btn">Close</button>
-      </form>
-    </div>
-  </div>
-</dialog>

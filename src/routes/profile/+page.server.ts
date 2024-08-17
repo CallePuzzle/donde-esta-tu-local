@@ -26,6 +26,7 @@ export const actions: Actions = {
 	save: async (event) => {
 		const formData = await event.request.formData();
 		const name = formData.get('name');
+		const gangId = formData.get('gangId');
 
 		logger.info({ name }, 'saving profile');
 
@@ -38,7 +39,8 @@ export const actions: Actions = {
 					id: event.locals.user!.id
 				},
 				data: {
-					name: name as string
+					name: name as string,
+					gangId: gangId ? parseInt(gangId as string) : null
 				}
 			});
 			logger.info(user, 'profile updated');

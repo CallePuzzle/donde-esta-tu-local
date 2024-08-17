@@ -3,7 +3,7 @@
 	import type { S } from 'vitest/dist/reporters-yx5ZTtEV.js';
 
 	export let gangs: Gang[] = [];
-    export let myGangId: number | null = null;
+	export let myGangId: number | null = null;
 	let searchTerm = '';
 	let filteredOptions = gangs;
 
@@ -13,15 +13,15 @@
 	);
 </script>
 
-	<input
-		type="text"
-		placeholder="Busca tu peña"
-		bind:value={searchTerm}
-		class="border border-gray-300 rounded-md p-2 w-full mb-2"
-	/>
-    <label for="gang" class="">Peña:</label>
-	<select bind:value={myGangId} class="border border-gray-300 rounded-md p-2 w-full">
-		{#each filteredOptions as gang}
-			<option value={gang.id}>{gang.name}</option>
-		{/each}
-	</select>
+<input
+	type="text"
+	placeholder="Busca tu peña"
+	bind:value={searchTerm}
+	class="border border-gray-300 rounded-md p-2 w-full mb-2"
+/>
+<label for="gang" class="">Peña:</label>
+<select bind:value={myGangId} class="border border-gray-300 rounded-md p-2 w-full">
+	{#each filteredOptions as gang}
+		<option value={gang.id}>{gang.name}</option>
+	{/each}
+</select>
