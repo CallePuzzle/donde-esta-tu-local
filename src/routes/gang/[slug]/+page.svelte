@@ -3,11 +3,12 @@
 	import { coordsMonte } from '$lib/utils/coords-monte';
 
 	import type { PageData } from './$types';
-	import type { Gang } from '@prisma/client';
+	import type { Gang, User } from '@prisma/client';
 
 	export let data: PageData;
 
 	export let gang: Gang = data.gang;
+	export let members: User[] = data.members;
 
 	onMount(async () => {
 		const L = (await import('leaflet')).default;
@@ -43,7 +44,7 @@
 		<div class="p-4 bg-white rounded-lg shadow">
 			<h2 class="text-2xl font-bold">Miembros</h2>
 			<ul>
-				{#each gang.members as member}
+				{#each members as member}
 					<li class="my-2 flex items-center">
 						<div class="avatar">
 							<div class="w-10 rounded-full">
