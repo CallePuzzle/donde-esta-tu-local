@@ -19,6 +19,9 @@ export async function getUserNotifications(
 	const user = await prisma.user.findUnique({
 		where: {
 			id: userId
+		},
+		include: {
+			gang: true
 		}
 	});
 	logger.debug(user, 'current user');

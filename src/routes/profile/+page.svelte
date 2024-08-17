@@ -23,6 +23,10 @@
 			}
 		}
 	});
+
+	function showMyGangModal() {
+		document.getElementById('my_gang').showModal();
+	}
 </script>
 
 <div class="flex flex-col">
@@ -42,7 +46,7 @@
 	<div class="container mx-auto px-4">
 		<form class="mt-8" method="POST" action="?/save">
 			<div class="mb-4">
-				<label for="name" class="">Nombre:</label>
+				<label for="name" class="my-2">Nombre:</label>
 				<input
 					type="text"
 					name="name"
@@ -51,6 +55,18 @@
 					required
 				/>
 			</div>
+			<div class="mb-4">
+				<label for="gangId" class="my-2">Mi peña:</label>
+				<select name="gangId" class="input w-full max-w-xs border-solid border-slate-600">
+					{#if data.user?.gangId === null}
+						<option value="" selected>Selecciona una peña</option>
+					{/if}
+					{#each data.gangs as gang}
+						<option value={gang.id} selected={gang.id === data.user?.gangId}>{gang.name}</option>
+					{/each}
+				</select>
+			</div>
+
 			<div class="flex items-center justify-between">
 				<button type="submit" class="btn btn-accent">Guardar</button>
 			</div>
