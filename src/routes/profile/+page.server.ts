@@ -1,9 +1,7 @@
 import { logger } from '$lib/server/logger';
 import { initializePrisma } from '$lib/server/db';
 
-import type { Actions } from './$types';
-
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	const db = event.platform!.env.DB;
