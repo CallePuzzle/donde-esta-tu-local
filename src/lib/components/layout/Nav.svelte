@@ -45,9 +45,11 @@
 	</div>
 
 	<div class="flex gap-2">
-		<a href={Routes.home.url} class="btn btn-ghost text-xl"
-			>Peñas <span class="md:block hidden">Montemayor</span></a
-		>
+		<div class="name">
+			<a href={Routes.home.url} class="btn btn-ghost text-xl flex">
+				<span>Montemayor</span> <span class="depililla text-sm -mt-3">de Pililla</span>
+			</a>
+		</div>
 
 		{#if userIsLogged}
 			<div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar indicator">
@@ -65,3 +67,19 @@
 		{/if}
 	</div>
 </div>
+
+<style>
+	.name {
+		width: 150px;
+	}
+	@media (min-width: 478px) {
+		.depililla {
+			margin-top: 0;
+			font-size: 1.25rem; /* 20px */
+			line-height: 1.75rem; /* 28px */
+		}
+		.name {
+			width: 267px;
+		}
+	}
+</style>
