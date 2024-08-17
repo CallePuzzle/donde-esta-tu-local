@@ -53,11 +53,11 @@
 
 	function noWellcome() {
 		wellcome.update((value) => {
-				return {
-					...value,
-					wellcome: true
-				};
-			});
+			return {
+				...value,
+				wellcome: true
+			};
+		});
 		document.getElementById('wellcomeModal').close();
 	}
 </script>
