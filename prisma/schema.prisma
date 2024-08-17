@@ -16,7 +16,7 @@ model User {
   sessions Session[]
   gangId   Int?
   gang Gang? @relation(fields: [gangId], references: [id])
-  isGangLeader Boolean?
+  role String @default("USER")
   subscription String?
   notifications Notification[]
 }
@@ -33,6 +33,7 @@ model Gang {
   name      String
   latitude  Float
   longitude Float
+  requestsValidation Float @default(0)
   members   User[]
   status  String @default("PENDING")
 }
