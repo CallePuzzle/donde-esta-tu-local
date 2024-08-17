@@ -34,6 +34,30 @@
 
 <div id="map" class="z-0"></div>
 
+<div class="container mx-auto">
+	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+		<div class="p-4 bg-white rounded-lg shadow">
+			<h2 class="text-2xl font-bold">Actividades</h2>
+			<p>TODO</p>
+		</div>
+		<div class="p-4 bg-white rounded-lg shadow">
+			<h2 class="text-2xl font-bold">Miembros</h2>
+			<ul>
+				{#each gang.members as member}
+					<li class="my-2 flex items-center">
+						<div class="avatar">
+							<div class="w-10 rounded-full">
+								<img alt="Profile image" src={member.picture} />
+							</div>
+						</div>
+						<div class="ml-2">{member.name}</div>
+					</li>
+				{/each}
+			</ul>
+		</div>
+	</div>
+</div>
+
 <link
 	rel="stylesheet"
 	href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"

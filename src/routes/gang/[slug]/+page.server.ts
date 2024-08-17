@@ -14,10 +14,18 @@ export const load: PageServerLoad = async (event) => {
 				not: 'REFUSED'
 			},
 			id: parseInt(gangId)
+		},
+		include: {
+			members: {
+				select: {
+					id: true,
+					name: true,
+					picture: true
+				}
+			}
 		}
 	});
 	logger.debug(gang, 'gang');
-
 	if (!gang) {
 		return error(404, 'Peña no encontrada');
 	}
