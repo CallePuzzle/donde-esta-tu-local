@@ -118,4 +118,21 @@ async function NewNotificationForAll(
 	return newNotification(users, payload, extraData, db);
 }
 
-export { NewNotificationForAll };
+async function NewNotificationForAdmins(
+	payload: Payload,
+	extraData: NotificationExtraData,
+	userId: string,
+	db: D1Database
+): Promise<boolean> {
+	const prisma = initializePrisma(db);
+
+	const users = await prisma.user.findMany({
+		where: {
+			role: 'ADMIN'
+		}
+	});
+
+	return newNotification(users, payload, extraData, db);
+}
+
+export { NewNotificationForAll, NewNotificationForAdmins };
