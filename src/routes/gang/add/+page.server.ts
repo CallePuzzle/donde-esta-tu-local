@@ -1,15 +1,15 @@
 import { logger } from '$lib/server/logger';
 import { initializePrisma } from '$lib/server/db';
 import {
-	NewNotificationForAll,
+	NewNotificationForAdmins,
 	type Payload,
 	type NotificationExtraData
 } from '$lib/utils/notifications';
 
-import type { Actions } from './$types';
+import type { Actions, RequestEvent } from './$types';
 
 export const actions: Actions = {
-	new: async (event) => {
+	new: async (event: RequestEvent) => {
 		const formData = await event.request.formData();
 		const name = formData.get('name');
 		const lat = formData.get('lat');
@@ -44,7 +44,7 @@ export const actions: Actions = {
 				}
 			};
 
-			if (!(await NewNotificationForAll(payload, extraData, event.locals.user!.id, db))) {
+			if (!(await NewNotificationForAdmins(payload, extraData, event.locals.user!.id, db))) {
 				return { success: false, error: 'Error sending notification' };
 			}
 
@@ -58,15 +58,15 @@ export const actions: Actions = {
 			return { success: false, error: error };
 		}
 	},
-	validate: async (event) => {
+	validate: async (event: RequestEvent) => {
 		return await validateRefuseGang(event, 'validate');
 	},
-	refuse: async (event) => {
+	refuse: async (event: RequestEvent) => {
 		return await validateRefuseGang(event, 'refuse');
 	}
 };
 
-async function validateRefuseGang(event, action: string) {
+async function validateRefuseGang(event: RequestEvent, action: string) {
 	if (action !== 'validate' && action !== 'refuse') {
 		return { success: false, error: 'Invalid action' };
 	}
@@ -77,6 +77,9 @@ async function validateRefuseGang(event, action: string) {
 	const gangId = formData.get('gangId');
 	const notificationId = formData.get('notificationId');
 	const userId = formData.get('userId');
+	if (gangId === null || notificationId === null || userId === null) {
+		return { success: false, error: 'Missing parameters' };
+	}
 
 	logger.debug(gangId, 'action: ' + action);
 
@@ -98,6 +101,9 @@ async function validateRefuseGang(event, action: string) {
 				id: parseInt(notificationId as string)
 			}
 		});
+		if (notification === null && notification === undefined) {
+			return { success: false, error: 'Notification not found' };
+		}
 		const data = JSON.parse(notification?.data);
 		data.reviewedBy = userId;
 		notification = await prisma.notification.update({
