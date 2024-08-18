@@ -1,17 +1,15 @@
+-- CreateTable
+CREATE TABLE "GangRequestValidation" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "gangId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
+    CONSTRAINT "GangRequestValidation_gangId_fkey" FOREIGN KEY ("gangId") REFERENCES "Gang" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "GangRequestValidation_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
 -- RedefineTables
 PRAGMA defer_foreign_keys=ON;
 PRAGMA foreign_keys=OFF;
-CREATE TABLE "new_Gang" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL,
-    "latitude" REAL NOT NULL,
-    "longitude" REAL NOT NULL,
-    "requestsValidation" REAL NOT NULL DEFAULT 0,
-    "status" TEXT NOT NULL DEFAULT 'PENDING'
-);
-INSERT INTO "new_Gang" ("id", "latitude", "longitude", "name", "status") SELECT "id", "latitude", "longitude", "name", "status" FROM "Gang";
-DROP TABLE "Gang";
-ALTER TABLE "new_Gang" RENAME TO "Gang";
 CREATE TABLE "new_User" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "email" TEXT NOT NULL,
@@ -28,3 +26,6 @@ ALTER TABLE "new_User" RENAME TO "User";
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 PRAGMA foreign_keys=ON;
 PRAGMA defer_foreign_keys=OFF;
+
+-- CreateIndex
+CREATE UNIQUE INDEX "GangRequestValidation_userId_key" ON "GangRequestValidation"("userId");

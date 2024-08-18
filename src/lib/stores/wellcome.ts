@@ -20,7 +20,7 @@ export const defaultValue = {
 const _initialValue = browser ? window.localStorage.getItem('wellcome') : false;
 
 const initialValue = _initialValue
-	? JSON.parse(window.localStorage.getItem('wellcome') || '{}') ?? defaultValue
+	? (JSON.parse(window.localStorage.getItem('wellcome') || '{}') ?? defaultValue)
 	: defaultValue;
 
 const wellcome = writable<Wellcome>(initialValue);

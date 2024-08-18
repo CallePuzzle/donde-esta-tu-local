@@ -2,12 +2,14 @@
 	import { onMount } from 'svelte';
 	import { coordsMonte } from '$lib/utils/coords-monte';
 
-	import type { PageData } from './$types';
+	import type { PageData, ActionData } from './$types';
 	import type { Gang, User } from '@prisma/client';
 
 	export let data: PageData;
+	export let form: ActionData;
 
 	export let gang: Gang = data.gang;
+	export let user: User = data.user;
 	export let members: User[] = data.members;
 
 	onMount(async () => {
@@ -21,6 +23,8 @@
 		map.panTo([gang.latitude, gang.longitude]);
 		L.marker([gang.latitude, gang.longitude]).addTo(map).bindPopup(gang.name);
 	});
+
+	export const gangRequestValidationByUser = data.gangRequestValidationByUser || form?.validation;
 </script>
 
 <div class="hero">
@@ -33,9 +37,32 @@
 	</div>
 </div>
 
+{#if data.userIsLogged}
+	<div class="container mx-auto my-2">
+		<div class="mx-4 flex">
+			<form class="basis-1/2 flex justify-center">
+				<button class="px-4 py-2 btn btn-success">Solicitar unirme unirme a esta peña</button>
+			</form>
+			{#if gang.status === 'PENDING'}
+				<form class="basis-1/2 flex justify-center" method="POST" action="?/addRequestsValidation">
+					<input type="hidden" name="gangId" value={gang.id} />
+					<input type="hidden" name="userId" value={user.id} />
+					<button class="px-4 py-2 btn btn-info" disabled={gangRequestValidationByUser}>
+						{#if !gangRequestValidationByUser}
+							Solicitar que validen esta peña
+						{:else}
+							Solicitado
+						{/if}
+					</button>
+				</form>
+			{/if}
+		</div>
+	</div>
+{/if}
+
 <div id="map" class="z-0"></div>
 
-<div class="container mx-auto">
+<div class="container mx-auto my-2">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 		<div class="p-4 bg-white rounded-lg shadow">
 			<h2 class="text-2xl font-bold">Actividades</h2>

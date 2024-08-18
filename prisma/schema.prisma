@@ -19,6 +19,7 @@ model User {
   role String @default("USER")
   subscription String?
   notifications Notification[]
+  requestsValidation GangRequestValidation?
 }
 
 model Session {
@@ -33,9 +34,17 @@ model Gang {
   name      String
   latitude  Float
   longitude Float
-  requestsValidation Float @default(0)
+  requestsValidation GangRequestValidation[]
   members   User[]
   status  String @default("PENDING")
+}
+
+model GangRequestValidation {
+  id Int   @id @default(autoincrement())
+  gangId Int
+  userId String @unique
+  gang Gang @relation(fields: [gangId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Notification {
