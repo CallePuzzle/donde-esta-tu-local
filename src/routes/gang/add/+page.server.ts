@@ -44,7 +44,7 @@ export const actions: Actions = {
 				}
 			};
 
-			if (!(await NewNotificationForAdmins(payload, extraData, event.locals.user!.id, db))) {
+			if (!(await NewNotificationForAdmins(payload, extraData, db))) {
 				return { success: false, error: 'Error sending notification' };
 			}
 

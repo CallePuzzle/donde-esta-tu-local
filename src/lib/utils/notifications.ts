@@ -121,7 +121,6 @@ async function NewNotificationForAll(
 async function NewNotificationForAdmins(
 	payload: Payload,
 	extraData: NotificationExtraData,
-	userId: string,
 	db: D1Database
 ): Promise<boolean> {
 	const prisma = initializePrisma(db);
@@ -135,4 +134,13 @@ async function NewNotificationForAdmins(
 	return newNotification(users, payload, extraData, db);
 }
 
-export { NewNotificationForAll, NewNotificationForAdmins };
+async function NewNotificationForUsers(
+	payload: Payload,
+	extraData: NotificationExtraData,
+	users: User[],
+	db: D1Database
+): Promise<boolean> {
+	return newNotification(users, payload, extraData, db);
+}
+
+export { NewNotificationForAll, NewNotificationForAdmins, NewNotificationForUsers };
