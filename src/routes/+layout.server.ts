@@ -1,9 +1,10 @@
 import { ProtectedRoutes } from '$lib/routes';
 import { JWK } from '$env/static/private'; // TODO https://github.com/sveltejs/kit/issues/8882
 import { getPublicKeyFromJwk } from 'cf-webpush';
-import { getUserNotifications, type UserNotifications } from '$lib/utils/get-user-notifications';
+import { getUserNotifications } from '$lib/utils/notification/get-user-notifications';
 
 import type { PageServerLoad, PageServerLoadEvent } from './$types';
+import type { UserNotifications } from '$lib/utils/notification/get-user-notifications-type';
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 	let userNotification: UserNotifications = {

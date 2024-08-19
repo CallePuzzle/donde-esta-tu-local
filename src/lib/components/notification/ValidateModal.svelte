@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import { coordsMonte } from '$lib/utils/coords-monte';
 	import { Routes } from '$lib/routes';
-	import ValidateButton from '$lib/components/notification/ValidateButton.svelte';
 
 	import type { Map } from 'leaflet';
 	import type { PageData } from './$types';
@@ -54,7 +53,46 @@
 		<ul>
 			{#each data.notifications as notification}
 				<li>
-					<ValidateButton {notification} />
+					{#if notification.type === 'gang-added'}
+						<span>{notification.data.addedBy.name} ha añadido una peña nueva: </span><span
+							class="underline decoration-sky-500 font-bold">{notification.data.gang.name}</span
+						>
+						{#if notification.status === 'PENDING'}
+							<button class="btn btn-accent m-6" on:click={showModal(notification)}>Validar</button>
+						{:else if notification.status === 'VALIDATED'}
+							<span class="m-3 text-green-500"
+								>Validada por {notification.data.reviewedBy?.name}</span
+							>
+							<button class="btn btn-accent m-6" on:click={showModal(notification)}
+								>Ver detalles</button
+							>
+						{:else if notification.status === 'REFUSED'}
+							<span class="m-3 text-red-500"
+								>Rechazada por {notification.data.reviewedBy?.name}</span
+							>
+							<button class="btn btn-accent m-6" on:click={showModal(notification)}
+								>Ver detalles</button
+							>
+						{/if}
+					{/if}
+					{#if notification.type === 'gang-member-request'}
+						<span>{notification.data.user.name} quiere unirse a la peña: </span><span
+							class="underline decoration-sky-500 font-bold">{notification.data.gang.name}</span
+						>
+						{#if notification.status === 'PENDING'}
+							<form method="POST" action="{Routes.add_gang.url}?/validateMember">
+								<button class="btn btn-accent m-6">Validar</button>
+							</form>
+						{:else if notification.status === 'VALIDATED'}
+							<span class="m-3 text-green-500"
+								>Validado por {notification.data.reviewedBy?.name}</span
+							>
+						{:else if notification.status === 'REFUSED'}
+							<span class="m-3 text-red-500"
+								>Rechazado por {notification.data.reviewedBy?.name}</span
+							>
+						{/if}
+					{/if}
 				</li>
 			{/each}
 		</ul>

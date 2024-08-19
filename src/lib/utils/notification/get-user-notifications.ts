@@ -2,13 +2,11 @@ import type { D1Database } from '@cloudflare/workers-types';
 import { initializePrisma } from '$lib/server/db';
 import { logger } from '$lib/server/logger';
 
-import type { User, Notification, PrismaClient } from '@prisma/client';
-
-interface UserNotifications {
-	user: User;
-	notifications: Notification[];
-	notificationsCount: number;
-}
+import type { User, Gang, Notification, PrismaClient } from '@prisma/client';
+import type {
+	UserNotifications,
+	NotificationDetail
+} from '$lib/utils/notification/get-user-notifications-type';
 
 export async function getUserNotifications(
 	userId: string,
@@ -41,10 +39,8 @@ export async function getUserNotifications(
 	});
 	let notifications: Notification[] = [];
 	for (const _notification of _notifications) {
-		if (_notification.type == 'gang-added') {
-			notifications = notifications.concat(
-				await getGangAddedNotificationDetails(_notification, prisma)
-			);
+		if (_notification.type == 'gang-added' || _notification.type == 'gang-member-request') {
+			notifications = notifications.concat(await getNotificationDetails(_notification, prisma));
 		}
 	}
 	logger.debug(notifications, 'notifications');
@@ -66,28 +62,42 @@ export async function getUserNotifications(
 	} as UserNotifications;
 }
 
-async function getGangAddedNotificationDetails(
+async function getNotificationDetails(
 	notification: Notification,
 	prisma: PrismaClient
-): Promise<Notification> {
+): Promise<NotificationDetail | Notification> {
+	if (notification.data === null) {
+		return notification;
+	}
+
 	const notificationData = JSON.parse(notification.data);
-	const gangId = notificationData.gangId;
-	const gang = await prisma.gang.findUnique({
-		where: { id: gangId }
-	});
-	notificationData.gang = gang;
-	notification.data = notificationData;
+
+	let ret = notification as NotificationDetail;
+
+	if (notificationData.gangId) {
+		const gang = await prisma.gang.findUnique({
+			where: { id: parseInt(notificationData.gangId) }
+		});
+		ret.detail = { ...ret.detail, ...{ gang: gang as Gang } };
+	}
+	if (notificationData.userId) {
+		const user = await prisma.user.findUnique({
+			where: { id: notificationData.userId }
+		});
+		ret.detail = { ...ret.detail, ...{ user: user as User } };
+	}
+
 	if (notificationData.addedBy) {
 		const addedBy = await prisma.user.findUnique({
 			where: { id: notificationData.addedBy }
 		});
-		notification.data.addedBy = addedBy;
+		ret.detail.addedBy = addedBy as User;
 	}
 	if (notificationData.reviewedBy) {
 		const reviewedBy = await prisma.user.findUnique({
 			where: { id: notificationData.reviewedBy }
 		});
-		notification.data.reviewedBy = reviewedBy;
+		ret.detail.reviewedBy = reviewedBy as User;
 	}
-	return notification;
+	return ret;
 }
