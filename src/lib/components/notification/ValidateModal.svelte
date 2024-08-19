@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { currentNotification } from '$lib/stores/validationCurrentNotification';
-	import { Routes } from '$lib/routes';
-	import { onMount } from 'svelte';
-	import { coordsMonte } from '$lib/utils/coords-monte';
-	import ValidateGangForm from './ValidateGangForm.svelte';
+	import ValidateGangModalBox from './ValidateGangModalBox.svelte';
+	import ValidateMemberModalBox from './ValidateMemberModalBox.svelte';
 
 	import type { Map } from 'leaflet';
 
@@ -12,45 +10,15 @@
 	export let L: any;
 	export let map: Map;
 
-	onMount(async () => {
-		L = (await import('leaflet')).default;
-		map = L.map('map').setView(coordsMonte, 17);
-		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			attribution:
-				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-		}).addTo(map);
-	});
+	$: (L = L), (map = map);
 </script>
 
 <dialog id="validate_modal" class="modal" bind:this={modal}>
-	<div class="modal-box">
-		<h3 class="text-lg font-bold py-4">Validar peña {$currentNotification.detail?.gang.name}</h3>
-		<div id="map" class="z-0"></div>
-		<p class="pt-4">
-			{$currentNotification?.detail?.addedBy?.name} ha añadido una peña nueva:
-			<span class="">{$currentNotification?.detail?.gang.name}</span>
-		</p>
-		{#if $currentNotification.status === 'PENDING'}
-			<div class="flex items-stretch">
-				<ValidateGangForm {userId} />
-				<ValidateGangForm {userId} type="refuse" buttonType="btn-error" buttonMessage="Rechazar" />
-			</div>
-		{/if}
-	</div>
+	<ValidateGangModalBox bind:L bind:map {userId} />
+	{#if $currentNotification.type === 'gang-member-request'}
+		<ValidateMemberModalBox {userId}/>
+	{/if}
 	<form method="dialog" class="modal-backdrop">
 		<button>close</button>
 	</form>
 </dialog>
-
-<link
-	rel="stylesheet"
-	href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-	integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-	crossorigin=""
-/>
-
-<style>
-	#map {
-		height: 40vh;
-	}
-</style>
