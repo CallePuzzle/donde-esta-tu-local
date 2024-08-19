@@ -2,29 +2,24 @@ import { logger } from '$lib/server/logger';
 import { initializePrisma } from '$lib/server/db';
 
 import type { Actions, RequestEvent } from './$types';
+import type { PrismaClient } from '@prisma/client';
 
 export const actions: Actions = {
 	validateGang: async (event: RequestEvent) => {
-		return await validateRefuseGang(event, 'validate');
+		return await validateRefuse(event, 'gang', 'VALIDATED', 'Peña validada, gracias!');
 	},
 	refuseGang: async (event: RequestEvent) => {
-		return await validateRefuseGang(event, 'refuse');
+		return await validateRefuse(event, 'gang', 'REFUSED', 'Peña rechazada, gracias!');
 	},
 	validateMember: async (event: RequestEvent) => {
-		return await validateRefuseGang(event, 'validate');
+		return await validateRefuse(event, 'member', 'VALIDATED', 'Nuevo miembro/a aprovado/a');
 	},
 	refuseMember: async (event: RequestEvent) => {
-		return await validateRefuseGang(event, 'refuse');
+		return await validateRefuse(event, 'member', 'REFUSED', 'Nuevo miembro/a rechazado/a');
 	}
 };
 
-async function validateRefuseGang(event: RequestEvent, action: string) {
-	if (action !== 'validate' && action !== 'refuse') {
-		return { success: false, error: 'Invalid action' };
-	}
-
-	const status = action === 'validate' ? 'VALIDATED' : 'REFUSED';
-	const message = action === 'validate' ? 'Peña validada, gracias!' : 'Peña rechazada, gracias!';
+async function validateRefuse(event: RequestEvent, type: string, status: string, message: string) {
 	const formData = await event.request.formData();
 	const gangId = formData.get('gangId');
 	const notificationId = formData.get('notificationId');
@@ -33,11 +28,24 @@ async function validateRefuseGang(event: RequestEvent, action: string) {
 		return { success: false, error: 'Missing parameters' };
 	}
 
-	logger.debug(gangId, 'action: ' + action);
+	logger.debug({ type: type, status: status }, 'validateRefuse');
 
 	const db = event.platform!.env.DB;
 	const prisma = initializePrisma(db);
 
+	if (type === 'gang') {
+		return await validateRefuseGang(prisma, gangId, userId, notificationId, status, message);
+	}
+}
+
+async function validateRefuseGang(
+	prisma: PrismaClient,
+	gangId: string,
+	userId: string,
+	notificationId: string,
+	status: string,
+	message: string
+) {
 	try {
 		const gang = await prisma.gang.update({
 			where: {
@@ -47,7 +55,7 @@ async function validateRefuseGang(event: RequestEvent, action: string) {
 				status: status
 			}
 		});
-		logger.info(gang, 'gang ' + action);
+		logger.info(gang, 'gang ' + status);
 		let notification = await prisma.notification.findUnique({
 			where: {
 				id: parseInt(notificationId as string)
@@ -67,7 +75,7 @@ async function validateRefuseGang(event: RequestEvent, action: string) {
 				data: JSON.stringify(data)
 			}
 		});
-		logger.info(notification, 'notification ' + action);
+		logger.info(notification, 'notification ' + status);
 
 		return { success: true, data: gang, message: message };
 	} catch (error) {

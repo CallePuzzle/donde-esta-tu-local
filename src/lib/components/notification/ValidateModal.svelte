@@ -16,7 +16,7 @@
 <dialog id="validate_modal" class="modal" bind:this={modal}>
 	<ValidateGangModalBox bind:L bind:map {userId} />
 	{#if $currentNotification.type === 'gang-member-request'}
-		<ValidateMemberModalBox {userId}/>
+		<ValidateMemberModalBox {userId} />
 	{/if}
 	<form method="dialog" class="modal-backdrop">
 		<button>close</button>

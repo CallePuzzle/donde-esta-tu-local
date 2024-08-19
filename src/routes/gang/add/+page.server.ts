@@ -57,5 +57,5 @@ export const actions: Actions = {
 			logger.error(error);
 			return { success: false, error: error };
 		}
-	},
+	}
 };

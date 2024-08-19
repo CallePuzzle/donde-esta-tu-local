@@ -13,7 +13,7 @@
 	</p>
 	{#if $currentNotification.status === 'PENDING'}
 		<div class="flex items-stretch">
-			<ValidateForm {userId} type="validateMember"/>
+			<ValidateForm {userId} type="validateMember" />
 			<ValidateForm {userId} type="refuseMember" buttonType="btn-error" buttonMessage="Rechazar" />
 		</div>
 	{/if}

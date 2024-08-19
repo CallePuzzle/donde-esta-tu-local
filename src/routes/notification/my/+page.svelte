@@ -23,7 +23,7 @@
 	}
 </script>
 
-{#if showSucess }
+{#if showSucess}
 	<div role="alert" class="alert alert-success" use:loadSucess>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
