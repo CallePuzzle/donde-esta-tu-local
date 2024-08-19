@@ -1,40 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { coordsMonte } from '$lib/utils/coords-monte';
-	import { Routes } from '$lib/routes';
 	import ValidateButton from '$lib/components/notification/ValidateButton.svelte';
+	import ValidateModal from '$lib/components/notification/ValidateModal.svelte';
 
 	import type { Map } from 'leaflet';
 	import type { PageData } from './$types';
-	import type { Gang, Notification } from '@prisma/client';
 
 	export let data: PageData;
 
-	let currentNotification: Notification;
+	let modal: HTMLElement;
 	let L: any;
 	let map: Map;
 
-	onMount(async () => {
-		L = (await import('leaflet')).default;
-		map = L.map('map').setView(coordsMonte, 17);
-		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			attribution:
-				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-		}).addTo(map);
-	});
-
-	function showModal(notification: Notification): undefined {
-		currentNotification = notification;
-		const gang: Gang = currentNotification.data?.gang;
-
-		map.panTo([gang.latitude, gang.longitude]);
-		L.marker([gang.latitude, gang.longitude]).addTo(map).bindPopup(gang.name);
-
-		const modal = document.getElementById('validate_modal');
-		modal.showModal();
-
-		return undefined;
-	}
+	$: modal = modal;
 </script>
 
 <div class="flex flex-col">
@@ -54,84 +33,14 @@
 		<ul>
 			{#each data.notifications as notification}
 				<li>
-					<ValidateButton {notification} />
+					<ValidateButton {notification} {modal} />
 				</li>
 			{/each}
 		</ul>
 	</div>
 </div>
 
-<dialog id="validate_modal" class="modal">
-	<div class="modal-box">
-		<h3 class="text-lg font-bold py-4">Validar peña {currentNotification?.data?.gang.name}</h3>
-		<div id="map" class="z-0"></div>
-		<p class="pt-4">
-			{currentNotification?.data?.addedBy?.name} ha añadido una peña nueva:
-			<span class="">{currentNotification?.data?.gang.name}</span>
-		</p>
-		{#if currentNotification?.status === 'PENDING'}
-			<div class="flex items-stretch">
-				<form method="POST" action="{Routes.add_gang.url}?/validate" class="grow m-3">
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="userId"
-							value={data.user.id}
-						/></label
-					>
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="notificationId"
-							value={currentNotification?.id}
-						/></label
-					>
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="gangId"
-							value={currentNotification?.data?.gangId}
-						/></label
-					>
-					<button type="submit" class="btn btn-accent w-full">Validar</button>
-				</form>
-				<form method="POST" action="{Routes.add_gang.url}?/refuse" class="grow m-3">
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="userId"
-							value={data.user.id}
-						/></label
-					>
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="notificationId"
-							value={currentNotification?.id}
-						/></label
-					>
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="gangId"
-							value={currentNotification?.data?.gangId}
-						/></label
-					>
-					<button type="submit" class="btn btn-error w-full">Rechazar</button>
-				</form>
-			</div>
-		{/if}
-	</div>
-	<form method="dialog" class="modal-backdrop">
-		<button>close</button>
-	</form>
-</dialog>
+<ValidateModal bind:modal userId={data.user.id} />
 
 <link
 	rel="stylesheet"

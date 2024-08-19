@@ -26,4 +26,5 @@ npx prisma generate
 Kill vite server and run `yarn dev` again.
 
 ## TODO
- - https://reacthustle.com/blog/how-to-implement-a-reusable-responsive-modal-in-react-with-daisyui#implementing-click-outside-functionality
+
+- https://reacthustle.com/blog/how-to-implement-a-reusable-responsive-modal-in-react-with-daisyui#implementing-click-outside-functionality

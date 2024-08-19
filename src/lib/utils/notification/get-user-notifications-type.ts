@@ -7,7 +7,7 @@ interface UserNotifications {
 }
 
 interface NotificationDetail extends Notification {
-	detail: {
+	detail?: {
 		gang: Gang;
 		addedBy?: User;
 		reviewedBy?: User;

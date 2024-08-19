@@ -1,16 +1,36 @@
 <script lang="ts">
+	import { currentNotification } from '$lib/stores/validationCurrentNotification';
+	import { Routes } from '$lib/routes';
+	import { onMount } from 'svelte';
+	import { coordsMonte } from '$lib/utils/coords-monte';
 
+	import type { Map } from 'leaflet';
+
+	export let modal: HTMLElement;
+	export let userId: number;
+
+	let L: any;
+	let map: Map;
+
+	onMount(async () => {
+		L = (await import('leaflet')).default;
+		map = L.map('map').setView(coordsMonte, 17);
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution:
+				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+		}).addTo(map);
+	});
 </script>
 
-<dialog id="validate_modal" class="modal">
+<dialog id="validate_modal" class="modal" bind:this={modal}>
 	<div class="modal-box">
-		<h3 class="text-lg font-bold py-4">Validar peña {currentNotification?.data?.gang.name}</h3>
+		<h3 class="text-lg font-bold py-4">Validar peña {$currentNotification.detail?.gang.name}</h3>
 		<div id="map" class="z-0"></div>
 		<p class="pt-4">
-			{currentNotification?.data?.addedBy?.name} ha añadido una peña nueva:
-			<span class="">{currentNotification?.data?.gang.name}</span>
+			{$currentNotification?.detail?.addedBy?.name} ha añadido una peña nueva:
+			<span class="">{$currentNotification?.detail?.gang.name}</span>
 		</p>
-		{#if currentNotification?.status === 'PENDING'}
+		{#if $currentNotification.status === 'PENDING'}
 			<div class="flex items-stretch">
 				<form method="POST" action="{Routes.add_gang.url}?/validate" class="grow m-3">
 					<label
@@ -18,7 +38,7 @@
 							type="hidden"
 							class="input w-full max-w-xs"
 							name="userId"
-							value={data.user.id}
+							value={userId}
 						/></label
 					>
 					<label
@@ -26,7 +46,7 @@
 							type="hidden"
 							class="input w-full max-w-xs"
 							name="notificationId"
-							value={currentNotification?.id}
+							value={$currentNotification.id}
 						/></label
 					>
 					<label
@@ -34,7 +54,7 @@
 							type="hidden"
 							class="input w-full max-w-xs"
 							name="gangId"
-							value={currentNotification?.data?.gangId}
+							value={$currentNotification.detail?.gang.id}
 						/></label
 					>
 					<button type="submit" class="btn btn-accent w-full">Validar</button>
@@ -45,7 +65,7 @@
 							type="hidden"
 							class="input w-full max-w-xs"
 							name="userId"
-							value={data.user.id}
+							value={userId}
 						/></label
 					>
 					<label
@@ -53,7 +73,7 @@
 							type="hidden"
 							class="input w-full max-w-xs"
 							name="notificationId"
-							value={currentNotification?.id}
+							value={$currentNotification.id}
 						/></label
 					>
 					<label
@@ -61,7 +81,7 @@
 							type="hidden"
 							class="input w-full max-w-xs"
 							name="gangId"
-							value={currentNotification?.data?.gangId}
+							value={$currentNotification.detail?.gang.id}
 						/></label
 					>
 					<button type="submit" class="btn btn-error w-full">Rechazar</button>
@@ -73,4 +93,3 @@
 		<button>close</button>
 	</form>
 </dialog>
-

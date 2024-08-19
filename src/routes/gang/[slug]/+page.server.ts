@@ -6,7 +6,7 @@ import {
 	NewNotificationForUsers,
 	type Payload,
 	type NotificationExtraData
-} from '$lib/utils/notifications';
+} from '$lib/utils/notification/notifications';
 
 import type { Actions, RequestEvent, PageServerLoad } from './$types';
 import type { User } from '@prisma/client';
