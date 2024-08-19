@@ -2,6 +2,8 @@
 	import type { NotificationDetail } from '$lib/utils/notification/get-user-notifications-type';
 
 	export let notification: NotificationDetail;
+	export let modal: HTMLElement;
+	$: currentNotification: null;
 
 	let menssage = '';
 
@@ -13,7 +15,8 @@
 	}
 
 	function showModal(notification: NotificationDetail): null {
-		console.log(notification);
+		currentNotification = notification;
+		modal.showModal();
 		return null;
 	}
 </script>
