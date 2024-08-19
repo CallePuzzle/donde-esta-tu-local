@@ -3,6 +3,7 @@
 	import { Routes } from '$lib/routes';
 	import { onMount } from 'svelte';
 	import { coordsMonte } from '$lib/utils/coords-monte';
+	import ValidateGangForm from './ValidateGangForm.svelte';
 
 	import type { Map } from 'leaflet';
 
@@ -31,60 +32,8 @@
 		</p>
 		{#if $currentNotification.status === 'PENDING'}
 			<div class="flex items-stretch">
-				<form method="POST" action="{Routes.add_gang.url}?/validate" class="grow m-3">
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="userId"
-							value={userId}
-						/></label
-					>
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="notificationId"
-							value={$currentNotification.id}
-						/></label
-					>
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="gangId"
-							value={$currentNotification.detail?.gang.id}
-						/></label
-					>
-					<button type="submit" class="btn btn-accent w-full">Validar</button>
-				</form>
-				<form method="POST" action="{Routes.add_gang.url}?/refuse" class="grow m-3">
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="userId"
-							value={userId}
-						/></label
-					>
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="notificationId"
-							value={$currentNotification.id}
-						/></label
-					>
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="gangId"
-							value={$currentNotification.detail?.gang.id}
-						/></label
-					>
-					<button type="submit" class="btn btn-error w-full">Rechazar</button>
-				</form>
+				<ValidateGangForm {userId} />
+				<ValidateGangForm {userId} type="refuse" buttonType="btn-error" buttonMessage="Rechazar" />
 			</div>
 		{/if}
 	</div>
