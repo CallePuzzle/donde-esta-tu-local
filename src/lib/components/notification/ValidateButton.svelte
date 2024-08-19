@@ -2,9 +2,13 @@
 	import { currentNotification } from '$lib/stores/validationCurrentNotification';
 
 	import type { NotificationDetail } from '$lib/utils/notification/get-user-notifications-type';
+	import type { Gang } from '@prisma/client';
+	import type { Map } from 'leaflet';
 
 	export let notification: NotificationDetail;
 	export let modal: HTMLElement;
+	export let L: any;
+	export let map: Map;
 
 	let menssage = '';
 
@@ -17,8 +21,17 @@
 
 	function showModal(notification: NotificationDetail): null {
 		currentNotification.update(() => notification);
+		if (notification.type === 'gang-added') {
+			panToGang(notification);
+		}
 		modal.showModal();
 		return null;
+	}
+
+	function panToGang(notification: NotificationDetail) {
+		const gang = notification.detail?.gang as Gang;
+		map.panTo([gang.latitude, gang.longitude]);
+		L.marker([gang.latitude, gang.longitude]).addTo(map).bindPopup(gang.name);
 	}
 </script>
 

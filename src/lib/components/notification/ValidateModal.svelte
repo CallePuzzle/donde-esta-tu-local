@@ -8,9 +8,8 @@
 
 	export let modal: HTMLElement;
 	export let userId: number;
-
-	let L: any;
-	let map: Map;
+	export let L: any;
+	export let map: Map;
 
 	onMount(async () => {
 		L = (await import('leaflet')).default;
@@ -93,3 +92,16 @@
 		<button>close</button>
 	</form>
 </dialog>
+
+<link
+	rel="stylesheet"
+	href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+	integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+	crossorigin=""
+/>
+
+<style>
+	#map {
+		height: 40vh;
+	}
+</style>
