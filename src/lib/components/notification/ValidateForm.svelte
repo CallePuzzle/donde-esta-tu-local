@@ -20,13 +20,5 @@
 			value={$currentNotification.id}
 		/>
 	</label>
-	<label>
-		<input
-			type="hidden"
-			class="input w-full max-w-xs"
-			name="gangId"
-			value={$currentNotification.detail?.gang.id}
-		/>
-	</label>
 	<button type="submit" class="btn {buttonType} w-full">{buttonMessage}</button>
 </form>

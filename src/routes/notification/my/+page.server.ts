@@ -21,7 +21,6 @@ export const actions: Actions = {
 
 async function validateRefuse(event: RequestEvent, type: string, status: string, message: string) {
 	const formData = await event.request.formData();
-	const gangId = formData.get('gangId') as string;
 	const notificationId = formData.get('notificationId') as string;
 	const userId = formData.get('userId') as string;
 
@@ -32,25 +31,29 @@ async function validateRefuse(event: RequestEvent, type: string, status: string,
 
 	try {
 		let data = null;
-		if (type === 'gang') {
-			data = await validateRefuseGang(prisma, gangId, status);
-		}
-		if (type === 'member') {
-			data = await validateRefuseMember(prisma, gangId, userId, status);
-		}
-
 		let notification = await prisma.notification.findUnique({
 			where: {
 				id: parseInt(notificationId as string)
 			}
 		});
+		const notificationData = JSON.parse(notification?.data as string);
+
 		if (notification === null && notification === undefined) {
 			return { success: false, error: 'Notification not found' };
 		}
 		if (typeof !notification?.data === 'string') {
 			return { success: false, error: 'Notification data not found' };
 		}
-		const notificationData = JSON.parse(notification?.data as string);
+
+		const gangId = notificationData.gangId;
+
+		if (type === 'gang') {
+			data = await validateRefuseGang(prisma, gangId, status);
+		}
+		if (type === 'member' && status === 'VALIDATED') {
+			data = await validateMember(prisma, gangId, notificationData.userId, status);
+		}
+
 		notificationData.reviewedBy = userId;
 		notification = await prisma.notification.update({
 			where: {
@@ -84,7 +87,7 @@ async function validateRefuseGang(prisma: PrismaClient, gangId: string, status: 
 	return gang;
 }
 
-async function validateRefuseMember(
+async function validateMember(
 	prisma: PrismaClient,
 	gangId: string,
 	userId: string,

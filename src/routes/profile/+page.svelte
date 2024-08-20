@@ -23,10 +23,6 @@
 			}
 		}
 	});
-
-	function showMyGangModal() {
-		document.getElementById('my_gang').showModal();
-	}
 </script>
 
 <div class="flex flex-col">
@@ -57,14 +53,18 @@
 			</div>
 			<div class="mb-4">
 				<label for="gangId" class="my-2">Mi peña:</label>
-				<select name="gangId" class="input w-full max-w-xs border-solid border-slate-600">
-					{#if data.user?.gangId === null}
-						<option value="" selected>Selecciona una peña</option>
-					{/if}
-					{#each data.gangs as gang}
-						<option value={gang.id} selected={gang.id === data.user?.gangId}>{gang.name}</option>
-					{/each}
-				</select>
+				{#if data.user?.gangId === null}
+					<a href={Routes.home.url} class="input w-full max-w-xs border-solid border-slate-600">
+						Busca tu peña o crea una nueva
+					</a>
+				{:else}
+					<a
+						href="/gang/{data.user?.gangId}"
+						class="input w-full max-w-xs border-solid border-slate-600"
+					>
+						{data.user?.gang.name}
+					</a>
+				{/if}
 			</div>
 
 			<div class="flex items-center justify-between">
