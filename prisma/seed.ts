@@ -1,4 +1,4 @@
-import { getPrismaClient } from './clientForTest';
+import { getPrismaClient } from '../src/lib/tests/clientForTest';
 
 const prisma = await getPrismaClient();
 
