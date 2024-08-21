@@ -7,7 +7,7 @@ import {
 } from '$lib/utils/notification/notifications';
 
 import type { Actions, RequestEvent } from './$types';
-import type { D1Database } from '@cloudflare/workers-types';
+import type { PrismaClient } from '@prisma/client';
 
 export const actions: Actions = {
 	new: async (event: RequestEvent) => {
@@ -20,8 +20,9 @@ export const actions: Actions = {
 
 		const db = event.platform!.env.DB;
 		const userId = event.locals.user!.id;
+		const prisma = initializePrisma(db);
 		try {
-			return await addGang(db, userId, name as string, lat as string, lng as string);
+			return await addGang(prisma, userId, name as string, lat as string, lng as string);
 		} catch (error) {
 			logger.error(error);
 			return { success: false, error: error };
@@ -29,8 +30,7 @@ export const actions: Actions = {
 	}
 };
 
-async function addGang(db: D1Database, userId: string, name: string, lat: string, lng: string) {
-	const prisma = initializePrisma(db);
+async function addGang(prisma: PrismaClient, userId: string, name: string, lat: string, lng: string) {
 
 	const gang = await prisma.gang.create({
 		data: {
@@ -55,7 +55,7 @@ async function addGang(db: D1Database, userId: string, name: string, lat: string
 		}
 	};
 
-	if (!(await NewNotificationForAdmins(payload, extraData, db))) {
+	if (!(await NewNotificationForAdmins(payload, extraData, prisma))) {
 		return { success: false, error: 'Error sending notification' };
 	}
 
@@ -64,4 +64,16 @@ async function addGang(db: D1Database, userId: string, name: string, lat: string
 		data: gang,
 		message: 'Peña añadida, a la espera de revisión por un administrador'
 	};
+}
+
+export async function TestAddGang(
+	prisma: PrismaClient,
+	userId: string,
+	name: string,
+	lat: string,
+	lng: string
+) {
+	if (process.env.NODE_ENV === 'test') {
+		return addGang(prisma, userId, name, lat, lng);
+	}
 }

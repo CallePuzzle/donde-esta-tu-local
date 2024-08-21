@@ -1,9 +1,8 @@
 import { JWK } from '$env/static/private';
 import { buildRequest, type PushSubscription } from 'cf-webpush';
 import { logger } from '$lib/server/logger';
-import { initializePrisma } from '$lib/server/db';
 import type { User } from '@prisma/client';
-import type { D1Database } from '@cloudflare/workers-types';
+import type { PrismaClient } from '@prisma/client';
 
 export interface Payload {
 	title: string;
@@ -56,9 +55,8 @@ async function createNotification(
 	users: User[],
 	payload: Payload,
 	extraData: NotificationExtraData,
-	db: D1Database
+	prisma: PrismaClient
 ): Promise<boolean> {
-	const prisma = initializePrisma(db);
 
 	try {
 		await prisma.notification.create({
@@ -85,7 +83,7 @@ async function newNotification(
 	users: User[],
 	payload: Payload,
 	extraData: NotificationExtraData,
-	db: D1Database
+	prisma: PrismaClient
 ): Promise<boolean> {
 	for (const user of users) {
 		if (!(await sendNotifications(user, payload))) {
@@ -93,7 +91,7 @@ async function newNotification(
 		}
 	}
 
-	if (!(await createNotification(users, payload, extraData, db))) {
+	if (!(await createNotification(users, payload, extraData, prisma))) {
 		return false;
 	}
 	return true;
@@ -103,9 +101,8 @@ async function NewNotificationForAll(
 	payload: Payload,
 	extraData: NotificationExtraData,
 	userId: string,
-	db: D1Database
+	prisma: PrismaClient
 ): Promise<boolean> {
-	const prisma = initializePrisma(db);
 
 	const users = await prisma.user.findMany({
 		where: {
@@ -115,15 +112,14 @@ async function NewNotificationForAll(
 		}
 	});
 
-	return newNotification(users, payload, extraData, db);
+	return newNotification(users, payload, extraData, prisma);
 }
 
 async function NewNotificationForAdmins(
 	payload: Payload,
 	extraData: NotificationExtraData,
-	db: D1Database
+	prisma: PrismaClient
 ): Promise<boolean> {
-	const prisma = initializePrisma(db);
 
 	const users = await prisma.user.findMany({
 		where: {
@@ -131,16 +127,16 @@ async function NewNotificationForAdmins(
 		}
 	});
 
-	return newNotification(users, payload, extraData, db);
+	return newNotification(users, payload, extraData, prisma);
 }
 
 async function NewNotificationForUsers(
 	payload: Payload,
 	extraData: NotificationExtraData,
 	users: User[],
-	db: D1Database
+	prisma: PrismaClient
 ): Promise<boolean> {
-	return newNotification(users, payload, extraData, db);
+	return newNotification(users, payload, extraData, prisma);
 }
 
 export { NewNotificationForAll, NewNotificationForAdmins, NewNotificationForUsers };
