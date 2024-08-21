@@ -12,8 +12,8 @@ export interface Payload {
 export interface NotificationExtraData {
 	type: string;
 	status: string;
-	addedById?: string;
-	reviewedById?: string;
+	addedByUserId?: string;
+	reviewedByUserId?: string;
 	relatedGangId?: number;
 }
 
@@ -59,7 +59,6 @@ async function createNotification(
 	extraData: NotificationExtraData,
 	prisma: PrismaClient
 ): Promise<boolean> {
-
 	try {
 		await prisma.notification.create({
 			data: {
@@ -67,7 +66,9 @@ async function createNotification(
 				body: payload.body,
 				type: extraData.type,
 				status: extraData.status,
-				data: JSON.stringify(extraData.data),
+				addedByUserId: extraData.addedByUserId,
+				reviewedByUserId: extraData.reviewedByUserId,
+				relatedGangId: extraData.relatedGangId,
 				users: {
 					connect: users.map((user) => ({ id: user.id }))
 				}
@@ -105,7 +106,6 @@ async function NewNotificationForAll(
 	userId: string,
 	prisma: PrismaClient
 ): Promise<boolean> {
-
 	const users = await prisma.user.findMany({
 		where: {
 			id: {
@@ -122,7 +122,6 @@ async function NewNotificationForAdmins(
 	extraData: NotificationExtraData,
 	prisma: PrismaClient
 ): Promise<boolean> {
-
 	const users = await prisma.user.findMany({
 		where: {
 			role: 'ADMIN'

@@ -24,6 +24,7 @@ npx prisma db seed
 ```
 
 ### Crear una migración
+
 ```bash
 npx wrangler d1 migrations create donde-esta-tu-local migration_name
 npx prisma migrate diff \

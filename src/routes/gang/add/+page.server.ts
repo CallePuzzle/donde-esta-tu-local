@@ -30,8 +30,13 @@ export const actions: Actions = {
 	}
 };
 
-async function addGang(prisma: PrismaClient, userId: string, name: string, lat: string, lng: string) {
-
+async function addGang(
+	prisma: PrismaClient,
+	userId: string,
+	name: string,
+	lat: string,
+	lng: string
+) {
 	const gang = await prisma.gang.create({
 		data: {
 			name: name,
@@ -50,7 +55,7 @@ async function addGang(prisma: PrismaClient, userId: string, name: string, lat: 
 		type: 'gang-added',
 		status: 'PENDING',
 		relatedGangId: gang.id,
-		addedById: userId
+		addedByUserId: userId
 	};
 
 	if (!(await NewNotificationForAdmins(payload, extraData, prisma))) {
