@@ -12,6 +12,16 @@ yarn dev
 
 ## Migraciones
 
+### Desde cero
+
+```bash
+npx prisma migrate diff \
+  --from-empty \
+  --to-schema-datamodel ./prisma/schema.prisma \
+  --script \
+  --output migrations/0001_v2.0.0.sql
+```
+
 ```bash
 npx wrangler d1 migrations create donde-esta-tu-local migration_name
 npx prisma migrate diff \

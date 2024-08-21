@@ -5,7 +5,7 @@ CREATE TABLE "User" (
     "name" TEXT,
     "picture" TEXT,
     "gangId" INTEGER,
-    "isGangLeader" BOOLEAN,
+    "role" TEXT NOT NULL DEFAULT 'USER',
     "subscription" TEXT,
     CONSTRAINT "User_gangId_fkey" FOREIGN KEY ("gangId") REFERENCES "Gang" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
@@ -33,9 +33,14 @@ CREATE TABLE "Notification" (
     "title" TEXT NOT NULL,
     "body" TEXT NOT NULL,
     "type" TEXT,
-    "data" TEXT,
+    "addedById" TEXT,
+    "reviewedById" TEXT,
+    "relatedGangId" INTEGER,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Notification_addedById_fkey" FOREIGN KEY ("addedById") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "Notification_reviewedById_fkey" FOREIGN KEY ("reviewedById") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "Notification_relatedGangId_fkey" FOREIGN KEY ("relatedGangId") REFERENCES "Gang" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
