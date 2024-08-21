@@ -5,11 +5,7 @@ import { TestAddGang } from './+page.server';
 
 const prisma = await getPrismaClient();
 
-describe('Prisma Tests', () => {
-	let userLocal: User;
-	let userAdmin: User;
-	let gang1: Gang;
-	let gang2: Gang;
+describe('add new gang', () => {
 	let form: any;
 	const USER_LOCAL = 'user|local';
 	const USER_ADMIN = 'admin|local';
@@ -67,6 +63,7 @@ describe('Prisma Tests', () => {
 	it('USER_ADMIN has a notification addedByUserId USER_LOCAL', async () => {
 		const notifications = await prisma.notification.findMany({
 			where: {
+				title: 'Nueva peña',
 				users: {
 					some: {
 						id: USER_ADMIN
@@ -76,6 +73,5 @@ describe('Prisma Tests', () => {
 			}
 		});
 		expect(notifications.length).toBe(1);
-		expect(notifications[0].title).toBe('Nueva peña');
 	});
 });

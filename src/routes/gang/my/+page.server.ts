@@ -58,7 +58,7 @@ export const load: PageServerLoad = async (event) => {
 	if (userHasGang) {
 		gang = await prisma.gang.findUnique({
 			where: {
-				id: user.gangId
+				id: user?.gangId as number
 			}
 		});
 	}
