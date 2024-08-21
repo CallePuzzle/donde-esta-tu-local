@@ -41,17 +41,17 @@ model Gang {
 }
 
 model Notification {
-  id            Int      @id @default(autoincrement())
-  title         String
-  body          String
-  type          String?
-  addedById     String?
-  reviewedById  String?
-  addedBy       User?    @relation("AddedBy", fields: [addedById], references: [id])
-  reviewedBy    User?    @relation("ReviewedBy", fields: [reviewedById], references: [id])
-  relatedGangId Int?
-  relatedGang   Gang?    @relation(fields: [relatedGangId], references: [id])
-  status        String   @default("PENDING")
-  createdAt     DateTime @default(now())
-  users         User[]
+  id               Int      @id @default(autoincrement())
+  title            String
+  body             String
+  type             String?
+  addedByUserId    String?
+  reviewedByUserId String?
+  addedBy          User?    @relation("AddedBy", fields: [addedByUserId], references: [id])
+  reviewedBy       User?    @relation("ReviewedBy", fields: [reviewedByUserId], references: [id])
+  relatedGangId    Int?
+  relatedGang      Gang?    @relation(fields: [relatedGangId], references: [id])
+  status           String   @default("PENDING")
+  createdAt        DateTime @default(now())
+  users            User[]
 }

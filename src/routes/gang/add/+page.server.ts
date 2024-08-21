@@ -49,10 +49,8 @@ async function addGang(prisma: PrismaClient, userId: string, name: string, lat: 
 	const extraData: NotificationExtraData = {
 		type: 'gang-added',
 		status: 'PENDING',
-		data: {
-			gangId: gang.id,
-			addedBy: userId
-		}
+		relatedGangId: gang.id,
+		addedById: userId
 	};
 
 	if (!(await NewNotificationForAdmins(payload, extraData, prisma))) {

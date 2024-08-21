@@ -12,7 +12,9 @@ export interface Payload {
 export interface NotificationExtraData {
 	type: string;
 	status: string;
-	data: any;
+	addedById?: string;
+	reviewedById?: string;
+	relatedGangId?: number;
 }
 
 async function sendNotifications(user: User, payload: Payload): Promise<boolean> {

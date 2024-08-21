@@ -33,13 +33,13 @@ CREATE TABLE "Notification" (
     "title" TEXT NOT NULL,
     "body" TEXT NOT NULL,
     "type" TEXT,
-    "addedById" TEXT,
-    "reviewedById" TEXT,
+    "addedByUserId" TEXT,
+    "reviewedByUserId" TEXT,
     "relatedGangId" INTEGER,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "Notification_addedById_fkey" FOREIGN KEY ("addedById") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT "Notification_reviewedById_fkey" FOREIGN KEY ("reviewedById") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "Notification_addedByUserId_fkey" FOREIGN KEY ("addedByUserId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "Notification_reviewedByUserId_fkey" FOREIGN KEY ("reviewedByUserId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "Notification_relatedGangId_fkey" FOREIGN KEY ("relatedGangId") REFERENCES "Gang" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
