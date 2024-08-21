@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { getPrismaClient } from '$lib/tests/clientForTest';
 import type { User, Gang } from '@prisma/client';
-import type { U } from 'vitest/dist/reporters-yx5ZTtEV.js';
 
 const prisma = await getPrismaClient();
 
