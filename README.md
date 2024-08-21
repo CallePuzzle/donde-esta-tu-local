@@ -20,8 +20,10 @@ npx prisma migrate diff \
   --to-schema-datamodel ./prisma/schema.prisma \
   --script \
   --output migrations/0001_v2.0.0.sql
+npx prisma db seed
 ```
 
+### Crear una migración
 ```bash
 npx wrangler d1 migrations create donde-esta-tu-local migration_name
 npx prisma migrate diff \
