@@ -1,4 +1,7 @@
 name = "donde-esta-tu-local"
+account_id = "aa18516a167f0800f64f12f43bebe293"
+[env.staging]
+name = "donde-esta-tu-local-staging"
 account_id = "173bf7921f79923475ce95a48b845583"
 
 main = "./.cloudflare/worker.js"
@@ -12,4 +15,9 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "donde-esta-tu-local"
-database_id = "134d2043-b27a-41f0-b278-6559eb48912f"
+database_id = "654a0ef0-e073-4b24-b5f6-a083467cb8b2"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "donde-esta-tu-local"-staging
+database_id = "3f44a2a9-c325-4b76-935e-2e955dbe5490"
