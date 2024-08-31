@@ -19,5 +19,5 @@ database_id = "654a0ef0-e073-4b24-b5f6-a083467cb8b2"
 
 [[env.staging.d1_databases]]
 binding = "DB"
-database_name = "donde-esta-tu-local"-staging
+database_name = "donde-esta-tu-local-staging"
 database_id = "3f44a2a9-c325-4b76-935e-2e955dbe5490"
