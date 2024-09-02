@@ -22,7 +22,7 @@ jobs:
       - name: Create .env file
         uses: CallePuzzle/envvar-to-dotenv-action@v1.2.1
         with:
-          variableNames: DATABASE_URL,AUTH0_CLIENT_ID,AUTH0_CLIENT_SECRET,JWK
+          variableNames: DATABASE_URL,AUTH0_DOMAIN,AUTH0_CLIENT_ID,AUTH0_CLIENT_SECRET,JWK
 
       - uses: actions/setup-node@v4
         with:
