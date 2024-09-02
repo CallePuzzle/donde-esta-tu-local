@@ -2,8 +2,8 @@ name: Deploy PR
 
 on:
   pull_request:
-    types:
-      - opened
+    branches:
+      - main
 
 env:
   AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID_STAGING }}
