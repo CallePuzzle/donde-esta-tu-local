@@ -1,0 +1,44 @@
+name: Deploy PR
+
+on:
+  pull_request:
+    types:
+      - opened
+
+env:
+  AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID_STAGING }}
+  AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET_STAGING }}
+  AUTH0_REDIRECT_URI: https://donde-esta-tu-local.callepuzzle-rkjp.workers.dev/login/callback
+  DATABASE_URL: file:./dev.db
+  JWK: ${{ secrets.JWK }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env file
+        uses: CallePuzzle/envvar-to-dotenv-action@v1.2.1
+        with:
+          variableNames: DATABASE_URL_STAGING,AUTH0_CLIENT_ID_STAGING,AUTH0_CLIENT_SECRET_STAGING,JWK
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: yarn install --pure-lockfile
+
+      - name: D1 Migrations Apply
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_STAGING }}
+          wranglerVersion: 3.63.1
+          command: d1 migrations apply donde-esta-tu-local --remote
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_STAGING }}
+          wranglerVersion: 3.63.1

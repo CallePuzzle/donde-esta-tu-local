@@ -33,7 +33,7 @@ declare module 'lucia' {
 	}
 }
 
-export const Auth0AppDomain = 'https://callepuzzle.eu.auth0.com';
+export const Auth0AppDomain = 'https://montemayordepililla.eu.auth0.com';
 
 export const auth0 = new Auth0(
 	Auth0AppDomain,
