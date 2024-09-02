@@ -78,10 +78,6 @@ async function requestNewMember(prisma: PrismaClient, gangId: number, userId: st
 	};
 }
 
-export async function RequestNewMember(prisma: PrismaClient, gangId: number, userId: string) {
-	return requestNewMember(prisma, gangId, userId);
-}
-
 export const load: PageServerLoad = async (event) => {
 	const db = event.platform!.env.DB;
 	const prisma = initializePrisma(db);
