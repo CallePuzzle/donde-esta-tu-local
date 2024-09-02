@@ -2,7 +2,7 @@ import { dev } from '$app/environment';
 import { Lucia } from 'lucia';
 import { D1Adapter } from '@lucia-auth/adapter-sqlite';
 import { Auth0 } from 'arctic';
-import { AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_REDIRECT_URI } from '$env/static/private';
+import { AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_REDIRECT_URI } from '$env/static/private';
 import type { D1Database } from '@cloudflare/workers-types';
 
 export function initializeLucia(D1: D1Database) {
@@ -33,10 +33,8 @@ declare module 'lucia' {
 	}
 }
 
-export const Auth0AppDomain = 'https://montemayordepililla.eu.auth0.com';
-
 export const auth0 = new Auth0(
-	Auth0AppDomain,
+	AUTH0_DOMAIN,
 	AUTH0_CLIENT_ID,
 	AUTH0_CLIENT_SECRET,
 	AUTH0_REDIRECT_URI
