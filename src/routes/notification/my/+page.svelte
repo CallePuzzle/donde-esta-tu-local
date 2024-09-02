@@ -1,40 +1,46 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { coordsMonte } from '$lib/utils/coords-monte';
-	import { Routes } from '$lib/routes';
+	import ValidateButton from '$lib/components/notification/ValidateButton.svelte';
+	import ValidateModal from '$lib/components/notification/ValidateModal.svelte';
 
 	import type { Map } from 'leaflet';
-	import type { PageData } from './$types';
-	import type { Gang, Notification } from '@prisma/client';
+	import type { PageData, ActionData } from './$types';
 
 	export let data: PageData;
+	export let form: ActionData;
 
-	let currentNotification: Notification;
+	let modal: HTMLElement;
 	let L: any;
 	let map: Map;
+	let showSucess: boolean;
 
-	onMount(async () => {
-		L = (await import('leaflet')).default;
-		map = L.map('map').setView(coordsMonte, 17);
-		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			attribution:
-				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-		}).addTo(map);
-	});
+	$: (modal = modal), (L = L), (map = map), (showSucess = form?.success || false);
 
-	function showModal(notification: Notification): undefined {
-		currentNotification = notification;
-		const gang: Gang = currentNotification.data?.gang;
-
-		map.panTo([gang.latitude, gang.longitude]);
-		L.marker([gang.latitude, gang.longitude]).addTo(map).bindPopup(gang.name);
-
-		const modal = document.getElementById('validate_modal');
-		modal.showModal();
-
-		return undefined;
+	function loadSucess(node) {
+		// wait 10 seconds and redirect to home
+		setTimeout(() => {
+			showSucess = false;
+		}, 3000);
 	}
 </script>
+
+{#if showSucess}
+	<div role="alert" class="alert alert-success" use:loadSucess>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			class="h-6 w-6 shrink-0 stroke-current"
+			fill="none"
+			viewBox="0 0 24 24"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+			/>
+		</svg>
+		<span>{form?.message}</span>
+	</div>
+{/if}
 
 <div class="flex flex-col">
 	<div class="hero">
@@ -53,120 +59,11 @@
 		<ul>
 			{#each data.notifications as notification}
 				<li>
-					{#if notification.type === 'gang-added'}
-						<span>{notification.data.addedBy.name} ha añadido una peña nueva: </span><span
-							class="underline decoration-sky-500 font-bold">{notification.data.gang.name}</span
-						>
-						{#if notification.status === 'PENDING'}
-							<button class="btn btn-accent m-6" on:click={showModal(notification)}>Validar</button>
-						{:else if notification.status === 'VALIDATED'}
-							<span class="m-3 text-green-500"
-								>Validada por {notification.data.reviewedBy?.name}</span
-							>
-							<button class="btn btn-accent m-6" on:click={showModal(notification)}
-								>Ver detalles</button
-							>
-						{:else if notification.status === 'REFUSED'}
-							<span class="m-3 text-red-500"
-								>Rechazada por {notification.data.reviewedBy?.name}</span
-							>
-							<button class="btn btn-accent m-6" on:click={showModal(notification)}
-								>Ver detalles</button
-							>
-						{/if}
-					{:else}
-						<h2>{notification.title}</h2>
-						<p>{notification.body}</p>
-						<p>{notification.type}</p>
-						<p>{notification.data}</p>
-					{/if}
+					<ValidateButton {notification} {modal} bind:L bind:map />
 				</li>
 			{/each}
 		</ul>
 	</div>
 </div>
 
-<dialog id="validate_modal" class="modal">
-	<div class="modal-box">
-		<h3 class="text-lg font-bold py-4">Validar peña {currentNotification?.data?.gang.name}</h3>
-		<div id="map" class="z-0"></div>
-		<p class="pt-4">
-			{currentNotification?.data?.addedBy?.name} ha añadido una peña nueva:
-			<span class="">{currentNotification?.data?.gang.name}</span>
-		</p>
-		{#if currentNotification?.status === 'PENDING'}
-			<div class="flex items-stretch">
-				<form method="POST" action="{Routes.add_gang.url}?/validate" class="grow m-3">
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="userId"
-							value={data.user.id}
-						/></label
-					>
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="notificationId"
-							value={currentNotification?.id}
-						/></label
-					>
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="gangId"
-							value={currentNotification?.data?.gangId}
-						/></label
-					>
-					<button type="submit" class="btn btn-accent w-full">Validar</button>
-				</form>
-				<form method="POST" action="{Routes.add_gang.url}?/refuse" class="grow m-3">
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="userId"
-							value={data.user.id}
-						/></label
-					>
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="notificationId"
-							value={currentNotification?.id}
-						/></label
-					>
-					<label
-						><input
-							type="hidden"
-							class="input w-full max-w-xs"
-							name="gangId"
-							value={currentNotification?.data?.gangId}
-						/></label
-					>
-					<button type="submit" class="btn btn-error w-full">Rechazar</button>
-				</form>
-			</div>
-		{/if}
-	</div>
-	<form method="dialog" class="modal-backdrop">
-		<button>close</button>
-	</form>
-</dialog>
-
-<link
-	rel="stylesheet"
-	href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-	integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-	crossorigin=""
-/>
-
-<style>
-	#map {
-		height: 40vh;
-	}
-</style>
+<ValidateModal bind:modal bind:L bind:map userId={data.user.id} />

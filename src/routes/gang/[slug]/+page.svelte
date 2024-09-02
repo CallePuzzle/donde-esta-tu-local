@@ -35,14 +35,14 @@
 	</div>
 </div>
 
-{#if false}
+{#if data.userIsLogged}
 	<div class="container mx-auto my-2">
 		<div class="mx-4 flex">
-			<form class="basis-1/2 flex justify-center" method="POST" action="?/addRequestsValidation">
+			<form class="basis-1/2 flex justify-center" method="POST" action="?/requestNewMember">
 				<input type="hidden" name="gangId" value={gang.id} />
 				<input type="hidden" name="userId" value={user.id} />
-				<button class="px-4 py-2 btn btn-info" disabled={true}>
-					{#if !true}
+				<button class="px-4 py-2 btn btn-info" disabled={false}>
+					{#if !false}
 						Solicitar unirme unirme a esta peña
 					{:else}
 						Solicitado

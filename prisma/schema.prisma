@@ -9,41 +9,49 @@ datasource db {
 }
 
 model User {
-  id       String    @id
-  email String  @unique
-  name  String?
-  picture  String?
-  sessions Session[]
-  gangId   Int?
-  gang Gang? @relation(fields: [gangId], references: [id])
-  role String @default("USER")
-  subscription String?
-  notifications Notification[]
+  id                     String         @id
+  email                  String         @unique
+  name                   String?
+  picture                String?
+  sessions               Session[]
+  gangId                 Int?
+  gang                   Gang?          @relation(fields: [gangId], references: [id])
+  role                   String         @default("USER")
+  subscription           String?
+  notificationAddedBy    Notification[] @relation("AddedBy")
+  notificationReviewedBy Notification[] @relation("ReviewedBy")
+  notifications          Notification[]
 }
 
 model Session {
-  id        String   @id
+  id         String   @id
   user_id    String
-  user      User     @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  user       User     @relation(references: [id], fields: [user_id], onDelete: Cascade)
   expires_at DateTime
 }
 
 model Gang {
-  id        Int   @id @default(autoincrement())
-  name      String
-  latitude  Float
-  longitude Float
-  members   User[]
-  status  String @default("PENDING")
+  id            Int            @id @default(autoincrement())
+  name          String
+  latitude      Float
+  longitude     Float
+  members       User[]
+  status        String         @default("PENDING")
+  notifications Notification[]
 }
 
 model Notification {
-  id Int   @id @default(autoincrement())
-  title String
-  body String
-  type String?
-  data String?
-  status  String @default("PENDING")
-  createdAt DateTime @default(now())
-  users User[]
+  id               Int      @id @default(autoincrement())
+  title            String
+  body             String
+  type             String?
+  addedByUserId    String?
+  reviewedByUserId String?
+  addedBy          User?    @relation("AddedBy", fields: [addedByUserId], references: [id])
+  reviewedBy       User?    @relation("ReviewedBy", fields: [reviewedByUserId], references: [id])
+  relatedGangId    Int?
+  relatedGang      Gang?    @relation(fields: [relatedGangId], references: [id])
+  status           String   @default("PENDING")
+  createdAt        DateTime @default(now())
+  users            User[]
 }

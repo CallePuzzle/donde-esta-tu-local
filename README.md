@@ -12,6 +12,19 @@ yarn dev
 
 ## Migraciones
 
+### Desde cero
+
+```bash
+npx prisma migrate diff \
+  --from-empty \
+  --to-schema-datamodel ./prisma/schema.prisma \
+  --script \
+  --output migrations/0001_v2.0.0.sql
+npx prisma db seed
+```
+
+### Crear una migración
+
 ```bash
 npx wrangler d1 migrations create donde-esta-tu-local migration_name
 npx prisma migrate diff \
@@ -25,8 +38,6 @@ npx prisma generate
 
 Kill vite server and run `yarn dev` again.
 
-## Test notifications
+## TODO
 
-```bash
-curl -v http://localhost:5173/notification/send
-```
+- https://reacthustle.com/blog/how-to-implement-a-reusable-responsive-modal-in-react-with-daisyui#implementing-click-outside-functionality
