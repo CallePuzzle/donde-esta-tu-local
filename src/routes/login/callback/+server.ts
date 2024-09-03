@@ -56,7 +56,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			await prisma.user.create({
 				data: {
 					id: user.sub,
-					email: user.email,
 					picture: user.picture,
 					name: user.name
 				}

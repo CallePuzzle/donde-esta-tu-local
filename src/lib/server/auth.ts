@@ -2,7 +2,12 @@ import { dev } from '$app/environment';
 import { Lucia } from 'lucia';
 import { D1Adapter } from '@lucia-auth/adapter-sqlite';
 import { Auth0 } from 'arctic';
-import { AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_REDIRECT_URI } from '$env/static/private';
+import {
+	AUTH0_DOMAIN,
+	AUTH0_CLIENT_ID,
+	AUTH0_CLIENT_SECRET,
+	AUTH0_REDIRECT_URI
+} from '$env/static/private';
 import type { D1Database } from '@cloudflare/workers-types';
 
 export function initializeLucia(D1: D1Database) {
@@ -15,11 +20,6 @@ export function initializeLucia(D1: D1Database) {
 			attributes: {
 				secure: !dev
 			}
-		},
-		getUserAttributes: (attributes) => {
-			return {
-				email: attributes.email
-			};
 		}
 	});
 }
@@ -27,9 +27,6 @@ export function initializeLucia(D1: D1Database) {
 declare module 'lucia' {
 	interface Register {
 		Lucia: ReturnType<typeof initializeLucia>;
-		DatabaseUserAttributes: {
-			email: string;
-		};
 	}
 }
 
