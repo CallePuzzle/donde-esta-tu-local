@@ -9,7 +9,7 @@ env:
   AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN_STAGING }}
   AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID_STAGING }}
   AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET_STAGING }}
-  AUTH0_REDIRECT_URI: https://donde-esta-tu-local.callepuzzle-rkjp.workers.dev/login/callback
+  AUTH0_REDIRECT_URI: https://staging-app.montemayordepililla.cc/login/callback
   DATABASE_URL: file:./dev.db
   JWK: ${{ secrets.JWK }}
 
