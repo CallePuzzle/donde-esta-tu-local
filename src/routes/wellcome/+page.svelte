@@ -27,7 +27,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="container mx-auto px-4">
+	<div class="container mx-auto px-4 text-center">
 		<ul class="steps">
 			<li class="step {$wellcome.login ? 'step-primary' : ''}">
 				<a href={Routes.login.url}>Logeate</a>
@@ -36,10 +36,7 @@
 				<a href={Routes.profile.url}>Edita tu nombre de usuario</a>
 			</li>
 			<li class="step {$wellcome.addGang ? 'step-primary' : ''}">
-				<a href={Routes.profile.url}>Añade tu peña</a>
-			</li>
-			<li class="step {$wellcome.reviewGang ? 'step-primary' : ''}">
-				<a href={Routes.notification_my.url}>Revisa las peñas creadas por otros usuarios</a>
+				<a href={Routes.profile.url}>Añade o busca tu peña</a>
 			</li>
 		</ul>
 	</div>

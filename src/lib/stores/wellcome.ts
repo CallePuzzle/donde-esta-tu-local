@@ -6,15 +6,13 @@ interface Wellcome {
 	login: boolean;
 	profileName: boolean;
 	addGang: boolean;
-	reviewGang: boolean;
 }
 
 export const defaultValue = {
 	wellcome: false,
 	login: false,
 	profileName: false,
-	addGang: false,
-	reviewGang: false
+	addGang: false
 } as Wellcome;
 
 const _initialValue = browser ? window.localStorage.getItem('wellcome') : false;
