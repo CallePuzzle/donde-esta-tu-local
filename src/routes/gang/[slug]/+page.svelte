@@ -35,7 +35,7 @@
 	</div>
 </div>
 
-{#if data.userIsLogged}
+{#if data.userIsLogged && data.user.gangId !== gang.id}
 	<div class="container mx-auto my-2">
 		<div class="mx-4 flex">
 			<form class="basis-1/2 flex justify-center" method="POST" action="?/requestNewMember">
