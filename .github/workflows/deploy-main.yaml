@@ -35,11 +35,11 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          wranglerVersion: 3.63.1
+          wranglerVersion: 3.74.0
           command: d1 migrations apply donde-esta-tu-local --remote
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          wranglerVersion: 3.63.1
+          wranglerVersion: 3.74.0

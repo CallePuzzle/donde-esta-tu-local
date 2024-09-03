@@ -49,7 +49,7 @@
 		<div class="alert alert-error">
 			<p>{data.protectedRouteMessage}</p>
 			<p>
-				<a href="/login" class="btn btn-accent">Iniciar sesión</a>
+				<a href={Routes.wellcome.url} class="btn btn-accent">{Routes.wellcome.name}</a>
 			</p>
 		</div>
 	{:else}

@@ -3,10 +3,14 @@ import { initializePrisma } from '$lib/server/db';
 import { logger } from '$lib/server/logger';
 
 import type { User, Gang, Notification, PrismaClient } from '@prisma/client';
-import type {
-	UserNotifications,
-	NotificationDetail
-} from '$lib/utils/notification/get-user-notifications-type';
+
+interface UserNotifications {
+	user?: User;
+	notifications: Notification[];
+	notificationsCount: number;
+}
+
+export { type UserNotifications };
 
 export async function getUserNotifications(
 	userId: string,
@@ -23,7 +27,7 @@ export async function getUserNotifications(
 		}
 	});
 	logger.debug(user, 'current user');
-	const _notifications = await prisma.notification.findMany({
+	const notifications = await prisma.notification.findMany({
 		where: {
 			users: {
 				some: {
@@ -31,18 +35,17 @@ export async function getUserNotifications(
 				}
 			}
 		},
+		include: {
+			addedBy: true,
+			reviewedBy: true,
+			relatedGang: true
+		},
 		orderBy: [
 			{
 				createdAt: 'desc'
 			}
 		]
 	});
-	let notifications: Notification[] = [];
-	for (const _notification of _notifications) {
-		if (_notification.type == 'gang-added' || _notification.type == 'gang-member-request') {
-			notifications = notifications.concat(await getNotificationDetails(_notification, prisma));
-		}
-	}
 	logger.debug(notifications, 'notifications');
 	const notificationsCount = await prisma.notification.count({
 		where: {
@@ -60,44 +63,4 @@ export async function getUserNotifications(
 		notifications,
 		notificationsCount
 	} as UserNotifications;
-}
-
-async function getNotificationDetails(
-	notification: Notification,
-	prisma: PrismaClient
-): Promise<NotificationDetail | Notification> {
-	if (notification.data === null) {
-		return notification;
-	}
-
-	const notificationData = JSON.parse(notification.data);
-
-	let ret = notification as NotificationDetail;
-
-	if (notificationData.gangId) {
-		const gang = await prisma.gang.findUnique({
-			where: { id: parseInt(notificationData.gangId) }
-		});
-		ret.detail = { ...ret.detail, ...{ gang: gang as Gang } };
-	}
-	if (notificationData.userId) {
-		const user = await prisma.user.findUnique({
-			where: { id: notificationData.userId }
-		});
-		ret.detail = { ...ret.detail, ...{ user: user as User } };
-	}
-
-	if (notificationData.addedBy) {
-		const addedBy = await prisma.user.findUnique({
-			where: { id: notificationData.addedBy }
-		});
-		ret.detail.addedBy = addedBy as User;
-	}
-	if (notificationData.reviewedBy) {
-		const reviewedBy = await prisma.user.findUnique({
-			where: { id: notificationData.reviewedBy }
-		});
-		ret.detail.reviewedBy = reviewedBy as User;
-	}
-	return ret;
 }

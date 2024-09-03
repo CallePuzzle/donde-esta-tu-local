@@ -31,15 +31,22 @@ jobs:
 
       - run: yarn install --pure-lockfile
 
+      - name: Data for tests
+        run: npx wrangler d1 migrations apply donde-esta-tu-local --local && npx prisma db seed
+
+      - name: Tests
+        run: yarn test:unit
+
       - name: D1 Migrations Apply
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_STAGING }}
-          wranglerVersion: 3.63.1
-          command: d1 migrations apply donde-esta-tu-local --remote
+          wranglerVersion: 3.74.0
+          command: d1 migrations apply donde-esta-tu-local-staging --remote --env staging
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_STAGING }}
-          wranglerVersion: 3.63.1
+          wranglerVersion: 3.74.0
+          command: deploy --env staging
