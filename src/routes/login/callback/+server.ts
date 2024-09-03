@@ -1,4 +1,5 @@
-import { auth0, initializeLucia, Auth0AppDomain } from '$lib/server/auth';
+import { AUTH0_DOMAIN } from '$env/static/private';
+import { auth0, initializeLucia } from '$lib/server/auth';
 import { initializePrisma } from '$lib/server/db';
 import { OAuth2RequestError } from 'arctic';
 import { logger } from '$lib/server/logger';
@@ -22,7 +23,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	try {
 		const tokens = await auth0.validateAuthorizationCode(code);
-		const response = await fetch(Auth0AppDomain + '/userinfo', {
+		const response = await fetch(AUTH0_DOMAIN + '/userinfo', {
 			headers: {
 				Authorization: `Bearer ${tokens.accessToken}`
 			}
@@ -55,7 +56,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			await prisma.user.create({
 				data: {
 					id: user.sub,
-					email: user.email,
 					picture: user.picture,
 					name: user.name
 				}

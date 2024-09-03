@@ -2,10 +2,11 @@ name: Deploy PR
 
 on:
   pull_request:
-    types:
-      - opened
+    branches:
+      - main
 
 env:
+  AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN_STAGING }}
   AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID_STAGING }}
   AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET_STAGING }}
   AUTH0_REDIRECT_URI: https://donde-esta-tu-local.callepuzzle-rkjp.workers.dev/login/callback
