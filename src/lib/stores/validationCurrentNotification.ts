@@ -21,3 +21,5 @@ export const currentNotification = writable<NotificationDetail>({
 	status: '',
 	createdAt: new Date()
 });
+
+export const markersInMap = writable<any[]>([]);

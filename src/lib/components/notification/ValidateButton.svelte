@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { currentNotification } from '$lib/stores/validationCurrentNotification';
+	import { currentNotification, markersInMap } from '$lib/stores/validationCurrentNotification';
 
 	import type { Gang, Notification, User } from '@prisma/client';
 	import type { Map } from 'leaflet';
@@ -34,9 +34,18 @@
 	}
 
 	function panToGang(notification: NotificationDetail) {
+		resetMarks();
 		const gang = notification.relatedGang as Gang;
 		map.panTo([gang.latitude, gang.longitude]);
-		L.marker([gang.latitude, gang.longitude]).addTo(map).bindPopup(gang.name);
+		const marker = L.marker([gang.latitude, gang.longitude]).addTo(map).bindPopup(gang.name);
+		markersInMap.update((markers) => [...markers, marker]);
+	}
+
+	function resetMarks() {
+		markersInMap.update((markers) => {
+			markers.forEach((marker) => map.removeLayer(marker));
+			return [];
+		});
 	}
 </script>
 
