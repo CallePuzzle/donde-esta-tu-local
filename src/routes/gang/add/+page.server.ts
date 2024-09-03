@@ -68,3 +68,15 @@ async function addGang(
 		message: 'Peña añadida, a la espera de revisión por un administrador'
 	};
 }
+
+export async function _TestAddGang(
+	prisma: PrismaClient,
+	userId: string,
+	name: string,
+	lat: string,
+	lng: string
+) {
+	if (process.env.NODE_ENV === 'test') {
+		return addGang(prisma, userId, name, lat, lng);
+	}
+}

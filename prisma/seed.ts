@@ -29,7 +29,6 @@ async function main() {
 		data: {
 			id: 'admin|local',
 			name: 'Admin Local',
-			email: 'admin@localhost.es',
 			role: 'ADMIN'
 		}
 	});
@@ -39,7 +38,6 @@ async function main() {
 		data: {
 			id: 'user|local',
 			name: 'User Local',
-			email: 'user@localhost.es',
 			gangId: gang1.id
 		}
 	});

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, expectTypeOf } from 'vitest';
 import { getPrismaClient } from '$lib/tests/clientForTest';
-import type { User, Gang } from '@prisma/client';
-import { TestAddGang } from './+page.server';
+import type { Gang } from '@prisma/client';
+import { _TestAddGang } from './+page.server';
 
 const prisma = await getPrismaClient();
 
@@ -11,7 +11,7 @@ describe('add new gang', () => {
 	const USER_ADMIN = 'admin|local';
 
 	beforeAll(async () => {
-		form = await TestAddGang(
+		form = await _TestAddGang(
 			prisma,
 			USER_LOCAL,
 			'Gang addGang',
