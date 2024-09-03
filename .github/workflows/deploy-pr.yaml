@@ -36,10 +36,11 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_STAGING }}
           wranglerVersion: 3.63.1
-          command: d1 migrations apply donde-esta-tu-local --remote
+          command: d1 migrations apply donde-esta-tu-local --remote --env staging
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_STAGING }}
           wranglerVersion: 3.63.1
+          command: deploy --env staging
