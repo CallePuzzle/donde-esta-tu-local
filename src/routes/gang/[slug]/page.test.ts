@@ -8,7 +8,6 @@ const prisma = await getPrismaClient();
 describe('new member and ADMIN notification', () => {
 	let gang: Gang;
 	let form: any;
-	const USER_LOCAL = 'user|local';
 	const USER_ADMIN = 'admin|local';
 	const USER_NO_GANG = 'user|no-gang';
 
@@ -73,7 +72,6 @@ describe('new member and ADMIN notification', () => {
 describe('new member and member notification', () => {
 	let gang: Gang;
 	let form: any;
-	const USER_LOCAL = 'user|local';
 	const USER_ADMIN = 'admin|local';
 	const USER_NO_GANG = 'user|no-gang';
 
