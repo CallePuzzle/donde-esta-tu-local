@@ -5,7 +5,7 @@ import { getUserNotifications } from '$lib/utils/notification/get-user-notificat
 import { logger } from '$lib/server/logger';
 
 import type { PageServerLoad, PageServerLoadEvent } from './$types';
-import type { UserNotifications } from '$lib/utils/notification/get-user-notifications-type';
+import type { UserNotifications } from '$lib/utils/notification/get-user-notifications';
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 	let userNotification: UserNotifications = {

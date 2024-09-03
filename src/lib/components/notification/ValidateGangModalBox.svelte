@@ -21,11 +21,11 @@
 </script>
 
 <div class="modal-box {$currentNotification.type === 'gang-added' ? 'visible' : 'invisible'}">
-	<h3 class="text-lg font-bold py-4">Validar peña {$currentNotification.detail?.gang.name}</h3>
+	<h3 class="text-lg font-bold py-4">Validar peña {$currentNotification.relatedGang?.name}</h3>
 	<div id="map" class="z-0"></div>
 	<p class="pt-4">
-		{$currentNotification?.detail?.addedBy?.name} ha añadido una peña nueva:
-		<span class="">{$currentNotification?.detail?.gang.name}</span>
+		{$currentNotification.addedBy?.name} ha añadido una peña nueva:
+		<span class="">{$currentNotification.relatedGang?.name}</span>
 	</p>
 	{#if $currentNotification.status === 'PENDING'}
 		<div class="flex items-stretch">
