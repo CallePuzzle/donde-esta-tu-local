@@ -40,4 +40,9 @@ Kill vite server and run `yarn dev` again.
 
 ## TODO
 
+- Reinciciar base de datos local:
+```bash
+rm -rf .wrangler && npx wrangler d1 migrations apply donde-esta-tu-local --local && npx prisma db seed
+```
+
 - https://reacthustle.com/blog/how-to-implement-a-reusable-responsive-modal-in-react-with-daisyui#implementing-click-outside-functionality

@@ -29,6 +29,7 @@
 		"@types/leaflet": "^1.9.12",
 		"@types/lodash": "^4.17.7",
 		"@types/node": "^22.4.2",
+		"@vitest/coverage-v8": "^2.0.5",
 		"autoprefixer": "^10.4.19",
 		"daisyui": "^4.12.10",
 		"eslint": "^9.0.0",
@@ -53,8 +54,8 @@
 		"typescript": "^5.5.4",
 		"typescript-eslint": "^8.0.0-alpha.20",
 		"vite": "^5.0.3",
-		"vitest": "^1.2.0",
-		"wrangler": "^3.63.1"
+		"vitest": "^2.0.5",
+		"wrangler": "^3.74.0"
 	},
 	"type": "module",
 	"dependencies": {
