@@ -31,6 +31,9 @@ jobs:
 
       - run: yarn install --pure-lockfile
 
+      - name: Data for tests
+        run: npx wrangler d1 migrations apply donde-esta-tu-local --local && npx prisma db seed
+
       - name: Tests
         run: yarn test:unit
 
