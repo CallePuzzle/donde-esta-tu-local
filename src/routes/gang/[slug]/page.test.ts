@@ -10,12 +10,13 @@ describe('new member and ADMIN notification', () => {
 	let form: any;
 	const USER_LOCAL = 'user|local';
 	const USER_ADMIN = 'admin|local';
+	const USER_NO_GANG = 'user|no-gang';
 
 	beforeAll(async () => {
 		gang = (await prisma.gang.findFirst({
 			where: { name: 'Gang 2' }
 		})) as Gang;
-		form = await _RequestNewMember(prisma, gang.id, USER_LOCAL);
+		form = await _RequestNewMember(prisma, gang.id, USER_NO_GANG);
 	});
 
 	afterAll(async () => {
@@ -27,7 +28,7 @@ describe('new member and ADMIN notification', () => {
 
 		// Remove notification from user|local
 		const notificationsToDelete = await prisma.notification.findMany({
-			where: { addedByUserId: USER_LOCAL }
+			where: { addedByUserId: USER_NO_GANG }
 		});
 		if (notificationsToDelete) {
 			for (const notificationToDelete of notificationsToDelete) {
@@ -53,7 +54,7 @@ describe('new member and ADMIN notification', () => {
 		expectTypeOf(user).toEqualTypeOf<User>();
 	});
 
-	it('USER_ADMIN has a notification addedByUserId USER_LOCAL', async () => {
+	it('USER_ADMIN has a notification addedByUserId USER_NO_GANG', async () => {
 		const notifications = await prisma.notification.findMany({
 			where: {
 				title: 'Nueva solicitud de miembro',
@@ -62,7 +63,7 @@ describe('new member and ADMIN notification', () => {
 						id: USER_ADMIN
 					}
 				},
-				addedByUserId: USER_LOCAL
+				addedByUserId: USER_NO_GANG
 			}
 		});
 		expect(notifications.length).toBe(1);
@@ -74,15 +75,16 @@ describe('new member and member notification', () => {
 	let form: any;
 	const USER_LOCAL = 'user|local';
 	const USER_ADMIN = 'admin|local';
+	const USER_NO_GANG = 'user|no-gang';
 
 	beforeAll(async () => {
 		gang = (await prisma.gang.findFirst({
 			where: { name: 'Gang 2' }
 		})) as Gang;
-		// Add USER_LOCAL to Gang 2
+		// Add USER_NO_GANG to Gang 2
 		await prisma.gang.update({
 			where: { id: gang.id },
-			data: { members: { connect: { id: USER_LOCAL } } }
+			data: { members: { connect: { id: USER_NO_GANG } } }
 		});
 		form = await _RequestNewMember(prisma, gang.id, USER_ADMIN);
 	});
@@ -128,7 +130,7 @@ describe('new member and member notification', () => {
 				title: 'Nueva solicitud de miembro',
 				users: {
 					some: {
-						id: USER_LOCAL
+						id: USER_NO_GANG
 					}
 				},
 				addedByUserId: USER_ADMIN

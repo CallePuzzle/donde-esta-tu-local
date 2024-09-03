@@ -42,6 +42,14 @@ async function main() {
 		}
 	});
 
+	// Create USER without gang
+	await prisma.user.create({
+		data: {
+			id: 'user|no-gang',
+			name: 'User No Gang'
+		}
+	});
+
 	console.log(`Seeding finished.`);
 }
 
