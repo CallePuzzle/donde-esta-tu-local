@@ -2,6 +2,7 @@ import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
 
 interface Wellcome {
+	installed: boolean;
 	wellcome: boolean;
 	login: boolean;
 	profileName: boolean;
@@ -9,6 +10,7 @@ interface Wellcome {
 }
 
 export const defaultValue = {
+	installed: false,
 	wellcome: false,
 	login: false,
 	profileName: false,
