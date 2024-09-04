@@ -77,16 +77,16 @@
 	<div class="modal-box">
 		<h3 class="text-lg font-bold">Hola</h3>
 		<p class="py-4">Bienvenido/a a Peñas de Montemayor de Pililla.</p>
-		<p class="py-4">Un mapa con todas las peñas del pueblo. En la que podrás:</p>
+		<p class="py-4">Un mapa con todas las peñas del pueblo. En esta app podrás:</p>
 		<ol class="list-decimal ml-4">
 			<li>Logearte</li>
 			<li>Editar tu nombre de usuario</li>
 			<li>Añadir o buscar tu peña</li>
 		</ol>
 		<div class="modal-action flex flex-wrap justify-center">
-			<button class="btn btn-success p-1 m-1" on:click={goWellcome}
-				>Empezar a usar la aplicación</button
-			>
+			<button class="btn btn-success p-1 m-1" on:click={goWellcome}>
+				Empezar a usar la aplicación
+			</button>
 			<form method="dialog">
 				<!-- if there is a button in form, it will close the modal -->
 				<button class="btn btn-warning p-1 m-1" on:click={noWellcome}>Ver mapa</button>
