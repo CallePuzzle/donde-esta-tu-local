@@ -22,7 +22,7 @@
 			<div class="max-w-md">
 				<h1 class="text-5xl font-bold">Hola</h1>
 				<p class="py-6">
-					Bienvenido/a a Peñas de Montemayor de Pililla. Un mapa con todas las peñas del pueblo.
+					Bienvenido/a a Peñas de Montemayor de Pililla. Un mapa con las peñas del pueblo.
 				</p>
 			</div>
 		</div>
