@@ -69,10 +69,10 @@
 			<li class="step {isChrome ? 'step-primary' : ''}">
 				<p>
 					Usa
-					<a href="https://play.google.com/store/apps/details?id=com.brave.browser&hl=es">Brave</a>
-					o
 					<a href="https://play.google.com/store/apps/details?id=com.android.chrome&hl=es">Chrome</a
 					>
+					o
+					<a href="https://play.google.com/store/apps/details?id=com.brave.browser&hl=es">Brave</a>
 				</p>
 			</li>
 			<li class="step {$wellcome.installed ? 'step-primary' : ''}">

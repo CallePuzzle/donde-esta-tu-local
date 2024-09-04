@@ -1,13 +1,9 @@
 import { logger } from '$lib/server/logger';
 import { initializePrisma } from '$lib/server/db';
-import {
-	NewNotificationForAdmins,
-	type Payload,
-	type NotificationExtraData
-} from '$lib/utils/notification/notifications';
+import { AddGang } from '$lib/utils/gang/add-gang';
+import { RequestNewMember } from '$lib/utils/gang/request-new-member';
 
 import type { Actions, RequestEvent } from './$types';
-import type { PrismaClient } from '@prisma/client';
 
 export const actions: Actions = {
 	new: async (event: RequestEvent) => {
@@ -15,68 +11,22 @@ export const actions: Actions = {
 		const name = formData.get('name');
 		const lat = formData.get('lat');
 		const lng = formData.get('lng');
+		const isMyGang = formData.get('ismygang');
 
-		logger.info({ name, lat, lng }, 'new gang datas');
+		logger.info({ name, lat, lng, isMyGang }, 'new gang datas');
 
 		const db = event.platform!.env.DB;
 		const userId = event.locals.user!.id;
 		const prisma = initializePrisma(db);
 		try {
-			return await addGang(prisma, userId, name as string, lat as string, lng as string);
+			const ret = await AddGang(prisma, userId, name as string, lat as string, lng as string);
+			if (isMyGang) {
+				await RequestNewMember(prisma, ret.data?.id as number, userId);
+			}
+			return ret;
 		} catch (error) {
 			logger.error(error);
 			return { success: false, error: error };
 		}
 	}
 };
-
-async function addGang(
-	prisma: PrismaClient,
-	userId: string,
-	name: string,
-	lat: string,
-	lng: string
-) {
-	const gang = await prisma.gang.create({
-		data: {
-			name: name,
-			latitude: parseFloat(lat),
-			longitude: parseFloat(lng)
-		}
-	});
-	logger.info(gang, 'new gang created');
-
-	const payload: Payload = {
-		title: 'Nueva peña',
-		body: `Se ha añadido una nueva peña: ${name}`
-	};
-
-	const extraData: NotificationExtraData = {
-		type: 'gang-added',
-		status: 'PENDING',
-		relatedGangId: gang.id,
-		addedByUserId: userId
-	};
-
-	if (!(await NewNotificationForAdmins(payload, extraData, prisma))) {
-		return { success: false, error: 'Error sending notification' };
-	}
-
-	return {
-		success: true,
-		data: gang,
-		message: 'Peña añadida, a la espera de revisión por un administrador'
-	};
-}
-
-export async function _TestAddGang(
-	prisma: PrismaClient,
-	userId: string,
-	name: string,
-	lat: string,
-	lng: string
-) {
-	if (process.env.NODE_ENV === 'test') {
-		return addGang(prisma, userId, name, lat, lng);
-	}
-}
