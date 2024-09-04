@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Routes } from '$lib/routes';
-	import { register } from 'swiper/element/bundle';
+	import Swiper from 'swiper';
+
+	import { Navigation, Pagination, Scrollbar } from 'swiper/modules';
+
+	import 'swiper/css';
+	import 'swiper/css/navigation';
+	import 'swiper/css/pagination';
 
 	import step1 from '$lib/assets/step1.png';
 	import step2 from '$lib/assets/step2.png';
@@ -9,7 +15,14 @@
 	import step4 from '$lib/assets/step4.png';
 
 	onMount(async () => {
-		register();
+		new Swiper('.steps', {
+			modules: [Navigation, Pagination, Scrollbar],
+			speed: 500,
+			navigation: {
+				nextEl: '.swiper-button-next',
+				prevEl: '.swiper-button-prev'
+			}
+		});
 	});
 </script>
 
@@ -22,20 +35,24 @@
 		</div>
 	</div>
 	<div class="container mx-auto px-4 text-center">
-		<swiper-container
-			class="steps"
-			pagination="true"
-			pagination-type="progressbar"
-			navigation="true"
-		>
-			<swiper-slide class="flex justify-center"><img src={step1} alt="step1" /></swiper-slide>
-			<swiper-slide class="flex justify-center"><img src={step2} alt="step2" /></swiper-slide>
-			<swiper-slide class="flex justify-center"><img src={step3} alt="step3" /></swiper-slide>
-			<swiper-slide class="flex justify-center"><img src={step4} alt="step4" /></swiper-slide>
-			<swiper-slide class="flex justify-center"
-				><a class="return" href={Routes.wellcome.url}>Volver</a></swiper-slide
-			>
-		</swiper-container>
+		<div class="swiper steps">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide"><img src={step1} alt="step1" /></div>
+				<div class="swiper-slide"><img src={step2} alt="step2" /></div>
+				<div class="swiper-slide"><img src={step3} alt="step3" /></div>
+				<div class="swiper-slide"><img src={step4} alt="step4" /></div>
+				<div class="swiper-slide"><a class="return" href={Routes.wellcome.url}>Volver</a></div>
+			</div>
+			<!-- If we need pagination -->
+			<div class="swiper-pagination"></div>
+
+			<!-- If we need navigation buttons -->
+			<div class="swiper-button-prev"></div>
+			<div class="swiper-button-next"></div>
+
+			<!-- If we need scrollbar -->
+			<div class="swiper-scrollbar"></div>
+		</div>
 	</div>
 </div>
 
