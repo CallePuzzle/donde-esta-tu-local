@@ -51,8 +51,17 @@ export const load: PageServerLoad = async (event) => {
 		return error(404, 'Peña no encontrada');
 	}
 
+	const userHasAMembershipRequestForThisGang = await prisma.notification.count({
+		where: {
+			type: 'gang-member-request',
+			addedByUserId: event.locals.user!.id,
+			relatedGangId: parseInt(gangId)
+		}
+	});
+
 	return {
 		gang: gang,
-		members: gang.members
+		members: gang.members,
+		userHasAMembershipRequestForThisGang: userHasAMembershipRequestForThisGang
 	};
 };
