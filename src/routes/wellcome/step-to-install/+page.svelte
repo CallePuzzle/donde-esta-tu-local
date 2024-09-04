@@ -9,6 +9,7 @@
 	import 'swiper/css/navigation';
 	import 'swiper/css/pagination';
 
+	import step0 from '$lib/assets/step0.png';
 	import step1 from '$lib/assets/step1.png';
 	import step2 from '$lib/assets/step2.png';
 	import step3 from '$lib/assets/step3.png';
@@ -37,6 +38,7 @@
 	<div class="container mx-auto px-4 text-center">
 		<div class="swiper steps">
 			<div class="swiper-wrapper">
+				<div class="swiper-slide"><img src={step0} alt="step0" /></div>
 				<div class="swiper-slide"><img src={step1} alt="step1" /></div>
 				<div class="swiper-slide"><img src={step2} alt="step2" /></div>
 				<div class="swiper-slide"><img src={step3} alt="step3" /></div>
