@@ -9,7 +9,7 @@ env:
   AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN_STAGING }}
   AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID_STAGING }}
   AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET_STAGING }}
-  AUTH0_REDIRECT_URI: https://staging-peñas.montemayordepililla.cc/login/callback
+  AUTH0_REDIRECT_URI: https%3A%2F%2Fstaging-pe%C3%B1as.montemayordepililla.cc%2Flogin%2Fcallback
   DATABASE_URL: file:./dev.db
   JWK: ${{ secrets.JWK }}
 
