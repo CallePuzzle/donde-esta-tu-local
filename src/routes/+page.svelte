@@ -80,7 +80,8 @@
 		<p class="py-4">Un mapa con las peñas del pueblo. En esta app podrás:</p>
 		<ol class="list-decimal ml-4">
 			<li>Añadir peñas</li>
-			<li>Registrarte como miembro de tu peña</li>
+			<li>Registrarte en tu peña</li>
+			<li>Validar a otras personas como pertenecientes a tu peña</li>
 		</ol>
 		<div class="modal-action flex flex-wrap justify-center">
 			<button class="btn btn-success p-1 m-1" on:click={goWellcome}>
