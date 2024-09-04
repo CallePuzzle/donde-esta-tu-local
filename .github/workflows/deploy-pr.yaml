@@ -9,7 +9,7 @@ env:
   AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN_STAGING }}
   AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID_STAGING }}
   AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET_STAGING }}
-  AUTH0_REDIRECT_URI: https://staging-app.montemayordepililla.cc/login/callback
+  AUTH0_REDIRECT_URI: https://staging-peñas.montemayordepililla.cc/login/callback
   DATABASE_URL: file:./dev.db
   JWK: ${{ secrets.JWK }}
 
@@ -41,12 +41,13 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_STAGING }}
-          wranglerVersion: 3.74.0
-          command: d1 migrations apply donde-esta-tu-local-staging --remote --env staging
+          wranglerVersion: 3.63.1
+          command: d1 migrations apply donde-esta-tu-local --remote --env staging
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_STAGING }}
-          wranglerVersion: 3.74.0
+          wranglerVersion: 3.63.1
           command: deploy --env staging
+
