@@ -41,8 +41,8 @@
 			<form class="basis-1/2 flex justify-center" method="POST" action="?/requestNewMember">
 				<input type="hidden" name="gangId" value={gang.id} />
 				<input type="hidden" name="userId" value={user.id} />
-				<button class="px-4 py-2 btn btn-info" disabled={false}>
-					{#if !false}
+				<button class="px-4 py-2 btn btn-info" disabled={form?.success}>
+					{#if !form?.success}
 						Solicitar unirme unirme a esta peña
 					{:else}
 						Solicitado

@@ -23,7 +23,7 @@ export const actions: Actions = {
 		const prisma = initializePrisma(db);
 
 		try {
-			await requestNewMember(prisma, parseInt(gangId as string), userId as string);
+			return await requestNewMember(prisma, parseInt(gangId as string), userId as string);
 		} catch (error) {
 			logger.error(error);
 			return { success: false, error: error };

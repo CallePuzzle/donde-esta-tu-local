@@ -19,7 +19,7 @@ export const actions: Actions = {
 					id: event.locals.user!.id
 				},
 				data: {
-					name: name as string,
+					name: name as string
 				}
 			});
 			logger.info(user, 'profile updated');
