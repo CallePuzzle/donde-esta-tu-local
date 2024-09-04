@@ -53,5 +53,5 @@ rm -rf .wrangler && npx wrangler d1 migrations apply donde-esta-tu-local --local
 ```sqlite
 UPDATE User
 SET role = 'ADMIN'
-WHERE id = 'email|66d5a248d30432de7bf76e64';
+WHERE id = 'sms|66d34d58ac3bbf23e5fe179';
 ```
