@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, expectTypeOf } from 'vitest';
 import { getPrismaClient } from '$lib/tests/clientForTest';
 import type { User, Gang } from '@prisma/client';
-import { _RequestNewMember } from './+page.server';
+import { RequestNewMember } from './request-new-member';
 
 const prisma = await getPrismaClient();
 
@@ -15,7 +15,7 @@ describe('new member and ADMIN notification', () => {
 		gang = (await prisma.gang.findFirst({
 			where: { name: 'Gang 2' }
 		})) as Gang;
-		form = await _RequestNewMember(prisma, gang.id, USER_NO_GANG);
+		form = await RequestNewMember(prisma, gang.id, USER_NO_GANG);
 	});
 
 	afterAll(async () => {
@@ -84,7 +84,7 @@ describe('new member and member notification', () => {
 			where: { id: gang.id },
 			data: { members: { connect: { id: USER_NO_GANG } } }
 		});
-		form = await _RequestNewMember(prisma, gang.id, USER_ADMIN);
+		form = await RequestNewMember(prisma, gang.id, USER_ADMIN);
 	});
 
 	afterAll(async () => {
