@@ -67,5 +67,9 @@ export const Routes: Routes = {
 	wellcome: {
 		name: 'Pantalla de bienvenida',
 		url: '/wellcome'
+	},
+	step_to_install: {
+		name: 'Instalar la aplicación',
+		url: '/wellcome/step-to-install'
 	}
 };
