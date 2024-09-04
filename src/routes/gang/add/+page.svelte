@@ -91,7 +91,7 @@
 		<h3 class="text-lg font-bold">Añadir peña</h3>
 
 		<div class="container pt-6">
-			<form method="POST" action="?/new">
+			<form method="POST" action="?/new" class="flex flex-col">
 				<label
 					><input
 						type="hidden"
@@ -110,12 +110,19 @@
 						value={latlng.lng}
 					/></label
 				>
-				<label
+				<label class="m-2"
 					><input
 						type="text"
 						placeholder="Nombre"
 						class="input w-full max-w-xs"
 						name="name"
+					/></label
+				>
+				<label class="m-2 flex items-center"
+					><span>Es mi peña: </span><input
+						type="checkbox"
+						class="checkbox"
+						name="ismygang"
 					/></label
 				>
 				<button type="submit" class="btn btn-accent m-6">Añadir</button>
