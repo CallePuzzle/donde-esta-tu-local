@@ -121,7 +121,7 @@
 				<label class="m-2 flex items-center"
 					><span>Es mi peña: </span><input
 						type="checkbox"
-						class="checkbox"
+						class="toggle toggle-success ml-2"
 						name="ismygang"
 					/></label
 				>
