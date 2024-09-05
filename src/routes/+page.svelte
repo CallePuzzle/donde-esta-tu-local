@@ -11,12 +11,18 @@
 
 	import type { PageData } from './$types';
 	import type { Map, Marker } from 'leaflet';
+	import type { Gang } from '@prisma/client';
+
+	interface GangInMap {
+		gang: Gang;
+		marker: Marker;
+	}
 
 	export let data: PageData;
 	let L: any;
 	let map: Map;
 	let showImHere = false;
-	let gangsInMap: Marker[] = [];
+	let gangsInMap: GangInMap[] = [];
 
 	onMount(async () => {
 		if (isEqual($wellcome, firstTime)) {
@@ -38,7 +44,8 @@
 			})
 				.addTo(map)
 				.bindPopup(message);
-			gangsInMap.push(marker);
+			const gangInMap: GangInMap = { gang, marker };
+			gangsInMap.push(gangInMap);
 		});
 
 		showImHere = true;
@@ -52,10 +59,15 @@
 		const input = event.target as HTMLInputElement;
 		const value = input.value.toLowerCase();
 
-		gangsInMap.forEach((marker) => {
+		gangsInMap.forEach((gangInMap) => {
+			const { marker, gang } = gangInMap;
 			const gangName = marker.getPopup().getContent().toLowerCase();
 			if (gangName.includes(value)) {
-				marker.setOpacity(1);
+				if (gang.status == 'VALIDATED') {
+					marker.setOpacity(1);
+				} else {
+					marker.setOpacity(0.6);
+				}
 			} else {
 				marker.setOpacity(0);
 			}
