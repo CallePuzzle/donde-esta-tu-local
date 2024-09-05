@@ -52,7 +52,7 @@
 			</h1>
 			{#if webShareAPISupported}
 				<button on:click={handleWebShare} class="ml-4"
-					><Icon src={BsShareFill} size="1.2rem" color="#2196f3" /></button
+					><Icon src={BsShareFill} size="1.2rem" color="#ee3616" /></button
 				>
 			{/if}
 		</div>
