@@ -30,13 +30,11 @@
 						<li>
 							<button class="btn"><a href={Routes.add_gang.url}>{Routes.add_gang.name}</a></button>
 						</li>
-						{#if userIsLogged}
-							<li>
-								<form method="post" use:enhance action={Routes.logout.url}>
-									<button class="btn" type="submit">{Routes.logout.name}</button>
-								</form>
-							</li>
-						{/if}
+						<li>
+							<button class="btn"
+								><a href={Routes.activities.url}>{Routes.activities.name}</a></button
+							>
+						</li>
 					</ul>
 				</details>
 			</li>
