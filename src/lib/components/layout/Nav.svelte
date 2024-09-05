@@ -41,12 +41,14 @@
 				</details>
 			</li>
 		</ul>
-		<a href={Routes.home.url}><img src={Logo} alt="Icono cabecera" class="max-w-14" /></a>
+		<a href={Routes.home.url} data-sveltekit-reload
+			><img src={Logo} alt="Icono cabecera" class="max-w-14" /></a
+		>
 	</div>
 
 	<div class="flex gap-2">
 		<div class="name">
-			<a href={Routes.home.url} class="btn btn-ghost text-xl flex">
+			<a href={Routes.home.url} class="btn btn-ghost text-xl flex" data-sveltekit-reload>
 				<span>Montemayor</span> <span class="depililla text-sm -mt-3">de Pililla</span>
 			</a>
 		</div>
