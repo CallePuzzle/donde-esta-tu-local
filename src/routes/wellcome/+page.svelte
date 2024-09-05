@@ -89,16 +89,14 @@
 					>
 				</p>
 			</li>
-			<li class="step {isChrome ? 'step-primary' : ''}">
+			<li class="step">
 				<p class="text-left {!copiedHidden ? 'hidden' : ''}">
-					Copia y pega
 					<button
 						use:copy={'https://peñas.montemayordepililla.cc'}
 						on:svelte-copy={(event) => showCopiedMessage()}
 					>
-						https://peñas.montemayordepililla.cc
+						Copia y pega en el navegador: https://peñas.montemayordepililla.cc
 					</button>
-					en el navegador
 				</p>
 				<p class="text-left {copiedHidden ? 'hidden' : ''}">Copiado</p>
 			</li>
