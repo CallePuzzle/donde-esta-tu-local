@@ -91,11 +91,8 @@
 			</li>
 			<li class="step">
 				<p class="text-left {!copiedHidden ? 'hidden' : ''}">
-					<button
-						use:copy={'https://peñas.montemayordepililla.cc'}
-						on:svelte-copy={(event) => showCopiedMessage()}
-					>
-						Copia y pega en el navegador: https://peñas.montemayordepililla.cc
+					<button use:copy={data.appUrl} on:svelte-copy={(event) => showCopiedMessage()}>
+						Copia y pega en el navegador: {data.appUrl}
 					</button>
 				</p>
 				<p class="text-left {copiedHidden ? 'hidden' : ''}">Copiado</p>
