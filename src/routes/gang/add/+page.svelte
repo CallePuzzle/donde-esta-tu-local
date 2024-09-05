@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { showMyPosition } from '$lib/utils/show-my-position';
@@ -12,6 +14,7 @@
 	}
 
 	export let form: ActionData;
+	let sending = false;
 	export let latlng = {} as LatLng;
 
 	onMount(async () => {
@@ -91,7 +94,21 @@
 		<h3 class="text-lg font-bold">Añadir peña</h3>
 
 		<div class="container pt-6">
-			<form method="POST" action="?/new" class="flex flex-col">
+			<form
+				method="POST"
+				action="?/new"
+				class="flex flex-col"
+				use:enhance={() => {
+					sending = true;
+					//document.getElementById('add_gang')?.close();
+					return ({ update }) => {
+						// Set invalidateAll to false if you don't want to reload page data when submitting
+						update({ invalidateAll: true }).finally(async () => {
+							sending = false;
+						});
+					};
+				}}
+			>
 				<label
 					><input
 						type="hidden"
@@ -125,7 +142,11 @@
 						name="ismygang"
 					/></label
 				>
-				<button type="submit" class="btn btn-accent m-6">Añadir</button>
+				{#if sending}
+					<span class="loading loading-dots loading-lg"></span>
+				{:else}
+					<button type="submit" class="btn btn-accent m-6">Añadir</button>
+				{/if}
 			</form>
 		</div>
 		<div class="modal-action m-0">
