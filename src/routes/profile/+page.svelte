@@ -55,7 +55,11 @@
 				<label for="gangId" class="my-2">Mi peña:</label>
 				{#if data.user?.gangId === null}
 					<a href={Routes.home.url} class="input w-full max-w-xs border-solid border-slate-600">
-						Busca tu peña o crea una nueva
+						Busca tu peña
+					</a>
+					o
+					<a href={Routes.add_gang.url} class="input w-full max-w-xs border-solid border-slate-600">
+						crea una nueva
 					</a>
 				{:else}
 					<a
