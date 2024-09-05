@@ -61,10 +61,6 @@
 <div class="container mx-auto my-2">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 		<div class="p-4 bg-white rounded-lg shadow">
-			<h2 class="text-2xl font-bold">Actividades</h2>
-			<p>TODO</p>
-		</div>
-		<div class="p-4 bg-white rounded-lg shadow">
 			<h2 class="text-2xl font-bold">Miembros</h2>
 			<ul>
 				{#each members as member}
