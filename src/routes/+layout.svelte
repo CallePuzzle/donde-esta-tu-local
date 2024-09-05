@@ -58,13 +58,13 @@
 	{/if}
 
 	<footer class="container mx-auto flex justify-around absolute bottom-0 justify-center">
-		<p class="md:flex-1 m-4 flex items-center justify-center">
+		<p class="md:flex-1 mx-4 flex items-center justify-center">
 			<span class="mr-2">Made with</span><Icon src={BiSolidHeart} size="16" color="red" /><span
 				class="ml-2">by KPY</span
 			>
 		</p>
 		<a
-			class="md:flex-1 m-4 flex items-center justify-center"
+			class="md:flex-1 mx-4 flex items-center justify-center"
 			href="https://github.com/CallePuzzle/donde-esta-tu-local"
 			target="_blank"
 			rel="noopener noreferrer"><Icon src={BiLogoGithub} size="32" /></a
