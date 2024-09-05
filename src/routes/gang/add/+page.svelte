@@ -100,7 +100,7 @@
 				class="flex flex-col"
 				use:enhance={() => {
 					sending = true;
-					//document.getElementById('add_gang')?.close();
+					document.getElementById('add_gang')?.close();
 					return ({ update }) => {
 						// Set invalidateAll to false if you don't want to reload page data when submitting
 						update({ invalidateAll: true }).finally(async () => {
