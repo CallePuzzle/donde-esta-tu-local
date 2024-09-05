@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Routes } from '$lib/routes';
 	import wellcome from '$lib/stores/wellcome';
+	import { copy } from 'svelte-copy';
 
 	import type { PageData } from './$types';
 
@@ -9,6 +10,7 @@
 	let isChrome: boolean;
 
 	$: stepsHidden = true;
+	$: copiedHidden = true;
 
 	if (data.userIsLogged) {
 		wellcome.update((value) => {
@@ -35,6 +37,9 @@
 	function showSteps() {
 		stepsHidden = !stepsHidden;
 	}
+	function showCopiedMessage() {
+		copiedHidden = false;
+	}
 </script>
 
 <div class="flex flex-col">
@@ -50,18 +55,22 @@
 	</div>
 	<div class="container mx-auto px-4 text-center">
 		<ul class="steps w-full">
-			<li class="step {$wellcome.installed ? 'step-primary' : ''}">
-				<button on:click={showSteps}>{Routes.step_to_install.name}</button>
-			</li>
-			<li class="step {$wellcome.login ? 'step-primary' : ''}">
-				<a href={Routes.login.url}>Logeate</a>
-			</li>
-			<li class="step {$wellcome.profileName ? 'step-primary' : ''}">
-				<a href={Routes.profile.url}>Edita tu nombre de usuario</a>
-			</li>
-			<li class="step {$wellcome.addGang ? 'step-primary' : ''}">
-				<a href={Routes.profile.url}>Añade o busca tu peña</a>
-			</li>
+			<a on:click={showSteps}>
+				<li class="step {$wellcome.installed ? 'step-primary' : ''}">
+					{Routes.step_to_install.name}
+				</li>
+			</a>
+			<a href={Routes.login.url}>
+				<li class="step {$wellcome.login ? 'step-primary' : ''}">Logeate</li>
+			</a>
+			<a href={Routes.profile.url}>
+				<li class="step {$wellcome.profileName ? 'step-primary' : ''}">
+					Edita tu nombre de usuario
+				</li>
+			</a>
+			<a href={Routes.profile.url}>
+				<li class="step {$wellcome.addGang ? 'step-primary' : ''}">Añade o busca tu peña</li>
+			</a>
 		</ul>
 	</div>
 	<div class="container mx-auto px-4 pl-10 {stepsHidden ? 'hidden' : ''}">
@@ -69,15 +78,35 @@
 			<li class="step {isChrome ? 'step-primary' : ''}">
 				<p>
 					Usa
-					<a href="https://play.google.com/store/apps/details?id=com.android.chrome&hl=es">Chrome</a
+					<a
+						href="https://play.google.com/store/apps/details?id=com.android.chrome&hl=es"
+						class="italic">Chrome</a
 					>
 					o
-					<a href="https://play.google.com/store/apps/details?id=com.brave.browser&hl=es">Brave</a>
+					<a
+						href="https://play.google.com/store/apps/details?id=com.brave.browser&hl=es"
+						class="italic">Brave</a
+					>
 				</p>
 			</li>
-			<li class="step {$wellcome.installed ? 'step-primary' : ''}">
-				<a href={Routes.step_to_install.url}>Añade a pantalla de inicio, muestrame cómo</a>
+			<li class="step {isChrome ? 'step-primary' : ''}">
+				<p class="text-left {!copiedHidden ? 'hidden' : ''}">
+					Copia y pega
+					<button
+						use:copy={'https://peñas.montemayordepililla.cc'}
+						on:svelte-copy={(event) => showCopiedMessage()}
+					>
+						https://peñas.montemayordepililla.cc
+					</button>
+					en el navegador
+				</p>
+				<p class="text-left {copiedHidden ? 'hidden' : ''}">Copiado</p>
 			</li>
+			<a href={Routes.step_to_install.url}>
+				<li class="step {$wellcome.installed ? 'step-primary' : ''}">
+					<p class="text-left">Añade a pantalla de inicio, muestrame cómo</p>
+				</li>
+			</a>
 		</ul>
 	</div>
 </div>
