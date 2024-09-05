@@ -89,74 +89,75 @@
 	</div>
 {/if}
 
-<dialog id="add_gang" class="modal">
-	<div class="modal-box">
-		<h3 class="text-lg font-bold">Añadir peña</h3>
+{#if form?.success}
+	<dialog id="add_gang" class="modal">
+		<div class="modal-box">
+			<h3 class="text-lg font-bold">Añadir peña</h3>
 
-		<div class="container pt-6">
-			<form
-				method="POST"
-				action="?/new"
-				class="flex flex-col"
-				use:enhance={() => {
-					sending = true;
-					//document.getElementById('add_gang')?.close();
-					return ({ update }) => {
-						// Set invalidateAll to false if you don't want to reload page data when submitting
-						update({ invalidateAll: true }).finally(async () => {
-							sending = false;
-						});
-					};
-				}}
-			>
-				<label
-					><input
-						type="hidden"
-						placeholder="Lat"
-						class="input w-full max-w-xs"
-						name="lat"
-						value={latlng.lat}
-					/></label
+			<div class="container pt-6">
+				<form
+					method="POST"
+					action="?/new"
+					class="flex flex-col"
+					use:enhance={() => {
+						sending = true;
+						return ({ update }) => {
+							// Set invalidateAll to false if you don't want to reload page data when submitting
+							update({ invalidateAll: true }).finally(async () => {
+								sending = false;
+							});
+						};
+					}}
 				>
-				<label
-					><input
-						type="hidden"
-						placeholder="Lng"
-						class="input w-full max-w-xs"
-						name="lng"
-						value={latlng.lng}
-					/></label
-				>
-				<label class="m-2"
-					><input
-						type="text"
-						placeholder="Nombre"
-						class="input w-full max-w-xs"
-						name="name"
-					/></label
-				>
-				<label class="m-2 flex items-center"
-					><span>Es mi peña: </span><input
-						type="checkbox"
-						class="toggle toggle-success ml-2"
-						name="ismygang"
-					/></label
-				>
-				{#if sending}
-					<span class="loading loading-dots loading-lg"></span>
-				{:else}
-					<button type="submit" class="btn btn-accent m-6">Añadir</button>
-				{/if}
-			</form>
+					<label
+						><input
+							type="hidden"
+							placeholder="Lat"
+							class="input w-full max-w-xs"
+							name="lat"
+							value={latlng.lat}
+						/></label
+					>
+					<label
+						><input
+							type="hidden"
+							placeholder="Lng"
+							class="input w-full max-w-xs"
+							name="lng"
+							value={latlng.lng}
+						/></label
+					>
+					<label class="m-2"
+						><input
+							type="text"
+							placeholder="Nombre"
+							class="input w-full max-w-xs"
+							name="name"
+						/></label
+					>
+					<label class="m-2 flex items-center"
+						><span>Es mi peña: </span><input
+							type="checkbox"
+							class="toggle toggle-success ml-2"
+							name="ismygang"
+						/></label
+					>
+					{#if sending}
+						<span class="loading loading-dots loading-lg"></span>
+					{:else}
+						<button type="submit" class="btn btn-accent m-6">Añadir</button>
+					{/if}
+				</form>
+			</div>
+			<div class="modal-action m-0">
+				<form method="dialog">
+					<!-- if there is a button in form, it will close the modal -->
+					<button class="btn">Close</button>
+				</form>
+			</div>
 		</div>
-		<div class="modal-action m-0">
-			<form method="dialog">
-				<!-- if there is a button in form, it will close the modal -->
-				<button class="btn">Close</button>
-			</form>
-		</div>
-	</div>
-</dialog>
+	</dialog>
+{/if}
 
 <dialog id="add_gang_info" class="modal">
 	<div class="modal-box max-w-md flex justify-center">
