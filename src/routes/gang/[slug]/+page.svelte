@@ -35,7 +35,7 @@
 			navigator.share({
 				title: `Peña: ${gang.name}`,
 				text: `Hola, te comparto esta peña: ${gang.name}`,
-				url: window.location.href
+				url: data.appUrl + `/gang/${gang.id}`
 			});
 		} catch (error) {
 			console.error('Error sharing:', error);

@@ -1,5 +1,5 @@
 import { ProtectedRoutes } from '$lib/routes';
-import { JWK } from '$env/static/private'; // TODO https://github.com/sveltejs/kit/issues/8882
+import { JWK, APP_URL } from '$env/static/private'; // TODO https://github.com/sveltejs/kit/issues/8882
 import { getPublicKeyFromJwk } from 'cf-webpush';
 import { getUserNotifications } from '$lib/utils/notification/get-user-notifications';
 import { logger } from '$lib/server/logger';
@@ -25,6 +25,7 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 	return {
 		isProtectedRoute: ProtectedRoutes.some((route) => route.path === path),
 		protectedRouteMessage: ProtectedRoutes.find((route) => route.path === path)?.message,
+		appUrl: APP_URL,
 		path: path,
 		userIsLogged: event.locals.user ? true : false,
 		user: userNotification.user,
