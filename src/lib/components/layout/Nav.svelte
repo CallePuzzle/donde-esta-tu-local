@@ -23,7 +23,7 @@
 					<summary><Icon src={BiMenu} size="32" /></summary>
 					<ul class="bg-base-100 rounded-t-none p-2">
 						<li><button class="btn"><a href={Routes.home.url}>{Routes.home.name}</a></button></li>
-						{#if userGangId !== null}
+						{#if userGangId != null}
 							<li>
 								<button class="btn"><a href="/gang/{userGangId}">Mi peña</a></button>
 							</li>
