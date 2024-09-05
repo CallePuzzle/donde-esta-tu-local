@@ -55,3 +55,13 @@ UPDATE User
 SET role = 'ADMIN'
 WHERE id = 'sms|66d34d58ac3bbf23e5fe179';
 ```
+
+- Resetar datos:
+
+```sqlite
+DELETE FROM Gang;
+DELETE FROM Notification;
+DELETE FROM Session;
+DELETE FROM User;
+DELETE FROM _NotificationToUser;
+```

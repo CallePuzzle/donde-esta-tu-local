@@ -43,7 +43,11 @@
 				<div class="swiper-slide"><img src={step2} alt="step2" /></div>
 				<div class="swiper-slide"><img src={step3} alt="step3" /></div>
 				<div class="swiper-slide"><img src={step4} alt="step4" /></div>
-				<div class="swiper-slide"><a class="return" href={Routes.wellcome.url}>Volver</a></div>
+				<div class="swiper-slide">
+					<a class="return" href={Routes.wellcome.url}
+						>Cierra el navegador y abre la aplicación instalada</a
+					>
+				</div>
 			</div>
 			<!-- If we need pagination -->
 			<div class="swiper-pagination"></div>

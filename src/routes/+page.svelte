@@ -4,7 +4,6 @@
 	import { coordsMonte } from '$lib/utils/coords-monte';
 	import { Icon } from 'svelte-icons-pack';
 	import { BiCurrentLocation } from 'svelte-icons-pack/bi';
-	import { goto } from '$app/navigation';
 	import { Routes } from '$lib/routes';
 	import wellcome from '$lib/stores/wellcome';
 	import { defaultValue as firstTime } from '$lib/stores/wellcome';
@@ -46,20 +45,6 @@
 	function imHere() {
 		showMyPosition(L, map, coordsMonte);
 	}
-
-	function goWellcome() {
-		goto(Routes.wellcome.url);
-	}
-
-	function noWellcome() {
-		wellcome.update((value) => {
-			return {
-				...value,
-				wellcome: true
-			};
-		});
-		document.getElementById('wellcomeModal').close();
-	}
 </script>
 
 <div id="map" class="z-0"></div>
@@ -84,12 +69,12 @@
 			<li>Validar a otras personas como pertenecientes a tu peña</li>
 		</ol>
 		<div class="modal-action flex flex-wrap justify-center">
-			<button class="btn btn-success p-1 m-1" on:click={goWellcome}>
-				Empezar a usar la aplicación
+			<button class="btn btn-success p-1 m-1">
+				<a href={Routes.wellcome.url}>Empezar a usar la aplicación</a>
 			</button>
 			<form method="dialog">
 				<!-- if there is a button in form, it will close the modal -->
-				<button class="btn btn-warning p-1 m-1" on:click={noWellcome}>Ver mapa</button>
+				<button class="btn btn-warning p-1 m-1">Ver mapa</button>
 			</form>
 		</div>
 	</div>

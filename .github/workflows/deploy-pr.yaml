@@ -6,6 +6,7 @@ on:
       - main
 
 env:
+  APP_URL: https://staging-peñas.montemayordepililla.cc/
   AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN_STAGING }}
   AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID_STAGING }}
   AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET_STAGING }}
