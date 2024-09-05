@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { coordsMonte } from '$lib/utils/coords-monte';
+	import { Icon } from 'svelte-icons-pack';
+	import { BsShareFill } from 'svelte-icons-pack/bs';
 
 	import type { PageData, ActionData } from './$types';
 	import type { Gang, User } from '@prisma/client';
@@ -23,14 +26,35 @@
 		map.panTo([gang.latitude, gang.longitude]);
 		L.marker([gang.latitude, gang.longitude]).addTo(map).bindPopup(gang.name);
 	});
+
+	$: webShareAPISupported = browser && typeof navigator.share !== 'undefined';
+
+	$: handleWebShare;
+	const handleWebShare = async () => {
+		try {
+			navigator.share({
+				title: `Peña: ${gang.name}`,
+				text: `Hola, te comparto esta peña: ${gang.name}`,
+				url: window.location.href
+			});
+		} catch (error) {
+			console.error('Error sharing:', error);
+			webShareAPISupported = false;
+		}
+	};
 </script>
 
 <div class="hero">
 	<div class="hero-content text-center">
-		<div class="max-w-md">
+		<div class="max-w-md flex">
 			<h1 class="text-5xl font-bold">
 				Peña {gang.name}
 			</h1>
+			{#if webShareAPISupported}
+				<button on:click={handleWebShare} class="ml-4"
+					><Icon src={BsShareFill} size="1.2rem" color="#ee3616" /></button
+				>
+			{/if}
 		</div>
 	</div>
 </div>
@@ -60,10 +84,6 @@
 
 <div class="container mx-auto my-2">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-		<div class="p-4 bg-white rounded-lg shadow">
-			<h2 class="text-2xl font-bold">Actividades</h2>
-			<p>TODO</p>
-		</div>
 		<div class="p-4 bg-white rounded-lg shadow">
 			<h2 class="text-2xl font-bold">Miembros</h2>
 			<ul>

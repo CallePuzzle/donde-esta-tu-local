@@ -71,5 +71,9 @@ export const Routes: Routes = {
 	step_to_install: {
 		name: 'Instalar la aplicación',
 		url: '/wellcome/step-to-install'
+	},
+	activities: {
+		name: 'Actividades de Peña',
+		url: '/activities'
 	}
 };

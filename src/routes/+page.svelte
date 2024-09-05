@@ -76,7 +76,7 @@
 </script>
 
 <div class="hero">
-	<div class="hero-content text-center">
+	<div class="hero-content text-center p-0">
 		<div class="max-w-md">
 			<label class="input input-bordered flex items-center">
 				<input type="text" class="grow" placeholder="Filtrar por peña:" on:change={filterGangs} />

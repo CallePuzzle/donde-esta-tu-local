@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { Icon } from 'svelte-icons-pack';
 	import { BiMenu } from 'svelte-icons-pack/bi';
 	import { clickOutside } from '$lib/utils/click-outside';
@@ -9,6 +8,7 @@
 	export let userIsLogged: boolean;
 	export let notificationsCount: number;
 	export let userPicture: string | null;
+	export let userGangId: number | null;
 
 	function closeNav(event) {
 		event.target.open = false;
@@ -23,30 +23,31 @@
 					<summary><Icon src={BiMenu} size="32" /></summary>
 					<ul class="bg-base-100 rounded-t-none p-2">
 						<li><button class="btn"><a href={Routes.home.url}>{Routes.home.name}</a></button></li>
-						<!--					<li>
-							<button class="btn"><a href={Routes.my_gang.url}>{Routes.my_gang.name}</a></button>
-						</li>
--->
+						{#if userGangId !== null}
+							<li>
+								<button class="btn"><a href="/gang/{userGangId}">Mi peña</a></button>
+							</li>
+						{/if}
 						<li>
 							<button class="btn"><a href={Routes.add_gang.url}>{Routes.add_gang.name}</a></button>
 						</li>
-						{#if userIsLogged}
-							<li>
-								<form method="post" use:enhance action={Routes.logout.url}>
-									<button class="btn" type="submit">{Routes.logout.name}</button>
-								</form>
-							</li>
-						{/if}
+						<li>
+							<button class="btn"
+								><a href={Routes.activities.url}>{Routes.activities.name}</a></button
+							>
+						</li>
 					</ul>
 				</details>
 			</li>
 		</ul>
-		<a href={Routes.home.url}><img src={Logo} alt="Icono cabecera" class="max-w-14" /></a>
+		<a href={Routes.home.url} data-sveltekit-reload
+			><img src={Logo} alt="Icono cabecera" class="max-w-14" /></a
+		>
 	</div>
 
 	<div class="flex gap-2">
 		<div class="name">
-			<a href={Routes.home.url} class="btn btn-ghost text-xl flex">
+			<a href={Routes.home.url} class="btn btn-ghost text-xl flex" data-sveltekit-reload>
 				<span>Montemayor</span> <span class="depililla text-sm -mt-3">de Pililla</span>
 			</a>
 		</div>
