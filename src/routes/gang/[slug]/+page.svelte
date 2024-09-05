@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
 	import { coordsMonte } from '$lib/utils/coords-monte';
 	import { Icon } from 'svelte-icons-pack';
@@ -10,6 +11,7 @@
 
 	export let data: PageData;
 	export let form: ActionData;
+	let sending = false;
 
 	export let gang: Gang = data.gang;
 	export let user: User = data.user;
@@ -62,19 +64,36 @@
 {#if data.userIsLogged && data.user.gangId !== gang.id}
 	<div class="container mx-auto my-2">
 		<div class="mx-4 flex">
-			<form class="basis-1/2 flex justify-center" method="POST" action="?/requestNewMember">
+			<form
+				class="basis-1/2 flex justify-center"
+				method="POST"
+				action="?/requestNewMember"
+				use:enhance={() => {
+					sending = true;
+					return ({ update }) => {
+						// Set invalidateAll to false if you don't want to reload page data when submitting
+						update({ invalidateAll: true }).finally(async () => {
+							sending = false;
+						});
+					};
+				}}
+			>
 				<input type="hidden" name="gangId" value={gang.id} />
 				<input type="hidden" name="userId" value={user.id} />
-				<button
-					class="px-4 py-2 btn btn-info"
-					disabled={form?.success || data.userHasAMembershipRequestForThisGang > 0}
-				>
-					{#if form?.success || data.userHasAMembershipRequestForThisGang > 0}
-						Solicitado
-					{:else}
-						Solicitar unirme a esta peña
-					{/if}
-				</button>
+				{#if sending}
+					<span class="loading loading-dots loading-lg"></span>
+				{:else}
+					<button
+						class="px-4 py-2 btn btn-info"
+						disabled={form?.success || data.userHasAMembershipRequestForThisGang > 0}
+					>
+						{#if form?.success || data.userHasAMembershipRequestForThisGang > 0}
+							Solicitado
+						{:else}
+							Solicitar unirme a esta peña
+						{/if}
+					</button>
+				{/if}
 			</form>
 		</div>
 	</div>

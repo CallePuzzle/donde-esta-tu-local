@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { showMyPosition } from '$lib/utils/show-my-position';
