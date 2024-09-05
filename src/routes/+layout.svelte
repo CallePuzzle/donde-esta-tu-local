@@ -43,6 +43,7 @@
 		userIsLogged={data.userIsLogged}
 		notificationsCount={data.notificationsCount}
 		userPicture={data.user?.picture}
+		userGangId={data.user?.gangId}
 	/>
 
 	{#if data.isProtectedRoute && !data.userIsLogged}
