@@ -49,8 +49,8 @@
 	}
 
 	function filterGangs(event: Event) {
-        const input = event.target as HTMLInputElement;
-        const value = input.value.toLowerCase();
+		const input = event.target as HTMLInputElement;
+		const value = input.value.toLowerCase();
 
 		gangsInMap.forEach((marker) => {
 			const gangName = marker.getPopup().getContent().toLowerCase();
@@ -60,14 +60,14 @@
 				marker.setOpacity(0);
 			}
 		});
-    }
+	}
 </script>
 
 <div class="hero">
 	<div class="hero-content text-center">
 		<div class="max-w-md">
 			<label class="input input-bordered flex items-center">
-				<input type="text" class="grow" placeholder="Filtrar por peña:" on:change={filterGangs}/>
+				<input type="text" class="grow" placeholder="Filtrar por peña:" on:change={filterGangs} />
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 16 16"
