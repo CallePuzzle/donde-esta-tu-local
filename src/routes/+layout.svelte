@@ -15,7 +15,7 @@
 
 	onMount(async () => {
 		const status = await Notification.requestPermission();
-		if (status !== 'granted') alert('Por favor, activa las notificaciones para recibir los avisos');
+		//if (status !== 'granted') alert('Por favor, activa las notificaciones para recibir los avisos'); quitamos esto de momento
 
 		if ('serviceWorker' in navigator && data.userIsLogged) {
 			const reg = await navigator.serviceWorker.ready;
