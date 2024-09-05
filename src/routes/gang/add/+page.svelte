@@ -89,7 +89,7 @@
 	</div>
 {/if}
 
-{#if form?.success}
+{#if !form?.success}
 	<dialog id="add_gang" class="modal">
 		<div class="modal-box">
 			<h3 class="text-lg font-bold">Añadir peña</h3>
