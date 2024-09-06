@@ -63,8 +63,8 @@
 	"type": "module",
 	"dependencies": {
 		"@lucia-auth/adapter-sqlite": "^3.0.2",
-		"@prisma/adapter-d1": "^5.18.0",
-		"@prisma/client": "5.18.0",
+		"@prisma/adapter-d1": "^5.19.1",
+		"@prisma/client": "^5.19.1",
 		"arctic": "^1.9.2",
 		"cf-webpush": "^1.1.4",
 		"lucia": "^3.2.0",
