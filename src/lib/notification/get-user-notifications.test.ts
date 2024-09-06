@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeAll, afterAll, expectTypeOf } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { getPrismaClient } from '$lib/tests/clientForTest';
 import { GetUserNotifications, type UserNotifications } from './get-user-notifications';
 
 const prisma = await getPrismaClient();
 
-describe('get user notitification fn', () => {
+describe('get user notification fn', () => {
 	const USER_LOCAL = 'user|local';
 	const GANG1 = 'Gang 1';
 	let userNotifications: UserNotifications;
