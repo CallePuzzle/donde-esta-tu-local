@@ -1,7 +1,7 @@
 import { logger } from '$lib/server/logger';
 import { initializePrisma } from '$lib/server/db';
-import { AddGang } from '$lib/utils/gang/add-gang';
-import { RequestNewMember } from '$lib/utils/gang/request-new-member';
+import { AddGang } from '$lib/gang/add-gang';
+import { RequestNewMember } from '$lib/gang/request-new-member';
 
 import type { Actions, RequestEvent } from './$types';
 

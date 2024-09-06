@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { onMount } from 'svelte';
-	import { SubscribeUser } from '$lib/utils/notification/notification-subscribe-user';
+	import { SubscribeUser } from '$lib/notification/notification-subscribe-user';
 	import { Routes } from '$lib/routes';
 	import toast, { Toaster } from 'svelte-french-toast';
 	import Nav from '$lib/components/layout/Nav.svelte';

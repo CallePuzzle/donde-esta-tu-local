@@ -2,7 +2,7 @@ import type { D1Database } from '@cloudflare/workers-types';
 import { initializePrisma } from '$lib/server/db';
 import { logger } from '$lib/server/logger';
 
-import type { User, Gang, Notification, PrismaClient } from '@prisma/client';
+import type { User, Notification } from '@prisma/client';
 
 interface UserNotifications {
 	user?: User;

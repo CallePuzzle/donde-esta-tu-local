@@ -4,7 +4,7 @@ import {
 	NewNotificationForUsers,
 	type Payload,
 	type NotificationExtraData
-} from '$lib/utils/notification/notifications';
+} from '$lib/notification/notifications';
 
 export async function RequestNewMember(prisma: PrismaClient, gangId: number, userId: string) {
 	const user = await prisma.user.findUnique({
