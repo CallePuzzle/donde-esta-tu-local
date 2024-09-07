@@ -60,7 +60,7 @@
 	<footer class="container mx-auto flex justify-around bottom-0 justify-center">
 		<p class="md:flex-1 mx-4 flex items-center justify-center">
 			<span class="mr-2">Made with</span><Icon src={BiSolidHeart} size="16" color="red" /><span
-				class="ml-2">by KPY</span
+				class="ml-2">by KPY2</span
 			>
 		</p>
 		<a
