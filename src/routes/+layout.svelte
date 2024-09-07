@@ -57,7 +57,7 @@
 		<slot />
 	{/if}
 
-	<footer class="container mx-auto flex justify-around absolute bottom-0 justify-center">
+	<footer class="container mx-auto flex justify-around bottom-0 justify-center">
 		<p class="md:flex-1 mx-4 flex items-center justify-center">
 			<span class="mr-2">Made with</span><Icon src={BiSolidHeart} size="16" color="red" /><span
 				class="ml-2">by KPY</span
@@ -73,10 +73,6 @@
 </div>
 
 <style>
-	footer {
-		left: 50%;
-		transform: translateX(-50%);
-	}
 	.main-div {
 		min-width: 353px;
 	}
