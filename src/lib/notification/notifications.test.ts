@@ -17,7 +17,6 @@ describe('new notifications', () => {
 	const USER_NO_GANG = 'user|no-gang';
 
 	beforeAll(async () => {
-		await prisma.notification.deleteMany();
 		const payload: Payload = {
 			title: 'Test notification',
 			body: 'Test notification body'
@@ -40,19 +39,27 @@ describe('new notifications', () => {
 	});
 
 	afterAll(async () => {
-		await prisma.notification.deleteMany();
+		await prisma.notification.deleteMany({
+			where: { title: 'Test notification' }
+		});
 		await prisma.$disconnect();
 	});
 
 	it('USER_ADMIN has 3 notifications', async () => {
 		const userNotifications = await prisma.notification.findMany({
-			where: { users: { some: { id: USER_ADMIN } } }
+			where: {
+				title: 'Test notification',
+				users: { some: { id: USER_ADMIN } }
+			}
 		});
 		expect(userNotifications.length).toBe(3);
 	});
 	it('USER_NO_GANG has 2 notifications', async () => {
 		const userNotifications = await prisma.notification.findMany({
-			where: { users: { some: { id: USER_NO_GANG } } }
+			where: {
+				title: 'Test notification',
+				users: { some: { id: USER_NO_GANG } }
+			}
 		});
 		expect(userNotifications.length).toBe(2);
 	});
