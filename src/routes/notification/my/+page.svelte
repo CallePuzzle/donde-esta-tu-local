@@ -63,7 +63,9 @@
 		</div>
 	</div>
 	<div class="container mx-auto px-4">
-		<FilterNotifications bind:notifications />
+		{#if data.user.role === 'ADMIN'}
+			<FilterNotifications bind:notifications />
+		{/if}
 		<ul>
 			{#each notifications as notification}
 				<li>
