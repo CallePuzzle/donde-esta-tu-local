@@ -131,6 +131,7 @@
 							type="text"
 							placeholder="Nombre"
 							class="input w-full max-w-xs"
+							required
 							name="name"
 						/></label
 					>
