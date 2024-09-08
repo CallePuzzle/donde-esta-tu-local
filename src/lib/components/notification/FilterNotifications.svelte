@@ -61,11 +61,7 @@
 		><Icon src={OiUnread16} size="2rem" color={filters.unread ? 'green' : 'undefined'} /></button
 	>
 	<button on:click={gangs}
-		><Icon
-			src={AiOutlineHome}
-			size="2rem"
-			color={filters.gangs ? 'green' : 'undefined'}
-		/></button
+		><Icon src={AiOutlineHome} size="2rem" color={filters.gangs ? 'green' : 'undefined'} /></button
 	>
 	<button on:click={members}
 		><Icon src={BsPersonPlus} size="2rem" color={filters.members ? 'green' : 'undefined'} /></button
