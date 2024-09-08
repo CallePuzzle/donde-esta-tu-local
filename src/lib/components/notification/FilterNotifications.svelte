@@ -64,11 +64,11 @@
 		><Icon
 			src={AiOutlineHome}
 			size="2rem"
-			color={filters.members ? 'green' : 'undefined'}
+			color={filters.gangs ? 'green' : 'undefined'}
 		/></button
 	>
 	<button on:click={members}
-		><Icon src={BsPersonPlus} size="2rem" color={filters.gangs ? 'green' : 'undefined'} /></button
+		><Icon src={BsPersonPlus} size="2rem" color={filters.members ? 'green' : 'undefined'} /></button
 	>
 	<button on:click={reset}><Icon src={ImCancelCircle} size="2rem" /></button>
 </div>

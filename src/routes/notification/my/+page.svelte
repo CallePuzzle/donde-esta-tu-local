@@ -14,10 +14,9 @@
 	let L: any;
 	let map: Map;
 	let showSucess: boolean;
-	let notifications: NotificationDetail[];
+	let notifications: NotificationDetail[] = data.notifications;
 
-	$: (modal = modal), (L = L), (map = map), (showSucess = form?.success || false);
-	$: notifications = data.notifications;
+	$: (modal = modal), (L = L), (map = map), (showSucess = form?.success || false), (notifications = notifications);
 
 	function loadSucess(node) {
 		// wait 10 seconds and redirect to home
