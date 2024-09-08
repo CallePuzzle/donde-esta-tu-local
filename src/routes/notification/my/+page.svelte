@@ -4,6 +4,13 @@
 
 	import type { Map } from 'leaflet';
 	import type { PageData, ActionData } from './$types';
+	import type { NotificationDetail } from '$lib/utils/notification/notifications';
+
+	interface Filters {
+		unread: boolean;
+		members: boolean;
+		gangs: boolean;
+	}
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -12,8 +19,12 @@
 	let L: any;
 	let map: Map;
 	let showSucess: boolean;
+	let notifications: NotificationDetail[];
+	let filters: Filters;
 
 	$: (modal = modal), (L = L), (map = map), (showSucess = form?.success || false);
+	$: (notifications = data.notifications),
+		(filters = { unread: false, members: false, gangs: false });
 
 	function loadSucess(node) {
 		// wait 10 seconds and redirect to home
@@ -57,7 +68,7 @@
 	</div>
 	<div class="container mx-auto px-4">
 		<ul>
-			{#each data.notifications as notification}
+			{#each notifications as notification}
 				<li>
 					<ValidateButton {notification} {modal} bind:L bind:map />
 				</li>

@@ -1,14 +1,9 @@
 <script lang="ts">
 	import { currentNotification, markersInMap } from '$lib/stores/validationCurrentNotification';
 
-	import type { Gang, Notification, User } from '@prisma/client';
+	import type { NotificationDetail } from '$lib/utils/notification/notifications';
+	import type { Gang } from '@prisma/client';
 	import type { Map } from 'leaflet';
-
-	interface NotificationDetail extends Notification {
-		relatedGang: Gang;
-		addedBy: User;
-		reviewedBy: User;
-	}
 
 	export let notification: NotificationDetail;
 	export let modal: HTMLElement;
