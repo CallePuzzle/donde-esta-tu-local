@@ -4,8 +4,10 @@
 	import { goto } from '$app/navigation';
 	import { showMyPosition } from '$lib/utils/show-my-position';
 	import { coordsMonte } from '$lib/utils/coords-monte';
+	import { Routes } from '$lib/routes';
 
 	import type { ActionData } from './$types';
+	import type { Gang } from '@prisma/client';
 
 	interface LatLng {
 		lat: number;
@@ -13,8 +15,10 @@
 	}
 
 	export let form: ActionData;
-	let sending = false;
 	export let latlng = {} as LatLng;
+	let sending = false;
+	let confirm = false;
+	let duplicateGangs: Gang[] = [];
 
 	onMount(async () => {
 		if (form?.success) return;
@@ -57,6 +61,35 @@
 			}
 		};
 	}
+	async function handleSubmit({
+		submitter,
+		formData,
+		cancel
+	}: {
+		formData: FormData;
+		submitter: HTMLButtonElement;
+		cancel: () => void;
+	}) {
+		sending = true;
+		if (submitter.innerText === 'Añadir') {
+			const name = formData.get('name');
+			// Call to Route.check_new_gang service to check if the gang already exists
+			const response = await fetch(`${Routes.check_new_gang.url}?name=${name}`);
+			const data = await response.json();
+			if (data.length > 0) {
+				duplicateGangs = data;
+				sending = false;
+				confirm = true;
+				cancel();
+			}
+		}
+		return ({ update }: { update: (options?: { invalidateAll?: boolean }) => Promise<void> }) => {
+			// Set invalidateAll to false if you don't want to reload page data when submitting
+			update({ invalidateAll: true }).finally(async () => {
+				sending = false;
+			});
+		};
+	}
 </script>
 
 {#if !form?.success}
@@ -94,20 +127,7 @@
 			<h3 class="text-lg font-bold">Añadir peña</h3>
 
 			<div class="container pt-6">
-				<form
-					method="POST"
-					action="?/new"
-					class="flex flex-col"
-					use:enhance={() => {
-						sending = true;
-						return ({ update }) => {
-							// Set invalidateAll to false if you don't want to reload page data when submitting
-							update({ invalidateAll: true }).finally(async () => {
-								sending = false;
-							});
-						};
-					}}
-				>
+				<form method="POST" action="?/new" class="flex flex-col" use:enhance={handleSubmit}>
 					<label
 						><input
 							type="hidden"
@@ -144,6 +164,20 @@
 					>
 					{#if sending}
 						<span class="loading loading-dots loading-lg"></span>
+					{:else if confirm}
+						<div class="alert alert-warning m-1 flex flex-col">
+							<p>Parece que ya existe una o varias peñas con un nombre parecido:</p>
+							<ul>
+								{#each duplicateGangs as gang}
+									<li><a href={Routes.gang.generateUrl({ id: gang.id })}>{gang.name}</a></li>
+								{/each}
+							</ul>
+						</div>
+						<p class="alert alert-warning m-1">¿Quieres añadir esta peña de todas formas?</p>
+						<button type="submit" class="btn btn-accent m-3">Confirmar</button>
+						<button type="reset" class="btn btn-error m-3"
+							><a href={Routes.add_gang.url} data-sveltekit-reload>Cancelar</a></button
+						>
 					{:else}
 						<button type="submit" class="btn btn-accent m-6">Añadir</button>
 					{/if}
