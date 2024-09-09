@@ -55,16 +55,18 @@
 	}
 </script>
 
-<div>
-	Filtrar por:
-	<button on:click={unread}
-		><Icon src={OiUnread16} size="2rem" color={filters.unread ? 'green' : 'undefined'} /></button
-	>
-	<button on:click={gangs}
-		><Icon src={AiOutlineHome} size="2rem" color={filters.gangs ? 'green' : 'undefined'} /></button
-	>
-	<button on:click={members}
-		><Icon src={BsPersonPlus} size="2rem" color={filters.members ? 'green' : 'undefined'} /></button
-	>
-	<button on:click={reset}><Icon src={ImCancelCircle} size="2rem" /></button>
+<div class="flex items-center">
+	<span class="m-1">Filtrar por:</span>
+	<button on:click={unread} class="m-1">
+		<Icon src={OiUnread16} size="2rem" color={filters.unread ? 'green' : 'undefined'} />
+	</button>
+	<button on:click={gangs} class="m-1">
+		<Icon src={AiOutlineHome} size="2rem" color={filters.gangs ? 'green' : 'undefined'} />
+	</button>
+	<button on:click={members} class="m-1">
+		<Icon src={BsPersonPlus} size="2rem" color={filters.members ? 'green' : 'undefined'} />
+	</button>
+	<button on:click={reset} class="m-1">
+		<Icon src={ImCancelCircle} size="2rem" />
+	</button>
 </div>
