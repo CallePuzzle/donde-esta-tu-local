@@ -1,9 +1,11 @@
 <script lang="ts">
 	import ValidateButton from '$lib/components/notification/ValidateButton.svelte';
 	import ValidateModal from '$lib/components/notification/ValidateModal.svelte';
+	import FilterNotifications from '$lib/components/notification/FilterNotifications.svelte';
 
 	import type { Map } from 'leaflet';
 	import type { PageData, ActionData } from './$types';
+	import type { NotificationDetail } from '$lib/utils/notification/notifications';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -12,8 +14,13 @@
 	let L: any;
 	let map: Map;
 	let showSucess: boolean;
+	let notifications: NotificationDetail[] = data.notifications;
 
-	$: (modal = modal), (L = L), (map = map), (showSucess = form?.success || false);
+	$: (modal = modal),
+		(L = L),
+		(map = map),
+		(showSucess = form?.success || false),
+		(notifications = notifications);
 
 	function loadSucess(node) {
 		// wait 10 seconds and redirect to home
@@ -56,8 +63,11 @@
 		</div>
 	</div>
 	<div class="container mx-auto px-4">
+		{#if data.user.role === 'ADMIN'}
+			<FilterNotifications bind:notifications />
+		{/if}
 		<ul>
-			{#each data.notifications as notification}
+			{#each notifications as notification}
 				<li>
 					<ValidateButton {notification} {modal} bind:L bind:map />
 				</li>

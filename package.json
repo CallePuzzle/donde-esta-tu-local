@@ -12,7 +12,8 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest"
+		"test:unit": "vitest",
+		"data-test:notification": "tsx prisma/data-test/notification.ts"
 	},
 	"prisma": {
 		"seed": "tsx prisma/seed.ts"

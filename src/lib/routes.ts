@@ -5,7 +5,8 @@ interface ProtectedRoute {
 
 interface Route {
 	name: string;
-	url: string;
+	url?: string;
+	generateUrl?: (params: any) => string;
 }
 
 interface Routes {
@@ -48,9 +49,13 @@ export const Routes: Routes = {
 		name: 'Añadir Peña',
 		url: '/gang/add'
 	},
-	my_gang: {
-		name: 'Mi Peña',
-		url: '/gang/my'
+	check_new_gang: {
+		name: 'Comprobar Peña',
+		url: '/gang/add/check'
+	},
+	gang: {
+		name: 'Peña',
+		generateUrl: (params: { id: string }) => `/gang/${params.id}`
 	},
 	notification_my: {
 		name: 'Mis notificaciones',

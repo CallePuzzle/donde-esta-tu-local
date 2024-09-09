@@ -1,34 +1,26 @@
 <script lang="ts">
 	import { currentNotification, markersInMap } from '$lib/stores/validationCurrentNotification';
 
-	import type { Gang, Notification, User } from '@prisma/client';
+	import type { NotificationDetail } from '$lib/utils/notification/notifications';
+	import type { Gang } from '@prisma/client';
 	import type { Map } from 'leaflet';
-
-	interface NotificationDetail extends Notification {
-		relatedGang: Gang;
-		addedBy: User;
-		reviewedBy: User;
-	}
 
 	export let notification: NotificationDetail;
 	export let modal: HTMLElement;
 	export let L: any;
 	export let map: Map;
 
-	let menssage = '';
+	$: notification = notification;
 
-	if (notification.type === 'gang-added') {
-		menssage = `${notification.addedBy.name} ha añadido una peña nueva:`;
-	}
-	if (notification.type === 'gang-member-request') {
-		menssage = `${notification.addedBy.name} quiere unirse a la peña:`;
-	}
-
-	function showModal(notification: NotificationDetail): null {
+	function showModalGang(notification: NotificationDetail): null {
 		currentNotification.update(() => notification);
-		if (notification.type === 'gang-added') {
-			panToGang(notification);
-		}
+		panToGang(notification);
+		modal.showModal();
+		return null;
+	}
+
+	function showModalMember(notification: NotificationDetail): null {
+		currentNotification.update(() => notification);
 		modal.showModal();
 		return null;
 	}
@@ -49,15 +41,32 @@
 	}
 </script>
 
-<span>{menssage} </span><span class="underline decoration-sky-500 font-bold"
-	>{notification.relatedGang.name}</span
->
-{#if notification.status === 'PENDING'}
-	<button class="btn btn-accent m-6" on:click={showModal(notification)}>Validar</button>
-{:else if notification.status === 'VALIDATED'}
-	<span class="m-3 text-green-500">Validada por {notification.reviewedBy?.name}</span>
-	<button class="btn btn-accent m-6" on:click={showModal(notification)}>Ver detalles</button>
-{:else if notification.status === 'REFUSED'}
-	<span class="m-3 text-red-500">Rechazada por {notification.reviewedBy?.name}</span>
-	<button class="btn btn-accent m-6" on:click={showModal(notification)}>Ver detalles</button>
+{#if notification.type === 'gang-added'}
+	<span>{notification.addedBy.name} ha añadido una peña nueva:</span>
+	<span class="underline decoration-sky-500 font-bold">{notification.relatedGang.name}</span>
+	{#if notification.status === 'PENDING'}
+		<button class="btn btn-accent m-6" on:click={showModalGang(notification)}>Validar</button>
+	{:else if notification.status === 'VALIDATED'}
+		<span class="m-3 text-green-500">Validada por {notification.reviewedBy?.name}</span>
+		<button class="btn btn-accent m-6" on:click={showModalGang(notification)}>Ver detalles</button>
+	{:else if notification.status === 'REFUSED'}
+		<span class="m-3 text-red-500">Rechazada por {notification.reviewedBy?.name}</span>
+		<button class="btn btn-accent m-6" on:click={showModalGang(notification)}>Ver detalles</button>
+	{/if}
+{/if}
+
+{#if notification.type === 'gang-member-request'}
+	<span>{notification.addedBy.name} quiere unirse a la peña:</span>
+	<span class="underline decoration-sky-500 font-bold">{notification.relatedGang.name}</span>
+	{#if notification.status === 'PENDING'}
+		<button class="btn btn-accent m-6" on:click={showModalMember(notification)}>Validar</button>
+	{:else if notification.status === 'VALIDATED'}
+		<span class="m-3 text-green-500">Validada por {notification.reviewedBy?.name}</span>
+		<button class="btn btn-accent m-6" on:click={showModalMember(notification)}>Ver detalles</button
+		>
+	{:else if notification.status === 'REFUSED'}
+		<span class="m-3 text-red-500">Rechazada por {notification.reviewedBy?.name}</span>
+		<button class="btn btn-accent m-6" on:click={showModalMember(notification)}>Ver detalles</button
+		>
+	{/if}
 {/if}
