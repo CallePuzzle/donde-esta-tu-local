@@ -90,6 +90,13 @@
 			});
 		};
 	}
+
+	function handleReset() {
+		confirm = false;
+		duplicateGangs = [];
+		document.getElementById('add_gang')?.close();
+		document.getElementById('add_gang_info')?.showModal();
+	}
 </script>
 
 {#if !form?.success}
@@ -127,7 +134,13 @@
 			<h3 class="text-lg font-bold">Añadir peña</h3>
 
 			<div class="container pt-6">
-				<form method="POST" action="?/new" class="flex flex-col" use:enhance={handleSubmit}>
+				<form
+					method="POST"
+					action="?/new"
+					class="flex flex-col"
+					use:enhance={handleSubmit}
+					on:reset={handleReset}
+				>
 					<label
 						><input
 							type="hidden"
@@ -175,9 +188,7 @@
 						</div>
 						<p class="alert alert-warning m-1">¿Quieres añadir esta peña de todas formas?</p>
 						<button type="submit" class="btn btn-accent m-3">Confirmar</button>
-						<button type="reset" class="btn btn-error m-3"
-							><a href={Routes.add_gang.url} data-sveltekit-reload>Cancelar</a></button
-						>
+						<button type="reset" class="btn btn-error m-3">Cancelar</button>
 					{:else}
 						<button type="submit" class="btn btn-accent m-6">Añadir</button>
 					{/if}
