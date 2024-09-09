@@ -1,7 +1,7 @@
 import { logger } from '$lib/server/logger';
 import { initializePrisma } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
-import { RequestNewMember } from '$lib/utils/gang/request-new-member';
+import { RequestNewMember } from '$lib/gang/request-new-member';
 
 import type { Actions, RequestEvent, PageServerLoad } from './$types';
 

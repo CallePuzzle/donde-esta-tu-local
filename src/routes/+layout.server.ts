@@ -1,11 +1,11 @@
 import { ProtectedRoutes } from '$lib/routes';
 import { JWK, APP_URL } from '$env/static/private'; // TODO https://github.com/sveltejs/kit/issues/8882
 import { getPublicKeyFromJwk } from 'cf-webpush';
-import { getUserNotifications } from '$lib/utils/notification/get-user-notifications';
-import { logger } from '$lib/server/logger';
+import { GetUserNotifications } from '$lib/notification/get-user-notifications';
+import { initializePrisma } from '$lib/server/db';
 
 import type { PageServerLoad, PageServerLoadEvent } from './$types';
-import type { UserNotifications } from '$lib/utils/notification/get-user-notifications';
+import type { UserNotifications } from '$lib/notification/get-user-notifications';
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 	let userNotification: UserNotifications = {
@@ -16,8 +16,8 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 
 	if (event.locals.user) {
 		const db = event.platform!.env.DB;
-		logger.info(db, 'db');
-		userNotification = await getUserNotifications(event.locals.user.id, db);
+		const prisma = initializePrisma(db);
+		userNotification = await GetUserNotifications(prisma, event.locals.user.id);
 	}
 
 	let path = event.route.id;

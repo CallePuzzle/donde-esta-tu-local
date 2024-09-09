@@ -1,23 +1,19 @@
-import type { D1Database } from '@cloudflare/workers-types';
-import { initializePrisma } from '$lib/server/db';
 import { logger } from '$lib/server/logger';
 
-import type { User, Gang, Notification, PrismaClient } from '@prisma/client';
+import type { User, Notification, PrismaClient } from '@prisma/client';
 
 interface UserNotifications {
-	user?: User;
+	user: User | null;
 	notifications: Notification[];
 	notificationsCount: number;
 }
 
-export { type UserNotifications };
+export { type UserNotifications, GetUserNotifications };
 
-export async function getUserNotifications(
-	userId: string,
-	db: D1Database
+async function GetUserNotifications(
+	prisma: PrismaClient,
+	userId: string
 ): Promise<UserNotifications> {
-	const prisma = initializePrisma(db);
-
 	const user = await prisma.user.findUnique({
 		where: {
 			id: userId

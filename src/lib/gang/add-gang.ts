@@ -4,7 +4,7 @@ import {
 	NewNotificationForAdmins,
 	type Payload,
 	type NotificationExtraData
-} from '$lib/utils/notification/notifications';
+} from '$lib/notification/notifications';
 
 export async function AddGang(
 	prisma: PrismaClient,
