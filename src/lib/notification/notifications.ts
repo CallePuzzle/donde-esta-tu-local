@@ -1,8 +1,7 @@
 import { JWK } from '$env/static/private';
 import { buildRequest, type PushSubscription } from 'cf-webpush';
 import { logger } from '$lib/server/logger';
-import type { User, Gang, Notification } from '@prisma/client';
-import type { PrismaClient } from '@prisma/client';
+import type { User, Gang, Notification, PrismaClient } from '@prisma/client';
 
 export interface Payload {
 	title: string;
