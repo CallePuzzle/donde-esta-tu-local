@@ -1,0 +1,68 @@
+import { logger } from '$lib/server/logger';
+import { initializePrisma } from '$lib/server/db';
+import { error } from '@sveltejs/kit';
+
+import type { Actions, RequestEvent, PageServerLoad } from './$types';
+
+export const actions: Actions = {
+	changeCoords: async (event: RequestEvent) => {
+		const formData = await event.request.formData();
+		const lat = formData.get('lat');
+		const lng = formData.get('lng');
+		const gangId = event.params.slug;
+
+		logger.info({ gangId, lat, lng }, 'change coords datas');
+
+		const db = event.platform!.env.DB;
+		const prisma = initializePrisma(db);
+		try {
+			await prisma.gang.update({
+				where: {
+					id: parseInt(gangId)
+				},
+				data: {
+					latitude: parseFloat(lat as string),
+					longitude: parseFloat(lng as string)
+				}
+			});
+			return { success: true, message: 'Coordenadas actualizadas' };
+		} catch (error) {
+			logger.error(error);
+			return { success: false, error: error };
+		}
+	}
+};
+
+export const load: PageServerLoad = async (event) => {
+	const db = event.platform!.env.DB;
+	const prisma = initializePrisma(db);
+	const gangId = event.params.slug;
+	const gang = await prisma.gang.findUnique({
+		where: {
+			status: {
+				not: 'REFUSED'
+			},
+			id: parseInt(gangId)
+		}
+	});
+	logger.debug(gang, 'gang');
+	if (!gang) {
+		return error(404, 'Peña no encontrada');
+	}
+
+	if (event.locals.user) {
+		const user = await prisma.user.findUnique({
+			where: {
+				id: event.locals.user.id
+			}
+		});
+
+		if (user?.role !== 'OWNER') {
+			return error(403, 'No tienes permisos para acceder a esta página');
+		}
+	}
+
+	return {
+		gang: gang
+	};
+};
