@@ -5,6 +5,7 @@
 
 	import type { PageData, ActionData } from './$types';
 	import type { Gang } from '@prisma/client';
+	import { Routes } from '$lib/routes';
 
 	interface LatLng {
 		lat: number;
@@ -50,6 +51,23 @@
 </script>
 
 {#if !form?.success}
+	<div class="hero">
+		<div class="hero-content text-center">
+			<div class="max-w-md flex">
+				<form method="POST" action="?/changeName" class="container">
+					<div class="form-control">
+						<h1 class="text-5xl font-bold">
+							<label>
+								<input type="text" name="name" value={gang.name} />
+							</label>
+						</h1>
+					</div>
+					<button type="submit" class="btn btn-accent">Actualizar</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
 	<div id="map" class="z-0"></div>
 
 	<link
@@ -75,6 +93,7 @@
 			/>
 		</svg>
 		<span>{form?.message}</span>
+		<a href={Routes.gang.generateUrl({ id: gang.id })} class="btn">Volver</a>
 	</div>
 {/if}
 

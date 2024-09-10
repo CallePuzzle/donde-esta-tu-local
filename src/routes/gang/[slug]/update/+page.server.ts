@@ -1,6 +1,7 @@
 import { logger } from '$lib/server/logger';
 import { initializePrisma } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
+import { HasPermission } from '$lib/permissions';
 
 import type { Actions, RequestEvent, PageServerLoad } from './$types';
 
@@ -81,7 +82,7 @@ export const load: PageServerLoad = async (event) => {
 			}
 		});
 
-		if (user?.role !== 'OWNER') {
+		if (!HasPermission(user, 'ADMIN')) {
 			return error(403, 'No tienes permisos para acceder a esta página');
 		}
 	}

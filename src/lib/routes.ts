@@ -57,6 +57,10 @@ export const Routes: Routes = {
 		name: 'Peña',
 		generateUrl: (params: { id: string }) => `/gang/${params.id}`
 	},
+	gang_update: {
+		name: 'Actualizar Peña',
+		generateUrl: (params: { id: string }) => `/gang/${params.id}/update`
+	},
 	notification_my: {
 		name: 'Mis notificaciones',
 		url: '/notification/my'
