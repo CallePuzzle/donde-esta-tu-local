@@ -30,6 +30,30 @@ export const actions: Actions = {
 			logger.error(error);
 			return { success: false, error: error };
 		}
+	},
+	changeName: async (event: RequestEvent) => {
+		const formData = await event.request.formData();
+		const name = formData.get('name');
+		const gangId = event.params.slug;
+
+		logger.info({ gangId, name }, 'change name datas');
+
+		const db = event.platform!.env.DB;
+		const prisma = initializePrisma(db);
+		try {
+			await prisma.gang.update({
+				where: {
+					id: parseInt(gangId)
+				},
+				data: {
+					name: name as string
+				}
+			});
+			return { success: true, message: 'Nombre actualizado' };
+		} catch (error) {
+			logger.error(error);
+			return { success: false, error: error };
+		}
 	}
 };
 
