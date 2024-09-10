@@ -52,19 +52,16 @@
 
 {#if !form?.success}
 	<div class="hero">
-		<div class="hero-content text-center">
-			<div class="max-w-md flex">
-				<form method="POST" action="?/changeName" class="container">
-					<div class="form-control">
-						<h1 class="text-5xl font-bold">
-							<label>
-								<input type="text" name="name" value={gang.name} />
-							</label>
-						</h1>
-					</div>
-					<button type="submit" class="btn btn-accent">Actualizar</button>
-				</form>
-			</div>
+		<div class="hero-content">
+			<form method="POST" action="?/changeName" class="flex flex-col">
+				<h1 class="text-5xl font-bold">
+					<label>
+						<input type="text" name="name" value={gang.name} class="w-full" />
+					</label>
+				</h1>
+
+				<button type="submit" class="btn btn-accent max-w-32">Actualizar</button>
+			</form>
 		</div>
 	</div>
 
