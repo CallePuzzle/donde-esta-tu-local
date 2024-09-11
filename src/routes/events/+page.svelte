@@ -16,11 +16,13 @@
 	}) {
 		sending = true;
 		if (submitter.innerText === 'Mandar') {
-			const name = formData.get('name');
-			// Call to Route.check_new_gang service to check if the gang already exists
-			const response = await fetch(`${Routes.check_new_gang.url}?name=${name}`);
-			const data = await response.json();
-			if (data.length > 0) {
+			const message = formData.get('message');
+			const response = await fetch(Routes.events_check.url as string);
+			console.log(response);
+			const ret = await response.json();
+			console.log(ret);
+			cancel();
+			if (ret.length > 0) {
 				sending = false;
 				confirm = true;
 				cancel();

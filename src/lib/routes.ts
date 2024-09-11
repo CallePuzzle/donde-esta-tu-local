@@ -91,6 +91,6 @@ export const Routes: Routes = {
 	},
 	events_check: {
 		name: 'Probar eventos',
-		url: '/events_check'
+		url: '/events/check'
 	}
 };
