@@ -5,6 +5,8 @@
 	import { coordsMonte } from '$lib/utils/coords-monte';
 	import { Icon } from 'svelte-icons-pack';
 	import { BsShareFill } from 'svelte-icons-pack/bs';
+	import { HasPermission } from '$lib/permissions';
+	import { Routes } from '$lib/routes';
 
 	import type { PageData, ActionData } from './$types';
 	import type { Gang, User } from '@prisma/client';
@@ -58,6 +60,11 @@
 				>
 			{/if}
 		</div>
+		{#if HasPermission(data.user, 'ADMIN')}
+			<a href={Routes.gang_update.generateUrl({ id: gang.id })} class="ml-4 btn btn-info"
+				>{Routes.gang_update.name}</a
+			>
+		{/if}
 	</div>
 </div>
 
