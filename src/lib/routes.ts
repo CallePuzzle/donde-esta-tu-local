@@ -84,5 +84,13 @@ export const Routes: Routes = {
 	activities: {
 		name: 'Actividades de Peña',
 		url: '/activities'
+	},
+	events: {
+		name: 'Mensajes de eventos',
+		url: '/events'
+	},
+	events_check: {
+		name: 'Probar eventos',
+		url: '/events_check'
 	}
 };

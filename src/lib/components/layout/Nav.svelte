@@ -38,6 +38,11 @@
 						</li>
 						<li>
 							<button class="btn">
+								<a href={Routes.events.url}>{Routes.events.name}</a>
+							</button>
+						</li>
+						<li>
+							<button class="btn">
 								<a href="mailto:app@montemayordepililla.cc">Buzón de sugerencias</a>
 							</button>
 						</li>
