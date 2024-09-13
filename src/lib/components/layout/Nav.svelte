@@ -41,7 +41,7 @@
 								<a href="mailto:app@montemayordepililla.cc">Buzón de sugerencias</a>
 							</button>
 						</li>
-						<li>
+						<!--<li>
 							<button class="btn">
 								<a
 									href="https://github.com/CallePuzzle/donde-esta-tu-local/milestones"
@@ -49,7 +49,7 @@
 									rel="noopener noreferrer">Próximas mejoras</a
 								>
 							</button>
-						</li>
+						</li>-->
 					</ul>
 				</details>
 			</li>
