@@ -8,6 +8,7 @@
 	import { Icon } from 'svelte-icons-pack';
 	import { BiSolidHeart } from 'svelte-icons-pack/bi';
 	import { BiLogoGithub } from 'svelte-icons-pack/bi';
+	import { TrOutlineMailHeart } from 'svelte-icons-pack/tr';
 
 	import type { PageData } from './$types';
 
@@ -63,12 +64,14 @@
 				class="ml-2">by KPY</span
 			>
 		</p>
-		<a
-			class="md:flex-1 mx-4 flex items-center justify-center"
-			href="https://github.com/CallePuzzle/donde-esta-tu-local"
-			target="_blank"
-			rel="noopener noreferrer"><Icon src={BiLogoGithub} size="32" /></a
-		>
+		<p class="md:flex-1 mx-4 flex items-center justify-center">
+			<a
+				href="https://github.com/CallePuzzle/donde-esta-tu-local"
+				target="_blank"
+				rel="noopener noreferrer"><Icon src={BiLogoGithub} size="32" /></a
+			>
+			<a href="mailto:app@montemayordepililla.cc"><Icon src={TrOutlineMailHeart} size="32" /></a>
+		</p>
 	</footer>
 </div>
 

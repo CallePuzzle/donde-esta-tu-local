@@ -32,10 +32,24 @@
 							<button class="btn"><a href={Routes.add_gang.url}>{Routes.add_gang.name}</a></button>
 						</li>
 						<li>
-							<button class="btn"
-								><a href={Routes.activities.url}>{Routes.activities.name}</a></button
-							>
+							<button class="btn">
+								<a href={Routes.activities.url}>{Routes.activities.name}</a>
+							</button>
 						</li>
+						<li>
+							<button class="btn">
+								<a href="mailto:app@montemayordepililla.cc">Buzón de sugerencias</a>
+							</button>
+						</li>
+						<!--<li>
+							<button class="btn">
+								<a
+									href="https://github.com/CallePuzzle/donde-esta-tu-local/milestones"
+									target="_blank"
+									rel="noopener noreferrer">Próximas mejoras</a
+								>
+							</button>
+						</li>-->
 					</ul>
 				</details>
 			</li>
