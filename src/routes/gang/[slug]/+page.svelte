@@ -68,13 +68,46 @@
 	</div>
 </div>
 
-{#if data.userIsLogged && data.user.gangId !== gang.id}
+{#if data.userIsLogged}
 	<div class="container mx-auto my-2">
 		<div class="mx-4 flex">
+			{#if data.user.gangId !== gang.id}
+				<form
+					class="basis-1/2 flex justify-center"
+					method="POST"
+					action="?/requestNewMember"
+					use:enhance={() => {
+						sending = true;
+						return ({ update }) => {
+							// Set invalidateAll to false if you don't want to reload page data when submitting
+							update({ invalidateAll: true }).finally(async () => {
+								sending = false;
+							});
+						};
+					}}
+				>
+					<input type="hidden" name="gangId" value={gang.id} />
+					<input type="hidden" name="userId" value={user.id} />
+					{#if sending}
+						<span class="loading loading-dots loading-lg"></span>
+					{:else}
+						<button
+							class="px-4 py-2 btn btn-info"
+							disabled={form?.success || data.userHasAMembershipRequestForThisGang > 0}
+						>
+							{#if form?.success || data.userHasAMembershipRequestForThisGang > 0}
+								Solicitado
+							{:else}
+								Solicitar unirme a esta peña
+							{/if}
+						</button>
+					{/if}
+				</form>
+			{/if}
 			<form
 				class="basis-1/2 flex justify-center"
 				method="POST"
-				action="?/requestNewMember"
+				action="?/visitGang"
 				use:enhance={() => {
 					sending = true;
 					return ({ update }) => {
@@ -91,13 +124,13 @@
 					<span class="loading loading-dots loading-lg"></span>
 				{:else}
 					<button
-						class="px-4 py-2 btn btn-info"
+						class="px-4 py-2 btn btn-accent"
 						disabled={form?.success || data.userHasAMembershipRequestForThisGang > 0}
 					>
 						{#if form?.success || data.userHasAMembershipRequestForThisGang > 0}
-							Solicitado
+							Visitado
 						{:else}
-							Solicitar unirme a esta peña
+							Marcar como visitado
 						{/if}
 					</button>
 				{/if}
