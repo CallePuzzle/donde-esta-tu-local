@@ -93,9 +93,10 @@
 					{:else}
 						<button
 							class="px-4 py-2 btn btn-info"
-							disabled={form?.success || data.userHasAMembershipRequestForThisGang > 0}
+							disabled={(form?.success && form?.type == 'requestNewMember') ||
+								data.userHasAMembershipRequestForThisGang > 0}
 						>
-							{#if form?.success || data.userHasAMembershipRequestForThisGang > 0}
+							{#if (form?.success && form?.type == 'requestNewMember') || data.userHasAMembershipRequestForThisGang > 0}
 								Solicitado
 							{:else}
 								Solicitar unirme a esta peña
@@ -125,12 +126,12 @@
 				{:else}
 					<button
 						class="px-4 py-2 btn btn-accent"
-						disabled={form?.success || data.userHasAMembershipRequestForThisGang > 0}
+						disabled={(form?.success && form?.type == 'visitGang') || data.userHasVisitedThisGang}
 					>
-						{#if form?.success || data.userHasAMembershipRequestForThisGang > 0}
-							Visitado
+						{#if (form?.success && form?.type == 'visitGang') || data.userHasVisitedThisGang}
+							Visitada
 						{:else}
-							Marcar como visitado
+							Marcar como visitada
 						{/if}
 					</button>
 				{/if}

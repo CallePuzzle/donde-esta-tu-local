@@ -22,6 +22,35 @@ export const actions: Actions = {
 			logger.error(error);
 			return { success: false, error: error };
 		}
+	},
+	visitGang: async (event: RequestEvent) => {
+		const formData = await event.request.formData();
+		const gangId = formData.get('gangId');
+		const userId = formData.get('userId');
+
+		logger.info({ gangId, userId }, 'visit gang datas');
+
+		const db = event.platform!.env.DB;
+		const prisma = initializePrisma(db);
+
+		try {
+			await prisma.gang.update({
+				where: {
+					id: parseInt(gangId as string)
+				},
+				data: {
+					visitedBy: {
+						connect: {
+							id: userId as string
+						}
+					}
+				}
+			});
+			return { success: true, type: 'visitGang' };
+		} catch (error) {
+			logger.error(error);
+			return { success: false, error: error };
+		}
 	}
 };
 
@@ -43,7 +72,8 @@ export const load: PageServerLoad = async (event) => {
 					name: true,
 					picture: true
 				}
-			}
+			},
+			visitedBy: true
 		}
 	});
 	logger.debug(gang, 'gang');
@@ -52,6 +82,7 @@ export const load: PageServerLoad = async (event) => {
 	}
 
 	let userHasAMembershipRequestForThisGang = 0;
+	let userHasVisitedThisGang = false;
 	if (event.locals.user) {
 		userHasAMembershipRequestForThisGang = await prisma.notification.count({
 			where: {
@@ -60,11 +91,15 @@ export const load: PageServerLoad = async (event) => {
 				relatedGangId: parseInt(gangId)
 			}
 		});
+		if (gang.visitedBy.find((user) => user.id === event.locals.user!.id)) {
+			userHasVisitedThisGang = true;
+		}
 	}
 
 	return {
 		gang: gang,
 		members: gang.members,
-		userHasAMembershipRequestForThisGang: userHasAMembershipRequestForThisGang
+		userHasAMembershipRequestForThisGang: userHasAMembershipRequestForThisGang,
+		userHasVisitedThisGang: userHasVisitedThisGang
 	};
 };
