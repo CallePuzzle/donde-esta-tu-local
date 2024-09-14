@@ -14,12 +14,13 @@ model User {
   picture                String?
   sessions               Session[]
   gangId                 Int?
-  gang                   Gang?          @relation(fields: [gangId], references: [id])
+  gang                   Gang?          @relation("GangId", fields: [gangId], references: [id])
   role                   String         @default("USER")
   subscription           String?
   notificationAddedBy    Notification[] @relation("AddedBy")
   notificationReviewedBy Notification[] @relation("ReviewedBy")
   notifications          Notification[]
+  gangsVisited           Gang[]         @relation("GangsVisited")
 }
 
 model Session {
@@ -34,9 +35,10 @@ model Gang {
   name          String
   latitude      Float
   longitude     Float
-  members       User[]
+  members       User[]         @relation("GangId")
   status        String         @default("PENDING")
   notifications Notification[]
+  visitedBy     User[]         @relation("GangsVisited")
 }
 
 model Notification {
