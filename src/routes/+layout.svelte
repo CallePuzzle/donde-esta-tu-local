@@ -1,12 +1,15 @@
 <script lang="ts">
 	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
+	import Header from '$lib/components/Header.svelte';
+	import { routes } from '$lib/routes';
+	import { session, authClient } from '$lib/auth-client';
 
-	let { children } = $props();
+	import type { PageData } from './$types';
+	import type { Snippet } from 'svelte';
+
+	let { children, data }: { children: Snippet; data: PageData } = $props();
 </script>
 
-<svelte:head>
-	<link rel="icon" href={favicon} />
-</svelte:head>
-
-{@render children?.()}
+<Header title="NavNar Title" {routes} {session} {authClient}>
+	{@render children()}
+</Header>

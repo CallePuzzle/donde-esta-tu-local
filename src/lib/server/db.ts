@@ -1,9 +1,6 @@
-import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import { withAccelerate } from '@prisma/extension-accelerate';
 
-import { DATABASE_URL } from '$env/static/private';
-
-const adapter = new PrismaPg({ DATABASE_URL });
-const db = new PrismaClient({ adapter });
+const db = new PrismaClient().$extends(withAccelerate());
 
 export default db;
