@@ -9,7 +9,9 @@ declare global {
 		}
 		// interface PageData {}
 		// interface PageState {}
-		// interface Platform {}
+		interface Platform {
+			caches: CacheStorage & { default: Cache };
+		}
 	}
 }
 
