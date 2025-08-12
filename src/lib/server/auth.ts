@@ -1,4 +1,5 @@
 import db from './db';
+import { logger } from '$lib/logger';
 // import sender from './sender';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { magicLink, admin } from 'better-auth/plugins';
@@ -22,12 +23,13 @@ function getBetterAuth(additionalOptions: BetterAuthOptions): ReturnType<typeof 
 			sveltekitCookies(getRequestEvent),
 			magicLink({
 				sendMagicLink: async ({ email, token, url }, request) => {
-					console.log(request);
+					logger.debug('Sending magic link to: ' + email);
+					logger.debug(request);
 					try {
 						// await sender(email, 'sign in', 'token: ' + token + ' -- url: ' + url);
-						console.log(email, 'sign in', 'token: ' + token + ' -- url: ' + url);
+						logger.info('token: ' + token + ' -- url: ' + url);
 					} catch (error) {
-						console.error(error);
+						logger.error(error);
 						throw error;
 					}
 				}

@@ -1,7 +1,8 @@
-import type { PageServerLoad, PageServerLoadEvent } from "./$types";
+import { logger } from '$lib/logger';
+import type { PageServerLoad, PageServerLoadEvent } from './$types';
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
-  console.log(event.locals);
+	logger.debug(event.locals);
 
-  return {};
+	return {};
 };
