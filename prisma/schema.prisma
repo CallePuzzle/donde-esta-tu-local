@@ -23,6 +23,9 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  gangId Int?
+  gang   Gang? @relation(fields: [gangId], references: [id])
+
   @@unique([email])
   @@map("user")
 }
@@ -71,4 +74,13 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Gang {
+  id        Int    @id @default(autoincrement())
+  name      String
+  latitude  Float
+  longitude Float
+  members   User[]
+  status    String @default("PENDING")
 }

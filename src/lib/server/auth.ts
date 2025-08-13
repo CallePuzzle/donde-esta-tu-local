@@ -1,4 +1,4 @@
-import db from './db';
+import prisma from '$lib/server/db';
 import { logger } from '$lib/logger';
 // import sender from './sender';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
@@ -9,7 +9,7 @@ import { betterAuth } from 'better-auth';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 
-const database = prismaAdapter(db, {
+const database = prismaAdapter(prisma, {
 	provider: 'postgresql'
 });
 
