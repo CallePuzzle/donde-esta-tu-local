@@ -10,7 +10,6 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 			}
 		}
 	});
-	logger.debug(gangs, 'gangs');
 
 	return {
 		gangs: gangs
