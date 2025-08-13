@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import Header from '$lib/components/Header.svelte';
+	import Footer from '$lib/components/Footer.svelte';
 	import { routes } from '$lib/routes';
 	import { session, authClient } from '$lib/auth-client';
 
@@ -10,6 +11,9 @@
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 </script>
 
-<Header title="NavNar Title" {routes} {session} {authClient}>
-	{@render children()}
-</Header>
+<div class="main-div h-screen">
+	<Header title="Montemayor de Pililla" {routes} {session} {authClient}>
+		{@render children()}
+	</Header>
+	<Footer />
+</div>

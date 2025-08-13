@@ -11,5 +11,8 @@
 	"routes_profile": "Perfil",
 	"routes_login": "Iniciar sesión",
 	"routes_logout": "Cerrar sesión",
-	"routes_notifications": "Notificaciones"
+	"routes_notifications": "Notificaciones",
+	"routes_user": "Usuario",
+	"routes_gang_add": "Añadir peña",
+	"routes_activities": "Actividades de las peñas"
 }

@@ -37,7 +37,9 @@
 					<Menu />
 				</label>
 			</div>
-			<div class="mx-2 navbar-start px-2">{title}</div>
+			<div class="mx-2 navbar-start px-2">
+				<a href={routes.home.url} data-sveltekit-reload>{title}</a>
+			</div>
 			<nav class="navbar-center hidden lg:block">
 				<NavBarList type="horizontal" {routes} />
 			</nav>
