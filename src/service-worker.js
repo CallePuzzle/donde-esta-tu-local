@@ -1,5 +1,3 @@
-import { Routes } from '$lib/routes';
-
 /// <reference types="@sveltejs/kit" />
 
 import { build, files, version } from '$service-worker';
@@ -63,9 +61,4 @@ self.addEventListener('push', (event) => {
 			body: data.body
 		})
 	);
-});
-
-self.addEventListener('notificationclick', (event) => {
-	event.notification.close();
-	event.waitUntil(clients.openWindow(Routes.notification_my.url));
 });
