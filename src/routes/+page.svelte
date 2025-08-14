@@ -14,13 +14,13 @@
 	}
 
 	let { data }: { data: PageData } = $props();
-	let L: any;
+	let L: typeof import('leaflet');
 	let map: Map;
 	let showImHere = $state(false);
 	let gangsInMap: GangInMap[] = [];
 
 	onMount(async () => {
-		L = (await import('leaflet')).default;
+		L = await import('leaflet');
 		map = L.map('map').setView(coordsMonte, 17);
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution:
@@ -53,7 +53,12 @@
 
 		gangsInMap.forEach((gangInMap) => {
 			const { marker, gang } = gangInMap;
-			const gangName = marker.getPopup().getContent().toLowerCase();
+			const popup = marker.getPopup();
+			if (!popup) return;
+
+			const content = popup.getContent();
+			const gangName = typeof content === 'string' ? content.toLowerCase() : '';
+
 			if (gangName.includes(value)) {
 				if (gang.status == 'VALIDATED') {
 					marker.setOpacity(1);

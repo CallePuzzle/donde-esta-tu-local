@@ -16,7 +16,7 @@
 	let members: Member[] = data.members;
 
 	onMount(async () => {
-		const L = (await import('leaflet')).default;
+		const L = await import('leaflet');
 		const map = L.map('map').setView(coordsMonte, 17);
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution:
