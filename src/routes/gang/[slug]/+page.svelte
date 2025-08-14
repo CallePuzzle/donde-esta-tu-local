@@ -11,7 +11,9 @@
 
 	let gang: Gang = data.gang;
 
-	let members: User[] = data.members;
+	type Member = Pick<User, 'id' | 'name' | 'image'>;
+
+	let members: Member[] = data.members;
 
 	onMount(async () => {
 		const L = (await import('leaflet')).default;
