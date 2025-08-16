@@ -7,6 +7,8 @@
 	"form_login_magic_link_sent": "¡Enlace mágico enviado a tu email!",
 	"schema_login_email_error": "Por favor, ingrese una dirección de correo electrónico válida.",
 	"schema_login_email_describe": "Por favor, ingrese una dirección de correo electrónico válida.",
+	"schema_add_gang_name_error": "Por favor, ingrese un nombre válido para la peña.",
+	"schema_add_gang_name_describe": "Por favor, ingrese un nombre válido para la peña.",
 	"routes_home": "Inicio",
 	"routes_profile": "Perfil",
 	"routes_login": "Iniciar sesión",
