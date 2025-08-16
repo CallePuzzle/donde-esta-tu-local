@@ -1,5 +1,5 @@
-import { ZodSchema } from 'zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
+import type { ZodObject } from 'zod/v4';
+import { z } from 'zod/v4';
 
 type Field = {
 	name: string;
@@ -11,12 +11,12 @@ type Field = {
 
 export type Fields = Array<Field>;
 
-export const zodToFieldsJsonSchema = (schema: ZodSchema<any>): Fields => {
-	const jsonSchema = zodToJsonSchema(schema) as {
+export const zodToFieldsJsonSchema = (schema: ZodObject): Fields => {
+	const jsonSchema = z.toJSONSchema(schema) as {
 		properties: Record<string, unknown>;
 		required: string[];
 	};
-
+	console.log(jsonSchema);
 	const fields: Fields = [];
 	for (const key in jsonSchema.properties) {
 		const name = key;
@@ -26,9 +26,9 @@ export const zodToFieldsJsonSchema = (schema: ZodSchema<any>): Fields => {
 		fields.push({
 			name: name,
 			required: required,
-			placeholder: name,
+			placeholder: properties.placeholder as string,
 			format: properties.format as string,
-			description: (properties.description as string) ?? undefined
+			description: properties.description as string
 		});
 	}
 

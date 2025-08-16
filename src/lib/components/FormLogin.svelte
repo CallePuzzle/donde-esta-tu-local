@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms/client';
-	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { loginSchema } from '../schemas/login.js';
 	import SuperDebug from 'sveltekit-superforms';
 	import { m } from '../paraglide/messages.js';
 	import Inbox from '@lucide/svelte/icons/inbox';
 	import { defaults } from 'sveltekit-superforms/client';
-	import { zod } from 'sveltekit-superforms/adapters';
+	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { signIn } from '$lib/auth-client';
 
 	import FormFields from './FormFields.svelte';
@@ -23,11 +23,11 @@
 
 	const uid = $props.id();
 
-	const formValidated = defaults({ email: '' }, zod(loginSchema));
+	const formValidated = defaults({ email: '' }, zod4(loginSchema));
 
 	const form = superForm(formValidated, {
 		id: uid,
-		validators: zodClient(loginSchema),
+		validators: zod4Client(loginSchema),
 		dataType: 'json',
 		async onSubmit({ cancel }) {
 			cancel();

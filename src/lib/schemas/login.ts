@@ -1,8 +1,11 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { m } from '../paraglide/messages.js';
 
 export const loginSchema = z.object({
-	email: z.string().email(m.schema_login_email_error()).describe(m.schema_login_email_describe())
+	email: z.email(m.schema_login_email_error()).meta({
+		placeholder: 'pepe@archive.org',
+		description: m.schema_login_email_describe()
+	})
 });
 
-export type LoginSchema = typeof loginSchema;
+export type LoginSchema = z.infer<typeof loginSchema>;
