@@ -5,16 +5,17 @@
 
 	export type Props = {
 		type?: 'button' | 'X' | 'outside';
+		showButton?: boolean;
 		title: string;
 		children: Snippet;
 	};
 
-	let { type = 'outside', title, children }: Props = $props();
+	let { type = 'outside', showButton = true, title, children }: Props = $props();
 	let modal: HTMLDialogElement;
 
 	const uid = $props.id();
 
-	function showModal() {
+	export function showModal() {
 		modal.showModal();
 	}
 
@@ -27,12 +28,14 @@
 	}
 </script>
 
-<button class="btn" onclick={showModal}>{title}</button>
+{#if showButton}
+	<button class="btn" onclick={showModal}>{title}</button>
+{/if}
 <dialog id="modal-{uid}" class="modal">
 	<div class="modal-box">
 		{#if type == 'X'}
 			<form method="dialog">
-				<button class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2">✕</button>
+				<button class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm">✕</button>
 			</form>
 		{/if}
 

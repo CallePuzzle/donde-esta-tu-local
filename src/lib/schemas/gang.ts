@@ -6,11 +6,11 @@ export const addGangSchema = z.object({
 		placeholder: 'KPY',
 		description: m.schema_add_gang_name_describe()
 	}),
-	lat: z.string().meta({
+	lat: z.number().meta({
 		placeholder: '',
 		description: ''
 	}),
-	lng: z.string().meta({
+	lng: z.number().meta({
 		placeholder: '',
 		description: ''
 	})

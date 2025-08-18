@@ -16,7 +16,7 @@ export const zodToFieldsJsonSchema = (schema: ZodObject): Fields => {
 		properties: Record<string, unknown>;
 		required: string[];
 	};
-	console.log(jsonSchema);
+
 	const fields: Fields = [];
 	for (const key in jsonSchema.properties) {
 		const name = key;

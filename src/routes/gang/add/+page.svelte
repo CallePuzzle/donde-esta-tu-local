@@ -5,8 +5,12 @@
 	import { showMyPosition } from '$lib/utils/show-my-position';
 	import { coordsMonte } from '$lib/utils/coords-monte';
 	import { routes } from '$lib/routes';
+	import Modal from '$lib/components/Modal.svelte';
+	import ModalType from '$lib/components/Modal.svelte';
+	import FormAddGang from '$lib/components/gangs/FormAddGang.svelte';
 
 	import type { Gang } from '@prisma/client';
+	import type { LatLng } from '$lib/components/gangs/types.ts';
 
 	import type { PageData } from './$types';
 
@@ -16,16 +20,13 @@
 		data: PageData;
 	} = $props();
 
-	interface LatLng {
-		lat: number;
-		lng: number;
-	}
-
 	let latlng = $state({}) as LatLng;
 
+	let modalInfo = $state<ModalType | null>(null);
+	let modalAdd = $state<ModalType | null>(null);
+
 	onMount(async () => {
-		const infoModal = document.getElementById('add_gang_info') as HTMLDialogElement;
-		infoModal.showModal();
+		modalInfo!.showModal();
 
 		const L = (await import('leaflet')).default;
 		const map = L.map('map').setView(coordsMonte, 17);
@@ -47,10 +48,15 @@
 			L.popup()
 				.setLatLng(e.latlng)
 				.setContent(
-					'<button class="btn btn-ghost" onclick="add_gang.showModal()">Añadir peña en esta localización</button>'
+					'<button class="btn btn-accent" onclick="showModalAdd()">Añadir peña en esta localización</button>'
 				)
 				.openOn(map);
 		}
+
+		// Hacemos que la función sea global para que funcione el onclick generado del setContent
+		window.showModalAdd = function () {
+			modalAdd!.showModal();
+		};
 	});
 </script>
 
@@ -63,14 +69,17 @@
 	crossorigin=""
 />
 
-<dialog id="add_gang_info" class="modal">
-	<div class="modal-box flex max-w-md justify-center">
-		<p class="py-4">Haz click en la ubicación de la peña para añadirla</p>
+<Modal title="add_gang_info" showButton={false} bind:this={modalInfo}>
+	<p class="py-4">Haz click en la ubicación de la peña para añadirla</p>
+</Modal>
+
+<Modal title="add_gang" showButton={false} bind:this={modalAdd}>
+	<h3 class="text-lg font-bold">Añadir peña</h3>
+
+	<div class="container pt-6">
+		<FormAddGang {latlng} />
 	</div>
-	<form method="dialog" class="modal-backdrop">
-		<button>close</button>
-	</form>
-</dialog>
+</Modal>
 
 <style>
 	#map {

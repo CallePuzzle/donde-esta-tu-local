@@ -5,6 +5,7 @@
 	"form_email": "Email",
 	"form_login_sign_in": "Iniciar sessión",
 	"form_login_magic_link_sent": "¡Enlace mágico enviado a tu email!",
+	"form_gang_add_submit": "Añadir peña",
 	"schema_login_email_error": "Por favor, ingrese una dirección de correo electrónico válida.",
 	"schema_login_email_describe": "Por favor, ingrese una dirección de correo electrónico válida.",
 	"schema_add_gang_name_error": "Por favor, ingrese un nombre válido para la peña.",
