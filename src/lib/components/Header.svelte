@@ -9,7 +9,7 @@
 	import { type Props as NavBarEndProps } from './NavBarEnd.svelte';
 
 	export type Props = {
-		title: string;
+		title: Snippet;
 		routes: Routes;
 		children: Snippet;
 	} & NavBarEndProps;
@@ -38,7 +38,7 @@
 				</label>
 			</div>
 			<div class="mx-2 navbar-start px-2">
-				<a href={routes.home.url} data-sveltekit-reload>{title}</a>
+				<a href={routes.home.url as string} data-sveltekit-reload>{@render title()}</a>
 			</div>
 			<nav class="navbar-center hidden lg:block">
 				<NavBarList type="horizontal" {routes} />
