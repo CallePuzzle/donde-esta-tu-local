@@ -3,6 +3,7 @@ import prisma from '$lib/server/db';
 import { superValidate, message, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { addGangSchema } from '$lib/schemas/gang';
+import { m } from '$lib/paraglide/messages.js';
 
 import type { PageServerLoad } from './$types';
 
@@ -29,7 +30,7 @@ export const actions = {
 			});
 
 			if (existingGang) {
-				return message(form, 'Peña repetida', { status: 400 });
+				return message(form, m.form_gang_name_duplicated(), { status: 400 });
 			}
 
 			// Crear nueva entrada en gang
@@ -42,10 +43,10 @@ export const actions = {
 			});
 
 			logger.info({ gangId: newGang.id, name: newGang.name }, 'Nueva peña creada');
-			return message(form, 'Peña creada exitosamente!');
+			return message(form, m.form_gang_add_successfully());
 		} catch (error) {
 			logger.error(error, 'Error al crear la peña');
-			return message(form, 'Error al crear la peña', { status: 500 });
+			return message(form, m.form_gang_add_error(), { status: 500 });
 		}
 	}
 };

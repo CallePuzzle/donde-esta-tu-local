@@ -1,15 +1,12 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
 	import { showMyPosition } from '$lib/utils/show-my-position';
 	import { coordsMonte } from '$lib/utils/coords-monte';
-	import { routes } from '$lib/routes';
 	import Modal from '$lib/components/Modal.svelte';
 	import ModalType from '$lib/components/Modal.svelte';
 	import FormAddGang from '$lib/components/gangs/FormAddGang.svelte';
 
-	import type { Gang } from '@prisma/client';
 	import type { LatLng } from '$lib/components/gangs/types.ts';
 
 	import type { PageData } from './$types';
@@ -20,7 +17,7 @@
 		data: PageData;
 	} = $props();
 
-	let latlng = $state({}) as LatLng;
+	let latlng = $state<LatLng>({ lat: 0, lng: 0 });
 
 	let modalInfo = $state<ModalType | null>(null);
 	let modalAdd = $state<ModalType | null>(null);
@@ -44,19 +41,29 @@
 				lat: e.latlng.lat,
 				lng: e.latlng.lng
 			};
-			console.log(latlng);
-			L.popup()
-				.setLatLng(e.latlng)
-				.setContent(
-					'<button class="btn btn-accent" onclick="showModalAdd()">Añadir peña en esta localización</button>'
-				)
-				.openOn(map);
-		}
 
-		// Hacemos que la función sea global para que funcione el onclick generado del setContent
-		window.showModalAdd = function () {
-			modalAdd!.showModal();
-		};
+			// Crear un marcador temporal en el punto clickeado
+			const marker = L.marker(e.latlng).addTo(map);
+
+			// Crear popup con botón
+			const popupContent = document.createElement('div');
+			const button = document.createElement('button');
+			button.className = 'btn btn-accent';
+			button.textContent = 'Añadir peña en esta localización';
+			button.onclick = () => {
+				modalAdd!.showModal();
+				map.closePopup();
+			};
+			popupContent.appendChild(button);
+
+			// Mostrar popup
+			marker.bindPopup(popupContent).openPopup();
+
+			// Opcional: remover el marcador cuando se cierre el popup
+			marker.on('popupclose', () => {
+				map.removeLayer(marker);
+			});
+		}
 	});
 </script>
 
@@ -77,7 +84,9 @@
 	<h3 class="text-lg font-bold">Añadir peña</h3>
 
 	<div class="container pt-6">
-		<FormAddGang {latlng} />
+		{#if latlng.lat !== 0 && latlng.lng !== 0}
+			<FormAddGang pageStatus={page.status} dataForm={data.form} {latlng} />
+		{/if}
 	</div>
 </Modal>
 
