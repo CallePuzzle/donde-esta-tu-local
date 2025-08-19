@@ -27,5 +27,6 @@
 	"schema_user_image_describe": "URL de tu foto de perfil",
 	"form_user_update_submit": "Actualizar perfil",
 	"form_user_update_successfully": "Perfil actualizado con éxito",
-	"form_user_update_error": "Error al actualizar el perfil, por favor inténtelo más tarde."
+	"form_user_update_error": "Error al actualizar el perfil, por favor inténtelo más tarde.",
+	"request_new_member_title": "Socilitar unirme"
 }

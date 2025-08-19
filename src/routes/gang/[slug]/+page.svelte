@@ -1,8 +1,12 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { coordsMonte } from '$lib/utils/coords-monte';
 	import Share2 from '@lucide/svelte/icons/share-2';
+	import Modal from '$lib/components/Modal.svelte';
+	import { m } from '$lib/paraglide/messages.js';
+	import FormNewMember from '$lib/components/gangs/FormNewMember.svelte';
 
 	import type { PageData } from './$types';
 	import type { Gang, User } from '@prisma/client';
@@ -62,8 +66,25 @@
 
 <div class="container mx-auto my-2">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-		<div class="rounded-lg bg-white p-4 shadow">
-			<h2 class="text-2xl font-bold">Miembros</h2>
+		<div class="rounded-lg bg-neutral p-4 shadow">
+			<div class="flex justify-between">
+				<h3 class="text-2xl font-bold">Miembros</h3>
+				<Modal title={m.request_new_member_title()} buttonClass="btn btn-primary">
+					{#if data.user}
+						<h3 class="text-lg font-bold">Solicitar unirme a la peña</h3>
+						<div class="container pt-6">
+							<FormNewMember
+								pageStatus={page.status}
+								dataForm={data.form}
+								userId={data.user.id}
+								gangId={gang.id}
+							/>
+						</div>
+					{:else}
+						<h3 class="text-lg font-bold">Inicia sesión para solicitar unirse a la peña</h3>
+					{/if}
+				</Modal>
+			</div>
 			<ul>
 				{#each members as member (member.id)}
 					<li class="my-2 flex items-center">

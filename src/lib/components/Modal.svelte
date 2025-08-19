@@ -4,13 +4,20 @@
 	import { m } from '../paraglide/messages.js';
 
 	export type Props = {
-		type?: 'button' | 'X' | 'outside';
-		showButton?: boolean;
 		title: string;
 		children: Snippet;
+		type?: 'button' | 'X' | 'outside';
+		showButton?: boolean;
+		buttonClass?: string;
 	};
 
-	let { type = 'outside', showButton = true, title, children }: Props = $props();
+	let {
+		title,
+		children,
+		type = 'outside',
+		showButton = true,
+		buttonClass = 'btn'
+	}: Props = $props();
 	let modal: HTMLDialogElement;
 
 	const uid = $props.id();
@@ -29,7 +36,7 @@
 </script>
 
 {#if showButton}
-	<button class="btn" onclick={showModal}>{title}</button>
+	<button class={buttonClass} onclick={showModal}>{title}</button>
 {/if}
 <dialog id="modal-{uid}" class="modal">
 	<div class="modal-box">

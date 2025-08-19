@@ -17,3 +17,16 @@ export const addGangSchema = z.object({
 });
 
 export type AddGangSchema = z.infer<typeof addGangSchema>;
+
+export const newMemberSchema = z.object({
+	userId: z.string().meta({
+		placeholder: '',
+		description: ''
+	}),
+	gangId: z.number().meta({
+		placeholder: '',
+		description: ''
+	})
+});
+
+export type NewMemberSchema = z.infer<typeof newMemberSchema>;
