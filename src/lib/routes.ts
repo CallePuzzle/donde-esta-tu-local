@@ -27,7 +27,7 @@ const routes: Routes = {
 	},
 	profile: {
 		name: m.routes_profile(),
-		url: '/user/profile',
+		url: '/profile',
 		isProtected: true,
 		showInMenu: false
 	},
