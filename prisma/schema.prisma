@@ -23,8 +23,12 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  gangId Int?
-  gang   Gang? @relation(fields: [gangId], references: [id])
+  gangId               Int?
+  gang                 Gang?  @relation(fields: [gangId], references: [id])
+  membershipGangStatus String @default("PENDING")
+
+  requestAddedBy    UpdateGangRequest[] @relation("AddedBy")
+  requestReviewedBy UpdateGangRequest[] @relation("ReviewedBy")
 
   @@unique([email])
   @@map("user")
@@ -77,10 +81,35 @@ model Verification {
 }
 
 model Gang {
-  id        Int    @id @default(autoincrement())
+  id                Int                 @id @default(autoincrement())
+  name              String
+  latitude          Float
+  longitude         Float
+  members           User[]
+  status            String              @default("PENDING")
+  UpdateGangRequest UpdateGangRequest[]
+
+  @@map("gang")
+}
+
+model UpdateGangRequest {
+  id Int @id @default(autoincrement())
+
+  relatedGangId Int?
+  relatedGang   Gang? @relation(fields: [relatedGangId], references: [id])
+
+  // Campos nuevos de la peña
   name      String
   latitude  Float
   longitude Float
-  members   User[]
-  status    String @default("PENDING")
+
+  addedByUserId    String?
+  reviewedByUserId String?
+  addedBy          User?   @relation("AddedBy", fields: [addedByUserId], references: [id])
+  reviewedBy       User?   @relation("ReviewedBy", fields: [reviewedByUserId], references: [id])
+
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+
+  @@map("update_gang_request")
 }
