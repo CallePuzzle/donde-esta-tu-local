@@ -3,10 +3,15 @@
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			session?: import('@prisma/client').Session;
+			user?: import('@prisma/client').User;
+		}
 		// interface PageData {}
 		// interface PageState {}
-		// interface Platform {}
+		interface Platform {
+			caches: CacheStorage & { default: Cache };
+		}
 	}
 }
 

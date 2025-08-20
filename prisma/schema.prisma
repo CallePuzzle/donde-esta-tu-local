@@ -1,0 +1,119 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  role          String?
+  banned        Boolean?
+  banReason     String?
+  banExpires    DateTime?
+  sessions      Session[]
+  accounts      Account[]
+
+  gangId               Int?
+  gang                 Gang?  @relation(fields: [gangId], references: [id])
+  membershipGangStatus String @default("PENDING")
+
+  requestAddedBy    UpdateGangRequest[] @relation("AddedBy")
+  requestReviewedBy UpdateGangRequest[] @relation("ReviewedBy")
+  validatedGangs    Gang[]              @relation("ValidatedBy")
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id             String   @id
+  expiresAt      DateTime
+  token          String
+  createdAt      DateTime
+  updatedAt      DateTime
+  ipAddress      String?
+  userAgent      String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy String?
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+model Gang {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  latitude          Float
+  longitude         Float
+  members           User[]
+  status            String              @default("PENDING")
+  UpdateGangRequest UpdateGangRequest[]
+
+  validatedByUserId String?
+  validatedBy       User?   @relation("ValidatedBy", fields: [validatedByUserId], references: [id])
+
+  @@map("gang")
+}
+
+model UpdateGangRequest {
+  id Int @id @default(autoincrement())
+
+  relatedGangId Int?
+  relatedGang   Gang? @relation(fields: [relatedGangId], references: [id])
+
+  // Campos nuevos de la peña
+  name      String
+  latitude  Float
+  longitude Float
+
+  addedByUserId    String?
+  reviewedByUserId String?
+  addedBy          User?   @relation("AddedBy", fields: [addedByUserId], references: [id])
+  reviewedBy       User?   @relation("ReviewedBy", fields: [reviewedByUserId], references: [id])
+
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+
+  @@map("update_gang_request")
+}
