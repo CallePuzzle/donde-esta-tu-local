@@ -4,11 +4,14 @@
 	import { coordsMonte } from '$lib/utils/coords-monte';
 	import Share2 from '@lucide/svelte/icons/share-2';
 	import UserPlus from '@lucide/svelte/icons/user-plus';
+	import Check from '@lucide/svelte/icons/check';
+	import X from '@lucide/svelte/icons/x';
 	import { m } from '$lib/paraglide/messages.js';
 	import ButtonRequest from '$lib/components/ButtonRequest.svelte';
 
 	import type { PageData } from './$types';
 	import type { Gang, User } from '@prisma/client';
+	import MemberDetail from '$lib/components/gangs/MemberDetail.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -17,6 +20,8 @@
 	type Member = Pick<User, 'id' | 'name' | 'image'>;
 
 	let members: Member[] = $state(data.members);
+	let pendingMembers: Member[] = $state(data.pendingMembers || []);
+	let isValidatedMember: boolean = $state(data.isValidatedMember || false);
 
 	onMount(async () => {
 		const L = await import('leaflet');
@@ -68,30 +73,57 @@
 		<div class="rounded-lg bg-neutral p-4 shadow">
 			<div class="flex justify-between">
 				<h3 class="text-2xl font-bold">Miembros</h3>
-				{#if data.user}
+				{#if data.user && !isValidatedMember && !pendingMembers.some((m) => m.id === data.user?.id)}
 					{#snippet buttonText()}
 						<UserPlus />{m.request_new_member_title()}
 					{/snippet}
 					<ButtonRequest
 						{buttonText}
-						url={`/gang/newMember?userId=${data.user.id}&gangId=${gang.id}`}
+						url={`/gang/addMember?userId=${data.user.id}&gangId=${gang.id}`}
 					/>
-				{:else}
+				{:else if !data.user}
 					<h3 class="text-lg font-bold">Inicia sesión para solicitar unirse a la peña</h3>
 				{/if}
 			</div>
+
+			<!-- Validated members -->
 			<ul>
 				{#each members as member (member.id)}
-					<li class="my-2 flex items-center">
-						<div class="avatar">
-							<div class="w-10 rounded-full">
-								<img alt="Profile image" src={member.image} />
-							</div>
-						</div>
-						<div class="ml-2">{member.name}</div>
-					</li>
+					<MemberDetail name={member.name} image={member.image} />
 				{/each}
 			</ul>
+
+			<!-- Pending members section for validated members -->
+			{#if isValidatedMember && pendingMembers.length > 0}
+				<div class="divider"></div>
+				<h4 class="mb-2 text-xl font-bold">Solicitudes pendientes</h4>
+				<ul>
+					{#each pendingMembers as pendingMember (pendingMember.id)}
+						<li class="my-2 flex items-center justify-between">
+							<MemberDetail name={pendingMember.name} image={pendingMember.image} />
+							<div class="flex gap-2">
+								{#snippet validateButtonText()}
+									<Check size="1rem" /> Validar
+								{/snippet}
+								<ButtonRequest
+									buttonText={validateButtonText}
+									url={`/gang/validateMember?userId=${pendingMember.id}&gangId=${gang.id}`}
+									buttonClass="btn btn-sm btn-success"
+								/>
+
+								{#snippet rejectButtonText()}
+									<X size="1rem" /> Rechazar
+								{/snippet}
+								<ButtonRequest
+									buttonText={rejectButtonText}
+									url={`/gang/refuseMember?userId=${pendingMember.id}&gangId=${gang.id}`}
+									buttonClass="btn btn-sm btn-error"
+								/>
+							</div>
+						</li>
+					{/each}
+				</ul>
+			{/if}
 		</div>
 	</div>
 </div>

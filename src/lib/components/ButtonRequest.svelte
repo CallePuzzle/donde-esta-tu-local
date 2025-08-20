@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
+	import { m } from '$lib/paraglide/messages.js';
 
 	import type { Snippet } from 'svelte';
 

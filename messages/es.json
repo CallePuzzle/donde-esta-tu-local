@@ -35,5 +35,16 @@
 	"request_new_member_error": "Error al enviar la solicitud, por favor inténtelo más tarde.",
 	"request_new_member_error_users_not_match": "El usuario logado no coincide con la petición",
 	"error_user_not_found": "Usuario no encontrado",
-	"error_user_not_logged_in": "Usuario no logueado"
+	"error_user_not_logged_in": "Usuario no logueado",
+	"error_missing_parameters": "Faltan parámetros requeridos",
+	"gang_validate_no_permission": "No tienes permisos para validar miembros de esta peña",
+	"gang_validate_user_not_in_gang": "El usuario no pertenece a esta peña",
+	"gang_validate_already_validated": "El usuario ya está validado",
+	"gang_validate_success": "Miembro validado correctamente",
+	"gang_validate_error": "Error al validar el miembro",
+	"gang_refuse_no_permission": "No tienes permisos para rechazar miembros de esta peña",
+	"gang_refuse_user_not_in_gang": "El usuario no pertenece a esta peña",
+	"gang_refuse_cannot_refuse_validated": "No se puede rechazar un usuario ya validado",
+	"gang_refuse_success": "Miembro rechazado correctamente",
+	"gang_refuse_error": "Error al rechazar el miembro"
 }
