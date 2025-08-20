@@ -3,6 +3,7 @@ import prisma from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 
 import type { PageServerLoad, PageServerLoadEvent } from './$types';
+import type { GangData, Member } from './type';
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 	const gangId = event.params.slug;
@@ -37,25 +38,27 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 
 	// Separate validated and pending members
 	const validatedMembers = gang.members.filter(
-		(member) => member.membershipGangStatus === 'VALIDATED'
+		(member: Member) => member.membershipGangStatus === 'VALIDATED'
 	);
 
-	const pendingMembers = gang.members.filter((member) => member.membershipGangStatus === 'PENDING');
+	const pendingMembers = gang.members.filter(
+		(member: Member) => member.membershipGangStatus === 'PENDING'
+	);
 
 	// Check if current user is a validated member
 	let isValidatedMember = false;
 	if (currentUser) {
-		isValidatedMember = validatedMembers.some((member) => member.id === currentUser.id);
+		isValidatedMember = validatedMembers.some((member: Member) => member.id === currentUser.id);
 	}
 
 	// Ensure all members have a name, using email as fallback
-	validatedMembers.forEach((member) => {
+	validatedMembers.forEach((member: Member) => {
 		if (!member.name) {
 			member.name = member.email;
 		}
 	});
 
-	pendingMembers.forEach((member) => {
+	pendingMembers.forEach((member: Member) => {
 		if (!member.name) {
 			member.name = member.email;
 		}
@@ -68,9 +71,9 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 			latitude: gang.latitude,
 			longitude: gang.longitude,
 			status: gang.status
-		},
-		members: validatedMembers,
-		pendingMembers: pendingMembers,
+		} as GangData,
+		members: validatedMembers as Member[],
+		pendingMembers: pendingMembers as Member[],
 		isValidatedMember: isValidatedMember
 	};
 };

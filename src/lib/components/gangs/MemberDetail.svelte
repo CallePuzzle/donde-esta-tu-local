@@ -2,7 +2,7 @@
 	import UserRound from '@lucide/svelte/icons/user-round';
 
 	export type Props = {
-		image: string;
+		image: string | null;
 		name: string;
 	};
 

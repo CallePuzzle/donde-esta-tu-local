@@ -14,6 +14,7 @@
 			href="https://github.com/CallePuzzle/donde-esta-tu-local"
 			target="_blank"
 			rel="noopener noreferrer"
+			aria-label="GitHub repository"
 			><svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="32"
@@ -30,6 +31,8 @@
 				/></svg
 			></a
 		>
-		<a href="mailto:app@montemayordepililla.cc"><MailQuestionMark size="32" /></a>
+		<a href="mailto:app@montemayordepililla.cc" aria-label="Contact via email"
+			><MailQuestionMark size="32" /></a
+		>
 	</p>
 </footer>

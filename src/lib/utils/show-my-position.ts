@@ -13,7 +13,7 @@ export function showMyPosition(L: any, map: Map, origin: LatLngTuple, focus: boo
 		});
 	}
 
-	function showPosition(position) {
+	function showPosition(position: GeolocationPosition) {
 		const lat = position.coords.latitude;
 		const lon = position.coords.longitude;
 
@@ -33,7 +33,7 @@ export function showMyPosition(L: any, map: Map, origin: LatLngTuple, focus: boo
 	}
 
 	// Manejar errores de geolocalización
-	function positionError(error) {
+	function positionError(error: GeolocationPositionError) {
 		console.warn(`ERROR(${error.code}): ${error.message}`);
 	}
 }

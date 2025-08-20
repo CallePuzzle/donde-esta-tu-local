@@ -8,16 +8,15 @@
 	import X from '@lucide/svelte/icons/x';
 	import { m } from '$lib/paraglide/messages.js';
 	import ButtonRequest from '$lib/components/ButtonRequest.svelte';
+	import MemberDetail from '$lib/components/gangs/MemberDetail.svelte';
 
 	import type { PageData } from './$types';
-	import type { Gang, User } from '@prisma/client';
-	import MemberDetail from '$lib/components/gangs/MemberDetail.svelte';
+
+	import type { GangData, Member } from './type';
 
 	let { data }: { data: PageData } = $props();
 
-	let gang: Gang = data.gang;
-
-	type Member = Pick<User, 'id' | 'name' | 'image'>;
+	let gang: GangData = data.gang;
 
 	let members: Member[] = $state(data.members);
 	let pendingMembers: Member[] = $state(data.pendingMembers || []);
