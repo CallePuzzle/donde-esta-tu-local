@@ -28,5 +28,12 @@
 	"form_user_update_submit": "Actualizar perfil",
 	"form_user_update_successfully": "Perfil actualizado con éxito",
 	"form_user_update_error": "Error al actualizar el perfil, por favor inténtelo más tarde.",
-	"request_new_member_title": "Socilitar unirme"
+	"request_new_member_title": "Socilitar unirme a la peña",
+	"request_new_member_added": "Solicitud enviada con éxito",
+	"request_new_member_accepted": "Solicitud aceptada con éxito",
+	"request_new_member_rejected": "Solicitud rechazada con éxito",
+	"request_new_member_error": "Error al enviar la solicitud, por favor inténtelo más tarde.",
+	"request_new_member_error_users_not_match": "El usuario logado no coincide con la petición",
+	"error_user_not_found": "Usuario no encontrado",
+	"error_user_not_logged_in": "Usuario no logueado"
 }

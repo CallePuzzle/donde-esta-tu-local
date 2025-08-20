@@ -3,7 +3,7 @@ import { APP_URL } from '$env/static/private';
 import type { LayoutServerLoad, LayoutServerLoadEvent } from './$types';
 
 export const load: LayoutServerLoad = async (event: LayoutServerLoadEvent) => {
-	const user = await event.locals.user;
+	const user = event.locals.user;
 	logger.debug(user?.email, 'User loaded');
 
 	const path = event.route.id;
