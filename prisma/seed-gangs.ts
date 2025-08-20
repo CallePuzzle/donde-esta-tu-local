@@ -4,6 +4,23 @@ export async function SeedGangs(prisma: PrismaClient) {
 	await prisma.gang.deleteMany();
 	console.log('✅ Cleared existing gangs');
 
+	// Create or find migration user
+	const migrationUser = await prisma.user.upsert({
+		where: { email: 'migration@system.local' },
+		update: {},
+		create: {
+			id: 'migration-user',
+			name: 'Migration User',
+			email: 'migration@system.local',
+			emailVerified: true,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			role: 'system',
+			membershipGangStatus: 'VALIDATED'
+		}
+	});
+	console.log('✅ Created/found migration user');
+
 	// Gang data
 	const gangs = [
 		{
@@ -125,12 +142,6 @@ export async function SeedGangs(prisma: PrismaClient) {
 			latitude: 41.50758152474093,
 			longitude: -4.454703927040101,
 			status: 'VALIDATED'
-		},
-		{
-			name: 'El Desmadre',
-			latitude: 41.50870875360579,
-			longitude: -4.459301233291627,
-			status: 'REFUSED'
 		},
 		{
 			name: 'Oasis',
@@ -308,10 +319,13 @@ export async function SeedGangs(prisma: PrismaClient) {
 		}
 	];
 
-	// Insert gangs
+	// Insert gangs with migration user as validator
 	for (const gang of gangs) {
 		await prisma.gang.create({
-			data: gang
+			data: {
+				...gang,
+				validatedByUserId: migrationUser.id
+			}
 		});
 	}
 

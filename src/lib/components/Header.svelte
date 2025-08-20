@@ -41,7 +41,7 @@
 				<a href={routes.home.url as string} data-sveltekit-reload>{@render title()}</a>
 			</div>
 			<nav class="navbar-center hidden lg:block">
-				<NavBarList type="horizontal" {routes} />
+				<NavBarList type="horizontal" {routes} {session} />
 			</nav>
 			<NavBarEnd {session} {authClient} {userHasNotification} {notification} {searcher} {routes} />
 		</div>
@@ -50,6 +50,6 @@
 	</div>
 	<nav class="drawer-side">
 		<label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
-		<NavBarList type="drawer" {routes} />
+		<NavBarList type="drawer" {routes} {session} />
 	</nav>
 </div>

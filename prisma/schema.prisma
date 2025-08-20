@@ -29,6 +29,7 @@ model User {
 
   requestAddedBy    UpdateGangRequest[] @relation("AddedBy")
   requestReviewedBy UpdateGangRequest[] @relation("ReviewedBy")
+  validatedGangs    Gang[]              @relation("ValidatedBy")
 
   @@unique([email])
   @@map("user")
@@ -88,6 +89,9 @@ model Gang {
   members           User[]
   status            String              @default("PENDING")
   UpdateGangRequest UpdateGangRequest[]
+
+  validatedByUserId String?
+  validatedBy       User?   @relation("ValidatedBy", fields: [validatedByUserId], references: [id])
 
   @@map("gang")
 }

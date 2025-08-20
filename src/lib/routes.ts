@@ -54,6 +54,12 @@ const routes: Routes = {
 		url: '/activities',
 		isProtected: false,
 		showInMenu: true
+	},
+	admin_gangs: {
+		name: 'Admin Gangs',
+		url: '/admin/gangs',
+		isProtected: true,
+		showInMenu: true
 	}
 };
 
