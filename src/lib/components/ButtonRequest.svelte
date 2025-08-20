@@ -8,9 +8,10 @@
 		url: string;
 		buttonText: Snippet;
 		buttonClass?: string;
+		onSuccess?: () => void | Promise<void>;
 	};
 
-	let { url, buttonText, buttonClass = 'btn w-fit btn-accent' }: Props = $props();
+	let { url, buttonText, buttonClass = 'btn w-fit btn-accent', onSuccess }: Props = $props();
 
 	let loading = $state(false);
 	let message = $state('');
@@ -28,6 +29,10 @@
 				messageClass = 'alert-success';
 				// Revalidate the page data to show the new member
 				await invalidateAll();
+				// Call onSuccess callback if provided
+				if (onSuccess) {
+					await onSuccess();
+				}
 			} else {
 				message = data.message || m.form_gang_add_error();
 				messageClass = response.status === 404 ? 'alert-warning' : 'alert-error';

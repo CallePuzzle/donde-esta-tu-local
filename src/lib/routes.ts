@@ -55,11 +55,23 @@ const routes: Routes = {
 		isProtected: false,
 		showInMenu: true
 	},
+	admin: {
+		name: 'Admin',
+		url: '/admin',
+		isProtected: true,
+		showInMenu: true
+	},
 	admin_gangs: {
 		name: 'Admin Gangs',
 		url: '/admin/gangs',
 		isProtected: true,
-		showInMenu: true
+		showInMenu: false
+	},
+	admin_members: {
+		name: 'Admin Miembros',
+		url: '/admin/members',
+		isProtected: true,
+		showInMenu: false
 	}
 };
 

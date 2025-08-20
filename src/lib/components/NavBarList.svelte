@@ -25,8 +25,8 @@
 			// Primero verificar si debe mostrarse en el menú
 			if (!route.showInMenu) return false;
 
-			// Si es la ruta de admin, verificar el rol del usuario
-			if (key === 'admin_gangs') {
+			// Si es una ruta de admin, verificar el rol del usuario
+			if (key === 'admin' || key === 'admin_gangs' || key === 'admin_members') {
 				const userRole = $session?.data?.user?.role;
 				return userRole === 'admin' || userRole === 'system';
 			}
