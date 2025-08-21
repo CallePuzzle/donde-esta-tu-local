@@ -24,7 +24,8 @@
 	const form = superForm(dataForm, {
 		id: uid,
 		validators: zod4Client(updateUserSchema),
-		dataType: 'json'
+		dataType: 'json',
+		resetForm: false
 	});
 
 	const { form: formData, enhance, delayed, message } = form;
