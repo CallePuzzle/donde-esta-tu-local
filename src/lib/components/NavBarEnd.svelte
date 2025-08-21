@@ -4,10 +4,10 @@
 	import Link from './Link.svelte';
 	import type { Routes } from '$lib/routes';
 	import Modal from './Modal.svelte';
-	import ModalType from './Modal.svelte';
 	import FormLogin from './FormLogin.svelte';
 	import type { AuthClient, Session } from '$lib/auth-client';
 	import type { Props as FormLoginProps } from './FormLogin.svelte';
+	import { loginModalStore } from '$lib/stores/loginModal';
 
 	export type Props = {
 		routes: Routes;
@@ -27,12 +27,11 @@
 		searcher = false
 	}: Props = $props();
 
-	let modal = $state<ModalType | null>(null);
 	let userIsLogged = $derived<boolean>($session?.data ? true : false);
 
 	async function afterCancelCallback() {
 		await new Promise((resolve) => setTimeout(resolve, 2000));
-		modal?.close();
+		$loginModalStore?.close();
 	}
 </script>
 
@@ -81,7 +80,7 @@
 				</li>
 			</ul>
 		{:else}
-			<Modal title="Login" bind:this={modal}>
+			<Modal title="Login" bind:this={$loginModalStore}>
 				<FormLogin {afterCancelCallback} />
 			</Modal>
 		{/if}
