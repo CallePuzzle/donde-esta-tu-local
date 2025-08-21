@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "prisma generate --no-engine && bun run prisma migrate deploy && vite build",
+		"build": "prisma generate --no-engine && prisma migrate deploy && bun run prisma migrate deploy && vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -49,6 +49,7 @@
 	"dependencies": {
 		"@prisma/client": "^6.14.0",
 		"@prisma/extension-accelerate": "^2.0.2",
+		"@vercel/blob": "^1.1.1",
 		"better-auth": "^1.3.7",
 		"leaflet": "^1.9.4",
 		"pino": "^9.9.0",

@@ -82,18 +82,6 @@
 				</div>
 			</div>
 
-			<!-- Current Avatar Display -->
-			{#if data.user.image}
-				<div class="mb-6">
-					<h3 class="mb-2 text-sm text-base-content/60">Avatar actual:</h3>
-					<div class="avatar">
-						<div class="w-24 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
-							<img src={data.user.image} alt="Avatar de {data.user.name}" />
-						</div>
-					</div>
-				</div>
-			{/if}
-
 			<!-- Update Form -->
 			<div class="divider">Actualizar información</div>
 			<FormUser dataForm={data.form} />
