@@ -1,13 +1,16 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Search from '@lucide/svelte/icons/search';
 	import BellRing from '@lucide/svelte/icons/bell-ring';
 	import Link from './Link.svelte';
-	import type { Routes } from '$lib/routes';
 	import Modal from './Modal.svelte';
 	import FormLogin from './FormLogin.svelte';
+	import { loginModalStore } from '$lib/stores/loginModal';
+
 	import type { AuthClient, Session } from '$lib/auth-client';
 	import type { Props as FormLoginProps } from './FormLogin.svelte';
-	import { loginModalStore } from '$lib/stores/loginModal';
+	import type { Routes } from '$lib/routes';
+	import ModalType from './Modal.svelte';
 
 	export type Props = {
 		routes: Routes;
@@ -27,12 +30,17 @@
 		searcher = false
 	}: Props = $props();
 
+	let modal = $state<ModalType | null>(null);
 	let userIsLogged = $derived<boolean>($session?.data ? true : false);
 
 	async function afterCancelCallback() {
 		await new Promise((resolve) => setTimeout(resolve, 2000));
-		$loginModalStore?.close();
+		modal?.close();
 	}
+
+	onMount(() => {
+		loginModalStore.set(modal);
+	});
 </script>
 
 <div class="navbar-end">
@@ -80,7 +88,7 @@
 				</li>
 			</ul>
 		{:else}
-			<Modal title="Login" bind:this={$loginModalStore}>
+			<Modal title="Login" bind:this={modal}>
 				<FormLogin {afterCancelCallback} />
 			</Modal>
 		{/if}
