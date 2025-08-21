@@ -9,6 +9,7 @@
 	import { m } from '$lib/paraglide/messages.js';
 	import ButtonRequest from '$lib/components/ButtonRequest.svelte';
 	import MemberDetail from '$lib/components/gangs/MemberDetail.svelte';
+	import { loginModalStore } from '$lib/stores/loginModal';
 
 	import type { PageData } from './$types';
 
@@ -48,6 +49,10 @@
 			webShareAPISupported = false;
 		}
 	};
+
+	function handleLogin() {
+		if ($loginModalStore) $loginModalStore.showModal();
+	}
 </script>
 
 <div class="hero">
@@ -81,7 +86,11 @@
 						url={`/gang/addMember?userId=${data.user.id}&gangId=${gang.id}`}
 					/>
 				{:else if !data.user}
-					<h3 class="text-lg font-bold">Inicia sesión para solicitar unirse a la peña</h3>
+					<button
+						class="btn flex h-full w-48 flex-col btn-secondary xl:h-[38px] xl:w-80 xl:flex-row"
+						onclick={handleLogin}
+						><span>Inicia sesión </span><span>para unirte a la peña</span></button
+					>
 				{/if}
 			</div>
 

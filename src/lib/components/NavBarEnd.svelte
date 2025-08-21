@@ -1,13 +1,16 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Search from '@lucide/svelte/icons/search';
 	import BellRing from '@lucide/svelte/icons/bell-ring';
 	import Link from './Link.svelte';
-	import type { Routes } from '$lib/routes';
 	import Modal from './Modal.svelte';
-	import ModalType from './Modal.svelte';
 	import FormLogin from './FormLogin.svelte';
+	import { loginModalStore } from '$lib/stores/loginModal';
+
 	import type { AuthClient, Session } from '$lib/auth-client';
 	import type { Props as FormLoginProps } from './FormLogin.svelte';
+	import type { Routes } from '$lib/routes';
+	import ModalType from './Modal.svelte';
 
 	export type Props = {
 		routes: Routes;
@@ -34,6 +37,10 @@
 		await new Promise((resolve) => setTimeout(resolve, 2000));
 		modal?.close();
 	}
+
+	onMount(() => {
+		loginModalStore.set(modal);
+	});
 </script>
 
 <div class="navbar-end">
