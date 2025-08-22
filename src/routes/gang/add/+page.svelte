@@ -6,6 +6,8 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import ModalType from '$lib/components/Modal.svelte';
 	import FormAddGang from '$lib/components/gangs/FormAddGang.svelte';
+	import { m } from '$lib/paraglide/messages.js';
+	import CirculePlus from '@lucide/svelte/icons/circle-plus';
 
 	import type { LatLng } from '$lib/components/gangs/types.ts';
 
@@ -85,7 +87,16 @@
 
 	<div class="container pt-6">
 		{#if latlng.lat !== 0 && latlng.lng !== 0}
-			<FormAddGang pageStatus={page.status} dataForm={data.form} {latlng} callbackUrl="/" />
+			{#snippet buttonText()}
+				<CirculePlus />{m.form_gang_add_submit()}
+			{/snippet}
+			<FormAddGang
+				pageStatus={page.status}
+				dataForm={data.form}
+				{latlng}
+				{buttonText}
+				callbackUrl="/"
+			/>
 		{/if}
 	</div>
 </Modal>

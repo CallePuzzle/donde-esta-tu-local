@@ -6,6 +6,8 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import ModalType from '$lib/components/Modal.svelte';
 	import FormAddGang from '$lib/components/gangs/FormAddGang.svelte';
+	import { m } from '$lib/paraglide/messages.js';
+	import CircleFadingArrowUp from '@lucide/svelte/icons/circle-fading-arrow-up';
 
 	import type { PageData } from './$types';
 	import type { GangData } from '../type';
@@ -76,10 +78,14 @@
 
 	<div class="container pt-6">
 		{#if latlng.lat !== 0 && latlng.lng !== 0}
+			{#snippet buttonText()}
+				<CircleFadingArrowUp />{m.form_gang_upgrade_submit()}
+			{/snippet}
 			<FormAddGang
 				pageStatus={page.status}
 				dataForm={data.form}
 				{latlng}
+				{buttonText}
 				callbackUrl={`/gang/${gang.id}`}
 			/>
 		{/if}

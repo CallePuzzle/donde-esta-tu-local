@@ -9,6 +9,7 @@
 	"form_gang_name_duplicated": "Ya existe una peña con este nombre, por favor revisa o cambia el nombre.",
 	"form_gang_add_successfully": "Peña añadida con éxito",
 	"form_gang_add_error": "Error al añadir la peña, por favor intentelo más tarde.",
+	"form_gang_upgrade_submit": "Actualizar peña",
 	"schema_login_email_error": "Por favor, ingrese una dirección de correo electrónico válida.",
 	"schema_login_email_describe": "Por favor, ingrese una dirección de correo electrónico válida.",
 	"schema_add_gang_name_error": "Por favor, ingrese un nombre válido para la peña.",
