@@ -2,13 +2,14 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import prisma from '$lib/server/db';
 import { logger } from '$lib/logger';
+import { m } from '$lib/paraglide/messages.js';
 
 export const GET: RequestHandler = async ({ url }) => {
 	try {
 		const email = url.searchParams.get('email');
 
 		if (!email) {
-			return json({ canSend: false, error: 'Email is required' }, { status: 400 });
+			return json({ canSend: false, error: m.magic_link_email_required() }, { status: 400 });
 		}
 
 		// Check if user exists and when was the last magic link sent
@@ -33,14 +34,14 @@ export const GET: RequestHandler = async ({ url }) => {
 
 			return json({
 				canSend: false,
-				error: 'Link ya enviado, revisa tu bandeja de entrada',
+				error: m.magic_link_already_sent(),
 				remainingSeconds
 			});
 		}
 
 		return json({ canSend: true });
 	} catch (error) {
-		logger.error('Error checking magic link status:', error);
-		return json({ canSend: false, error: 'Error checking status' }, { status: 500 });
+		logger.error(error, 'Error checking magic link status');
+		return json({ canSend: false, error: m.magic_link_error_checking() }, { status: 500 });
 	}
 };
