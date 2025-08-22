@@ -1,8 +1,12 @@
 import { logger } from '$lib/logger';
 import prisma from '$lib/server/db';
 import { error } from '@sveltejs/kit';
+import { superValidate, message, fail } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import { addGangSchema } from '$lib/schemas/gang';
+import { m } from '$lib/paraglide/messages.js';
 
-import type { PageServerLoad, PageServerLoadEvent } from './$types';
+import type { PageServerLoad, PageServerLoadEvent, Actions, RequestEvent } from './$types';
 import type { GangData } from '../type';
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
@@ -30,6 +34,39 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 			latitude: gang.latitude,
 			longitude: gang.longitude,
 			status: gang.status
-		} as GangData
+		} as GangData,
+		form: await superValidate(gang, zod4(addGangSchema))
 	};
+};
+
+export const actions: Actions = {
+	default: async (event: RequestEvent) => {
+		const request = event.request;
+		const form = await superValidate(request, zod4(addGangSchema));
+		logger.info(form, 'Form submitted');
+
+		if (!form.valid) return fail(400, { form });
+
+		const gangId = event.params.slug;
+
+		try {
+			// Crear nueva entrada en gang
+			const newGang = await prisma.gang.update({
+				where: {
+					id: parseInt(gangId)
+				},
+				data: {
+					name: form.data.name,
+					latitude: form.data.lat,
+					longitude: form.data.lng
+				}
+			});
+
+			logger.info({ gangId: newGang.id, name: newGang.name }, 'Gang updated');
+			return message(form, m.form_gang_add_successfully());
+		} catch (error) {
+			logger.error(error, 'Error updating gang');
+			return message(form, m.form_gang_add_error(), { status: 500 });
+		}
+	}
 };
