@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import SuperDebug from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
@@ -16,10 +17,11 @@
 		dataForm: SuperValidated<AddGangSchema>;
 		latlng: LatLng;
 		pageStatus: number;
+		callbackUrl?: string;
 		debug?: boolean;
 	};
 
-	let { dataForm, latlng, pageStatus, debug = false }: Props = $props();
+	let { dataForm, latlng, pageStatus, callbackUrl, debug = false }: Props = $props();
 
 	const uid = $props.id();
 
@@ -27,7 +29,14 @@
 		id: uid,
 		validators: zod4Client(addGangSchema),
 		dataType: 'json',
-		resetForm: false
+		resetForm: false,
+		onResult({ result }) {
+			if (result.type === 'success' && callbackUrl) {
+				setTimeout(() => {
+					goto(callbackUrl);
+				}, 1000);
+			}
+		}
 	});
 
 	const { form: formData, enhance, delayed, message } = form;

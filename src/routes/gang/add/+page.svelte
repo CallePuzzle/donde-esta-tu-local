@@ -85,7 +85,7 @@
 
 	<div class="container pt-6">
 		{#if latlng.lat !== 0 && latlng.lng !== 0}
-			<FormAddGang pageStatus={page.status} dataForm={data.form} {latlng} />
+			<FormAddGang pageStatus={page.status} dataForm={data.form} {latlng} callbackUrl="/" />
 		{/if}
 	</div>
 </Modal>
