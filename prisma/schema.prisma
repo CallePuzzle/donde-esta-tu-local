@@ -9,19 +9,20 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  role          String?
-  banned        Boolean?
-  banReason     String?
-  banExpires    DateTime?
-  sessions      Session[]
-  accounts      Account[]
+  id                  String    @id
+  name                String
+  email               String
+  emailVerified       Boolean
+  image               String?
+  createdAt           DateTime
+  updatedAt           DateTime
+  role                String?
+  banned              Boolean?
+  banReason           String?
+  banExpires          DateTime?
+  lastMagicLinkSentAt DateTime?
+  sessions            Session[]
+  accounts            Account[]
 
   gangId               Int?
   gang                 Gang?  @relation(fields: [gangId], references: [id])

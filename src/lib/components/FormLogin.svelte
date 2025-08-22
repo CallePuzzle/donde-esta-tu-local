@@ -33,6 +33,21 @@
 			cancel();
 			try {
 				message = null;
+
+				// Check if we can send the magic link
+				const checkResponse = await fetch(
+					`/api/user/magic-link-check?email=${encodeURIComponent($formData.email)}`
+				);
+				const checkResult = await checkResponse.json();
+
+				if (!checkResult.canSend) {
+					message = {
+						type: 'error',
+						text: checkResult.error || 'Cannot send magic link at this time'
+					};
+					return;
+				}
+
 				const result = await signIn.magicLink({
 					email: $formData.email
 				});
