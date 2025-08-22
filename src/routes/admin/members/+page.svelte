@@ -22,13 +22,13 @@
 
 <div class="container mx-auto p-4">
 	<div class="mb-8">
-		<h1 class="text-3xl font-bold mb-4">Administración de Miembros</h1>
+		<h1 class="mb-4 text-3xl font-bold">Administración de Miembros</h1>
 
 		<!-- Estadísticas -->
-		<div class="stats shadow w-full mb-6">
+		<div class="stats mb-6 w-full shadow">
 			<div class="stat">
 				<div class="stat-figure text-primary">
-					<Users class="w-8 h-8" />
+					<Users class="h-8 w-8" />
 				</div>
 				<div class="stat-title">Total Usuarios</div>
 				<div class="stat-value text-primary">{data.stats.totalUsers}</div>
@@ -36,7 +36,7 @@
 
 			<div class="stat">
 				<div class="stat-figure text-warning">
-					<Clock class="w-8 h-8" />
+					<Clock class="h-8 w-8" />
 				</div>
 				<div class="stat-title">Pendientes</div>
 				<div class="stat-value text-warning">{data.stats.pendingMembers}</div>
@@ -44,7 +44,7 @@
 
 			<div class="stat">
 				<div class="stat-figure text-success">
-					<UserCheck class="w-8 h-8" />
+					<UserCheck class="h-8 w-8" />
 				</div>
 				<div class="stat-title">Validados</div>
 				<div class="stat-value text-success">{data.stats.validatedMembers}</div>
@@ -52,7 +52,7 @@
 
 			<div class="stat">
 				<div class="stat-figure text-error">
-					<UserX class="w-8 h-8" />
+					<UserX class="h-8 w-8" />
 				</div>
 				<div class="stat-title">Rechazados</div>
 				<div class="stat-value text-error">{data.stats.refusedMembers}</div>
@@ -60,7 +60,7 @@
 
 			<div class="stat">
 				<div class="stat-figure text-base-content">
-					<Building class="w-8 h-8" />
+					<Building class="h-8 w-8" />
 				</div>
 				<div class="stat-title">Sin Peña</div>
 				<div class="stat-value text-base-content">{data.stats.usersWithoutGang}</div>
@@ -68,16 +68,16 @@
 		</div>
 
 		<!-- Tabs -->
-		<div class="tabs tabs-boxed mb-6">
+		<div class="tabs-boxed mb-6 tabs">
 			<button
 				class="tab {activeTab === 'pending' ? 'tab-active' : ''}"
-				on:click={() => activeTab = 'pending'}
+				on:click={() => (activeTab = 'pending')}
 			>
 				Solicitudes Pendientes ({data.pendingMembers.length})
 			</button>
 			<button
 				class="tab {activeTab === 'validated' ? 'tab-active' : ''}"
-				on:click={() => activeTab = 'validated'}
+				on:click={() => (activeTab = 'validated')}
 			>
 				Validados Recientemente ({data.recentlyValidatedMembers.length})
 			</button>
@@ -87,7 +87,7 @@
 		{#if activeTab === 'pending'}
 			<div class="card bg-base-100 shadow-xl">
 				<div class="card-body">
-					<h2 class="card-title mb-4">Solicitudes de Membresía Pendientes</h2>
+					<h2 class="mb-4 card-title">Solicitudes de Membresía Pendientes</h2>
 
 					{#if data.pendingMembers.length === 0}
 						<div class="alert alert-info">
@@ -113,14 +113,16 @@
 												<div class="flex items-center gap-3">
 													{#if member.image}
 														<div class="avatar">
-															<div class="mask mask-squircle w-12 h-12">
+															<div class="mask h-12 w-12 mask-squircle">
 																<img src={member.image} alt={member.name || 'Avatar'} />
 															</div>
 														</div>
 													{:else}
-														<div class="avatar placeholder">
-															<div class="bg-neutral text-neutral-content rounded-full w-12">
-																<span class="text-xl">{(member.name || member.email || '?')[0].toUpperCase()}</span>
+														<div class="placeholder avatar">
+															<div class="w-12 rounded-full bg-neutral text-neutral-content">
+																<span class="text-xl"
+																	>{(member.name || member.email || '?')[0].toUpperCase()}</span
+																>
 															</div>
 														</div>
 													{/if}
@@ -133,7 +135,11 @@
 											<td>{member.email}</td>
 											<td>
 												{#if member.gang}
-													<a href="/gang/{member.gang.id}" class="link link-primary font-semibold" target="_blank">
+													<a
+														href="/gang/{member.gang.id}"
+														class="link font-semibold link-primary"
+														target="_blank"
+													>
 														{member.gang.name}
 													</a>
 												{:else}
@@ -156,12 +162,15 @@
 											<td>
 												{#if member.gang && member.gang.members}
 													<div class="flex items-center gap-1">
-														<Users class="w-4 h-4" />
+														<Users class="h-4 w-4" />
 														<span>{member.gang.members.length}</span>
 													</div>
 													{#if member.gang.members.length > 0}
-														<div class="text-xs text-base-content/60 mt-1">
-															{member.gang.members.slice(0, 3).map(m => m.name || m.email).join(', ')}
+														<div class="mt-1 text-xs text-base-content/60">
+															{member.gang.members
+																.slice(0, 3)
+																.map((m) => m.name || m.email)
+																.join(', ')}
 															{#if member.gang.members.length > 3}
 																...
 															{/if}
@@ -175,7 +184,7 @@
 												{#if member.gang}
 													<div class="flex gap-2">
 														{#snippet validateButtonText()}
-															<CircleCheck class="w-4 h-4" /> Validar
+															<CircleCheck class="h-4 w-4" /> Validar
 														{/snippet}
 														<ButtonRequest
 															buttonText={validateButtonText}
@@ -185,7 +194,7 @@
 														/>
 
 														{#snippet rejectButtonText()}
-															<CircleX class="w-4 h-4" /> Rechazar
+															<CircleX class="h-4 w-4" /> Rechazar
 														{/snippet}
 														<ButtonRequest
 															buttonText={rejectButtonText}
@@ -209,7 +218,7 @@
 		{:else if activeTab === 'validated'}
 			<div class="card bg-base-100 shadow-xl">
 				<div class="card-body">
-					<h2 class="card-title mb-4">Miembros Validados Recientemente (últimos 30 días)</h2>
+					<h2 class="mb-4 card-title">Miembros Validados Recientemente (últimos 30 días)</h2>
 
 					{#if data.recentlyValidatedMembers.length === 0}
 						<div class="alert alert-info">
@@ -234,14 +243,16 @@
 												<div class="flex items-center gap-3">
 													{#if member.image}
 														<div class="avatar">
-															<div class="mask mask-squircle w-12 h-12">
+															<div class="mask h-12 w-12 mask-squircle">
 																<img src={member.image} alt={member.name || 'Avatar'} />
 															</div>
 														</div>
 													{:else}
-														<div class="avatar placeholder">
-															<div class="bg-neutral text-neutral-content rounded-full w-12">
-																<span class="text-xl">{(member.name || member.email || '?')[0].toUpperCase()}</span>
+														<div class="placeholder avatar">
+															<div class="w-12 rounded-full bg-neutral text-neutral-content">
+																<span class="text-xl"
+																	>{(member.name || member.email || '?')[0].toUpperCase()}</span
+																>
 															</div>
 														</div>
 													{/if}
@@ -254,7 +265,11 @@
 											<td>{member.email}</td>
 											<td>
 												{#if member.gang}
-													<a href="/gang/{member.gang.id}" class="link link-primary font-semibold" target="_blank">
+													<a
+														href="/gang/{member.gang.id}"
+														class="link font-semibold link-primary"
+														target="_blank"
+													>
 														{member.gang.name}
 													</a>
 												{:else}
