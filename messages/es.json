@@ -21,6 +21,8 @@
 	"routes_notifications": "Notificaciones",
 	"routes_user": "Usuario",
 	"routes_gang_add": "Añadir peña",
+	"routes_add_gang_user_not_logged_in": "Es necesario estar logado para añadir una peña",
+	"routes_add_gang_user_not_logged_in_or_not_member": "Para modificar una peña tienes que estar logado y ser miembro de la peña",
 	"routes_activities": "Actividades de las peñas",
 	"schema_user_name_error": "Por favor, ingrese un nombre válido.",
 	"schema_user_name_describe": "Tu nombre completo",

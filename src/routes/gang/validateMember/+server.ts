@@ -45,9 +45,10 @@ export const GET: RequestHandler = async (event: RequestEvent) => {
 		});
 
 		if (
-			!validatorMember ||
-			validatorMember.gangId !== parseInt(gangId) ||
-			validatorMember.membershipGangStatus !== 'VALIDATED'
+			userLogged.role !== 'admin' &&
+			(!validatorMember ||
+				validatorMember.gangId !== parseInt(gangId) ||
+				validatorMember.membershipGangStatus !== 'VALIDATED')
 		) {
 			return json(
 				{
