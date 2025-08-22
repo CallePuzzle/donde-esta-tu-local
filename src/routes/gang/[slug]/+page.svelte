@@ -62,14 +62,16 @@
 			<h1 class="text-5xl font-bold">
 				Peña {gang.name}
 			</h1>
-			<div class="tooltip m-2" data-tip="Actualizar peña">
-				<a class="text-accent" href="/gang/{gang.id}/update"><CircleFadingArrowUp /></a>
+			<div class="m-2 flex flex-col">
+				<div class="tooltip my-1" data-tip="Actualizar peña">
+					<a class="text-accent" href="/gang/{gang.id}/update"><CircleFadingArrowUp /></a>
+				</div>
+				{#if !webShareAPISupported}
+					<div class="tooltip my-1" data-tip="Compartir peña">
+						<button onclick={handleWebShare}><Share2 size="1.2rem" color="#ee3616" /></button>
+					</div>
+				{/if}
 			</div>
-			{#if webShareAPISupported}
-				<button onclick={handleWebShare} class="ml-4"
-					><Share2 size="1.2rem" color="#ee3616" /></button
-				>
-			{/if}
 		</div>
 	</div>
 </div>
