@@ -29,7 +29,7 @@
 
 	{#if navigating.to}
 		<div class="flex h-full w-full items-center justify-center">
-			<span class="loading loading-xl loading-ring"></span>
+			<span class="loading loading-xl loading-dots"></span>
 		</div>
 	{:else}
 		{@render children()}
