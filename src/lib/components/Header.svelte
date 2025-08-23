@@ -12,7 +12,6 @@
 		title: Snippet;
 		routes: Routes;
 		menuRoutes: Route[];
-		routeHomeUrl: string;
 	} & NavBarEndProps;
 
 	let {
