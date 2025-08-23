@@ -2,6 +2,8 @@ import { m } from './paraglide/messages.js';
 
 import { resolve } from '$app/paths';
 
+import type { User } from '@prisma/client';
+
 type Route = {
 	name: string;
 	url: string;
@@ -58,4 +60,13 @@ const routes: Routes = {
 	}
 };
 
-export { routes, type Routes, type Route };
+function getMenuRoutes(user: User | null): Route[] {
+	return Object.entries(routes)
+		.filter(([key, route]: [string, Route]) => {
+			if (!route.showInMenu) return false;
+			return true;
+		})
+		.map(([_, route]) => route);
+}
+
+export { routes, getMenuRoutes, type Routes, type Route };

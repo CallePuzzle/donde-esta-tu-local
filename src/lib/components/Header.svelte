@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import type { Routes } from '$lib/routes.js';
+	import type { Route, Routes } from '$lib/routes';
 
 	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
 	import NavBarList from './NavBarList.svelte';
@@ -11,10 +11,13 @@
 	export type Props = {
 		title: Snippet;
 		routes: Routes;
+		menuRoutes: Route[];
+		routeHomeUrl: string;
 	} & NavBarEndProps;
 
 	let {
 		title,
+		menuRoutes,
 		routes,
 		// NavBarEndProps
 		session,
@@ -30,7 +33,7 @@
 		<a href={routes.home.url as string} data-sveltekit-reload>{@render title()}</a>
 	</div>
 	<nav class="navbar-center hidden lg:block">
-		<NavBarList type="horizontal" {routes} {session} />
+		<NavBarList type="horizontal" routes={menuRoutes} />
 	</nav>
 	<NavBarEnd {session} {authClient} {userHasNotification} {notification} {searcher} {routes} />
 </div>
