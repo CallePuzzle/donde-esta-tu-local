@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import { page } from '$app/state';
+	import { page, navigating } from '$app/state';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import { getMenuRoutes, routes } from '$lib/routes';
@@ -26,6 +26,13 @@
 			</div>
 		{/snippet}
 	</Header>
-	{@render children()}
+
+	{#if navigating.to}
+		<div class="flex h-full w-full items-center justify-center">
+			<span class="loading loading-xl loading-ring"></span>
+		</div>
+	{:else}
+		{@render children()}
+	{/if}
 	<Footer menuRoutes={menuRoutesMobile} currentPath={page.url.pathname} />
 </div>
