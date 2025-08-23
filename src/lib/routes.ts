@@ -1,17 +1,12 @@
 import { m } from './paraglide/messages.js';
 
-type URL<T extends string = string> = T | ((id: string, ...params: string[]) => T);
-
-type Permissions = {
-	[entity: string]: string[];
-};
+import { resolve } from '$app/paths';
 
 type Route = {
 	name: string;
-	url: URL;
+	url: string;
 	isProtected: boolean;
 	showInMenu: boolean;
-	permissions?: Permissions;
 };
 
 interface Routes {
@@ -21,55 +16,43 @@ interface Routes {
 const routes: Routes = {
 	home: {
 		name: m.routes_home(),
-		url: '/',
+		url: resolve(`/`),
 		isProtected: false,
 		showInMenu: false
 	},
 	profile: {
 		name: m.routes_profile(),
-		url: '/profile',
-		isProtected: true,
-		showInMenu: false
-	},
-	notifications: {
-		name: m.routes_notifications(),
-		url: '/user/notifications',
-		isProtected: true,
-		showInMenu: false
-	},
-	user: {
-		name: m.routes_user(),
-		url: '/user/:id',
+		url: resolve(`/profile`),
 		isProtected: true,
 		showInMenu: false
 	},
 	gang_add: {
 		name: m.routes_gang_add(),
-		url: '/gang/add',
+		url: resolve(`/gang/add`),
 		isProtected: true,
 		showInMenu: true
 	},
 	activities: {
 		name: m.routes_activities(),
-		url: '/activities',
+		url: resolve(`/activities`),
 		isProtected: false,
 		showInMenu: true
 	},
 	admin: {
 		name: 'Admin',
-		url: '/admin',
+		url: resolve(`/admin`),
 		isProtected: true,
 		showInMenu: true
 	},
 	admin_gangs: {
 		name: 'Admin Gangs',
-		url: '/admin/gangs',
+		url: resolve(`/admin/gangs`),
 		isProtected: true,
 		showInMenu: false
 	},
 	admin_members: {
 		name: 'Admin Miembros',
-		url: '/admin/members',
+		url: resolve(`/admin/members`),
 		isProtected: true,
 		showInMenu: false
 	}
