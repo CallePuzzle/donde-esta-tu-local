@@ -66,7 +66,7 @@
 				<div class="tooltip my-1" data-tip="Actualizar peña">
 					<a class="text-accent" href="/gang/{gang.id}/update"><CircleFadingArrowUp /></a>
 				</div>
-				{#if !webShareAPISupported}
+				{#if webShareAPISupported}
 					<div class="tooltip my-1" data-tip="Compartir peña">
 						<button onclick={handleWebShare}><Share2 size="1.2rem" color="#ee3616" /></button>
 					</div>
