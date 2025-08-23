@@ -6,10 +6,9 @@
 	import { session, authClient } from '$lib/auth-client';
 	import Logo from '$lib/assets/logo.png';
 
-	import type { PageData } from './$types';
 	import type { Snippet } from 'svelte';
 
-	let { children, data }: { children: Snippet; data: PageData } = $props();
+	let { children }: { children: Snippet } = $props();
 </script>
 
 <div class="main-div h-screen">

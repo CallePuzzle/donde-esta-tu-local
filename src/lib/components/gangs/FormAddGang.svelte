@@ -1,9 +1,8 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import SuperDebug from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
-	import { m } from '$lib/paraglide/messages.js';
-	import CirculePlus from '@lucide/svelte/icons/circle-plus';
 	import FormFields from '$lib/components/FormFields.svelte';
 	import { zodToFieldsJsonSchema } from '$lib/schemas/utils.js';
 	import { addGangSchema } from '$lib/schemas/gang.js';
@@ -11,22 +10,33 @@
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { AddGangSchema } from '$lib/schemas/gang.js';
 	import type { LatLng } from '$lib/components/gangs/types.ts';
+	import type { Snippet } from 'svelte';
 
 	export type Props = {
 		dataForm: SuperValidated<AddGangSchema>;
 		latlng: LatLng;
 		pageStatus: number;
+		buttonText: Snippet;
+		callbackUrl?: string;
 		debug?: boolean;
 	};
 
-	let { dataForm, latlng, pageStatus, debug = false }: Props = $props();
+	let { dataForm, latlng, pageStatus, buttonText, callbackUrl, debug = false }: Props = $props();
 
 	const uid = $props.id();
 
 	const form = superForm(dataForm, {
 		id: uid,
 		validators: zod4Client(addGangSchema),
-		dataType: 'json'
+		dataType: 'json',
+		resetForm: false,
+		onResult({ result }) {
+			if (result.type === 'success' && callbackUrl) {
+				setTimeout(() => {
+					goto(callbackUrl);
+				}, 1000);
+			}
+		}
 	});
 
 	const { form: formData, enhance, delayed, message } = form;
@@ -57,7 +67,7 @@
 		{#if $delayed}
 			<span class="loading loading-lg loading-dots"></span>
 		{:else}
-			<button class="btn w-fit btn-accent"><CirculePlus />{m.form_gang_add_submit()}</button>
+			<button class="btn w-fit btn-accent">{@render buttonText()}</button>
 		{/if}
 		{#if $message}
 			<div class="my-2 alert {messageClass} text-sm">

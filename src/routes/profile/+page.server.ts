@@ -1,4 +1,3 @@
-import type { PageServerLoad, PageServerLoadEvent, Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -8,6 +7,10 @@ import { m } from '$lib/paraglide/messages';
 import { logger } from '$lib/logger';
 import { put } from '@vercel/blob';
 
+import type { PageServerLoad, PageServerLoadEvent, Actions } from './$types';
+import type { Gang } from '@prisma/client';
+type UserGangDetail = Pick<Gang, 'id' | 'name'>;
+
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 	const user = event.locals.user;
 
@@ -16,18 +19,32 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 		throw redirect(303, '/');
 	}
 
+	const userGangDetail = await prisma.user.findUnique({
+		where: {
+			id: user.id
+		},
+		include: {
+			gang: true
+		}
+	});
+
 	// Initialize form with current user data
 	const form = await superValidate(
 		{
 			name: user.name || '',
-			image: user.image || null
+			image: user.image || undefined,
+			imageFile: undefined
 		},
 		zod4(updateUserSchema)
 	);
 
 	return {
 		form,
-		user: user
+		user,
+		userGangDetail: {
+			id: userGangDetail?.gang?.id || null,
+			name: userGangDetail?.gang?.name || 'Usuario sin peña'
+		} as UserGangDetail
 	};
 };
 

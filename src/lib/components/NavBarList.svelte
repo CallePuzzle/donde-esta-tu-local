@@ -15,7 +15,7 @@
 		if (type === 'horizontal') {
 			return 'menu menu-horizontal';
 		} else if (type === 'drawer') {
-			return 'menu bg-base-200 min-h-full w-80 p-4';
+			return 'menu bg-base-200 min-h-full w-80 p-4 py-10';
 		}
 	}
 

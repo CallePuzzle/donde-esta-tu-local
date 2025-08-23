@@ -5,7 +5,7 @@
 	import User from '@lucide/svelte/icons/user';
 	import Mail from '@lucide/svelte/icons/mail';
 	import Calendar from '@lucide/svelte/icons/calendar';
-	import Shield from '@lucide/svelte/icons/shield';
+	import MapPinned from '@lucide/svelte/icons/map-pinned';
 
 	let {
 		data
@@ -43,16 +43,22 @@
 						</div>
 					</div>
 
-					<!-- Role -->
-					{#if data.user.role}
-						<div class="flex items-center gap-3">
-							<Shield class="h-5 w-5 text-base-content/60" />
-							<div>
-								<span class="text-sm text-base-content/60">Rol:</span>
-								<p class="font-medium capitalize">{data.user.role}</p>
-							</div>
+					<!-- Gang -->
+					<div class="flex items-center gap-3">
+						<MapPinned class="h-5 w-5 text-base-content/60" />
+						<div>
+							<span class="text-sm text-base-content/60">Peña:</span>
+							<p class="font-medium">
+								{#if data.userGangDetail.name}
+									<a href="/gang/{data.userGangDetail.id}" class="link link-primary"
+										>{data.userGangDetail.name}</a
+									>
+								{:else}
+									{data.userGangDetail.name}
+								{/if}
+							</p>
 						</div>
-					{/if}
+					</div>
 
 					<!-- Created Date -->
 					<div class="flex items-center gap-3">

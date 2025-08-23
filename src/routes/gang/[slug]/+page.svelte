@@ -5,6 +5,7 @@
 	import Share2 from '@lucide/svelte/icons/share-2';
 	import UserPlus from '@lucide/svelte/icons/user-plus';
 	import Check from '@lucide/svelte/icons/check';
+	import CircleFadingArrowUp from '@lucide/svelte/icons/circle-fading-arrow-up';
 	import X from '@lucide/svelte/icons/x';
 	import { m } from '$lib/paraglide/messages.js';
 	import ButtonRequest from '$lib/components/ButtonRequest.svelte';
@@ -61,11 +62,16 @@
 			<h1 class="text-5xl font-bold">
 				Peña {gang.name}
 			</h1>
-			{#if webShareAPISupported}
-				<button onclick={handleWebShare} class="ml-4"
-					><Share2 size="1.2rem" color="#ee3616" /></button
-				>
-			{/if}
+			<div class="m-2 flex flex-col">
+				<div class="tooltip my-1" data-tip="Actualizar peña">
+					<a class="text-accent" href="/gang/{gang.id}/update"><CircleFadingArrowUp /></a>
+				</div>
+				{#if !webShareAPISupported}
+					<div class="tooltip my-1" data-tip="Compartir peña">
+						<button onclick={handleWebShare}><Share2 size="1.2rem" color="#ee3616" /></button>
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 </div>
