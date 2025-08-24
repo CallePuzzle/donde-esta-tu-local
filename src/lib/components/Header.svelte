@@ -41,4 +41,7 @@
 	<button class="" onclick={() => history.back()}>
 		<ChevronLeft size={30} />
 	</button>
+	<div class="mx-2 px-2">
+		<a href={routes.home.url as string} data-sveltekit-reload>{@render title()}</a>
+	</div>
 </div>

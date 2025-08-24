@@ -5,7 +5,7 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import { getMenuRoutes, routes } from '$lib/routes';
 	import { session, authClient } from '$lib/auth-client';
-	import Logo from '$lib/assets/logo.png';
+	import Logo from '$lib/assets/logo.png?enhanced';
 
 	import type { Snippet } from 'svelte';
 
@@ -19,7 +19,7 @@
 	<Header {routes} {menuRoutes} {session} {authClient}>
 		{#snippet title()}
 			<div class="flex items-center">
-				<img src={Logo} alt="Icono cabecera" class="m-1 max-w-14" />
+				<enhanced:img src={Logo} alt="Icono cabecera" class="w-6 lg:m-1 lg:w-14" />
 				<div class="m-1">
 					<span>Montemayor</span> <span class="depililla -mt-3 text-sm">de Pililla</span>
 				</div>
@@ -28,7 +28,7 @@
 	</Header>
 
 	{#if navigating.to}
-		<div class="flex h-full w-full items-center justify-center">
+		<div class="flex h-1/2 w-full justify-center">
 			<span class="loading loading-xl loading-dots"></span>
 		</div>
 	{:else}
