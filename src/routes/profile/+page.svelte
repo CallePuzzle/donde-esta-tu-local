@@ -23,7 +23,7 @@
 </script>
 
 <div class="container mx-auto max-w-2xl p-4">
-	<div class="card bg-base-100 shadow-xl">
+	<div class="card mb-10 bg-base-100 shadow-xl lg:mb-0">
 		<div class="card-body">
 			<h1 class="mb-6 card-title flex items-center gap-2 text-2xl">
 				<User class="h-8 w-8" />

@@ -110,7 +110,7 @@
 	</div>
 
 	<!-- Información adicional -->
-	<div class="mt-8">
+	<div class="mt-8 mb-15 lg:mb-0">
 		<div class="alert alert-info">
 			<Shield class="h-6 w-6" />
 			<div>
