@@ -44,9 +44,4 @@
 	<div class="mx-2 px-2">
 		<a href={routes.home.url as string} data-sveltekit-reload>{@render title()}</a>
 	</div>
-	<p class="mx-2 flex grow items-center justify-center max-[400px]:hidden md:flex-1">
-		<span class="mr-1 text-xs">Made with</span><Heart size="10" color="red" strokeWidth="4" /><span
-			class="ml-1 text-xs">by KPY</span
-		>
-	</p>
 </div>
