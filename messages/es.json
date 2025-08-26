@@ -63,6 +63,8 @@
 	"gang_refuse_cannot_refuse_validated": "No se puede rechazar un usuario ya validado",
 	"gang_refuse_success": "Miembro rechazado correctamente",
 	"gang_refuse_error": "Error al rechazar el miembro",
+	"gang_update": "Actualizar peña",
+	"gang_share": "Compartir peña",
 	"magic_link_email_required": "El email es requerido",
 	"magic_link_already_sent": "Link ya enviado, revisa tu bandeja de entrada",
 	"magic_link_error_checking": "Error al verificar el estado"

@@ -62,16 +62,6 @@
 			<h1 class="text-5xl font-bold">
 				Peña {gang.name}
 			</h1>
-			<div class="m-2 flex flex-col">
-				<div class="tooltip my-1" data-tip="Actualizar peña">
-					<a class="text-accent" href="/gang/{gang.id}/update"><CircleFadingArrowUp /></a>
-				</div>
-				{#if webShareAPISupported}
-					<div class="tooltip my-1" data-tip="Compartir peña">
-						<button onclick={handleWebShare}><Share2 size="1.2rem" color="#ee3616" /></button>
-					</div>
-				{/if}
-			</div>
 		</div>
 	</div>
 </div>
@@ -81,8 +71,8 @@
 <div class="container mx-auto my-2">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 		<div class="rounded-lg bg-neutral p-4 shadow">
-			<div class="flex justify-between">
-				<h3 class="text-2xl font-bold">Miembros</h3>
+			<div class="m-2 flex justify-between">
+				<h3 class="m-1 text-2xl font-bold">Miembros</h3>
 				{#if data.user && !isValidatedMember && !pendingMembers.some((m) => m.id === data.user?.id)}
 					{#snippet buttonText()}
 						<UserPlus />{m.request_new_member_title()}
@@ -138,6 +128,18 @@
 					{/each}
 				</ul>
 			{/if}
+		</div>
+		<div class="order-first rounded-lg bg-neutral p-4 shadow md:order-last">
+			<div class="m-2 flex justify-between">
+				<a class="btn text-accent btn-soft" href="/gang/{gang.id}/update"
+					><CircleFadingArrowUp /> {m.gang_update()}</a
+				>
+				{#if webShareAPISupported}
+					<button class="btn text-secondary btn-soft" onclick={handleWebShare}
+						><Share2 size="1.2rem" /> {m.gang_share()}</button
+					>
+				{/if}
+			</div>
 		</div>
 	</div>
 </div>
