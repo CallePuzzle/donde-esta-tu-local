@@ -10,14 +10,11 @@
 
 	import type { Snippet } from 'svelte';
 
-	let menuRoutes = $state(getMenuRoutes($session?.data?.user));
-	let menuRoutesMobile = $state(getMenuRoutes($session?.data?.user, true));
-
 	let { children }: { children: Snippet } = $props();
 </script>
 
 <div class="main-div h-screen">
-	<Header {routes} {menuRoutes} {session} {authClient}>
+	<Header {routes} menuRoutes={getMenuRoutes()} {session} {authClient}>
 		{#snippet title()}
 			<div class="flex items-center">
 				<enhanced:img src={Logo} alt="Icono cabecera" class="w-6 lg:m-1 lg:w-14" />
@@ -37,5 +34,5 @@
 		{@render children()}
 	{/if}
 	<Footer />
-	<Dock menuRoutes={menuRoutesMobile} currentPath={page.url.pathname} />
+	<Dock menuRoutes={getMenuRoutes(true)} currentPath={page.url.pathname} />
 </div>

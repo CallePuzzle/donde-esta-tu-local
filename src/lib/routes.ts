@@ -2,8 +2,6 @@ import { m } from './paraglide/messages.js';
 
 import { resolve } from '$app/paths';
 
-import type { User } from '@prisma/client';
-import type { Component } from 'svelte';
 import Map from '@lucide/svelte/icons/map';
 import UserCircle from '@lucide/svelte/icons/user-circle';
 import MapPinPlus from '@lucide/svelte/icons/map-pin-plus';
@@ -12,6 +10,8 @@ import Shield from '@lucide/svelte/icons/shield';
 import Users from '@lucide/svelte/icons/users';
 import UsersRound from '@lucide/svelte/icons/users-round';
 import Megaphone from '@lucide/svelte/icons/megaphone';
+
+import type { Component } from 'svelte';
 
 type Route = {
 	name: string;
@@ -90,14 +90,18 @@ const routes: Routes = {
 	}
 };
 
-function getMenuRoutes(user: User | null, isMobile = false): Route[] {
-	return Object.entries(routes)
-		.filter(([key, route]: [string, Route]) => {
-			if (isMobile && route.showInMobile) return true;
-			if (!route.showInMenu) return false;
-			return true;
-		})
-		.map(([_, route]) => route);
+function getMenuRoutes(isMobile = false): Route[] {
+	return (
+		Object.entries(routes)
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			.filter(([key, route]: [string, Route]) => {
+				if (isMobile && route.showInMobile) return true;
+				if (!route.showInMenu) return false;
+				return true;
+			})
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			.map(([_, route]) => route)
+	);
 }
 
 export { routes, getMenuRoutes, type Routes, type Route };
