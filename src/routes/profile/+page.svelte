@@ -4,8 +4,10 @@
 	import { m } from '$lib/paraglide/messages';
 	import User from '@lucide/svelte/icons/user';
 	import Mail from '@lucide/svelte/icons/mail';
+	import Camera from '@lucide/svelte/icons/camera';
 	import Calendar from '@lucide/svelte/icons/calendar';
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
+	import UserRound from '@lucide/svelte/icons/user-round';
 
 	let {
 		data
@@ -34,6 +36,24 @@
 			<div class="mb-8 rounded-lg bg-base-200 p-4">
 				<h2 class="mb-4 text-lg font-semibold">Información de la cuenta</h2>
 				<div class="space-y-3">
+					<!-- image view (readonly) -->
+
+					<div class="flex items-center gap-3">
+						<Camera class="h-5 w-5 text-base-content/60" />
+						<div>
+							<span class="text-sm text-base-content/60">Imagen:</span>
+							<div class="avatar px-4">
+								<div class="flex w-10 content-center justify-center rounded-full">
+									{#if data.user.image}
+										<img alt="Profile" src={data.user.image} />
+									{:else}
+										<UserRound />
+									{/if}
+								</div>
+							</div>
+						</div>
+					</div>
+
 					<!-- Email (readonly) -->
 					<div class="flex items-center gap-3">
 						<Mail class="h-5 w-5 text-base-content/60" />

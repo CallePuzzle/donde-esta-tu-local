@@ -134,7 +134,7 @@
 				<a class="btn text-accent btn-soft" href="/gang/{gang.id}/update"
 					><CircleFadingArrowUp /> {m.gang_update()}</a
 				>
-				{#if !webShareAPISupported}
+				{#if webShareAPISupported}
 					<button class="btn text-[#ee3616] btn-soft" onclick={handleWebShare}
 						><Share2 size="1.2rem" /> {m.gang_share()}</button
 					>
