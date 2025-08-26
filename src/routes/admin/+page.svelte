@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import Users from '@lucide/svelte/icons/users';
 	import Building from '@lucide/svelte/icons/building';
 	import Shield from '@lucide/svelte/icons/shield';

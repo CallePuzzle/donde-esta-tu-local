@@ -2,17 +2,18 @@
 	import Heart from '@lucide/svelte/icons/heart';
 	import MailQuestionMark from '@lucide/svelte/icons/mail-question-mark';
 
-	import type { Route } from '$lib/routes';
-
 	export type Props = {
-		menuRoutes: Route[];
-		currentPath: string;
+		visibleOnlyOnMobile?: boolean;
 	};
 
-	let { menuRoutes, currentPath }: Props = $props();
+	let { visibleOnlyOnMobile = false }: Props = $props();
+
+	let visibleOnMobileClass = $derived.by(() => {
+		return visibleOnlyOnMobile ? 'flex lg:hidden' : 'hidden lg:flex';
+	});
 </script>
 
-<footer class="bottom-0 container mx-auto hidden justify-center lg:flex">
+<footer class="bottom-0 container mx-auto justify-center {visibleOnMobileClass}">
 	<p class="mx-4 flex items-center justify-center md:flex-1">
 		<span class="mr-2">Made with</span><Heart size="16" color="red" strokeWidth="4" /><span
 			class="ml-2">by KPY</span
@@ -44,16 +45,4 @@
 			><MailQuestionMark size="32" /></a
 		>
 	</p>
-</footer>
-
-<footer class="dock flex lg:hidden">
-	{#each menuRoutes as route (route.url)}
-		<a href={route.url} class={currentPath == route.url ? 'dock-active' : ''}>
-			{#if route.icon}
-				{@const Component = route.icon}
-				<Component size={20} />
-			{/if}
-			<span class="dock-label">{route.short || route.name}</span>
-		</a>
-	{/each}
 </footer>
