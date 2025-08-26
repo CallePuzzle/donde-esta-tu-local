@@ -27,6 +27,7 @@
 	"routes_activities": "Actividades de las peñas",
 	"routes_activities_short": "Actividades",
 	"routes_notices": "Avisos",
+	"routes_notices_user_not_logged_in": "Es necesario estar logado para ver los avisos",
 	"schema_user_name_error": "Por favor, ingrese un nombre válido.",
 	"schema_user_name_describe": "Tu nombre completo",
 	"schema_user_image_error": "Por favor, ingrese una URL de imagen válida.",
