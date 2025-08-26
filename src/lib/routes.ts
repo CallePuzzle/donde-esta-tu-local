@@ -1,17 +1,26 @@
 import { m } from './paraglide/messages.js';
 
-type URL<T extends string = string> = T | ((id: string, ...params: string[]) => T);
+import { resolve } from '$app/paths';
 
-type Permissions = {
-	[entity: string]: string[];
-};
+import Map from '@lucide/svelte/icons/map';
+import UserCircle from '@lucide/svelte/icons/user-circle';
+import MapPinPlus from '@lucide/svelte/icons/map-pin-plus';
+import Calendar from '@lucide/svelte/icons/calendar';
+import Shield from '@lucide/svelte/icons/shield';
+import Users from '@lucide/svelte/icons/users';
+import UsersRound from '@lucide/svelte/icons/users-round';
+import Megaphone from '@lucide/svelte/icons/megaphone';
+
+import type { Component } from 'svelte';
 
 type Route = {
 	name: string;
-	url: URL;
+	short?: string;
+	url: string;
+	icon?: Component;
 	isProtected: boolean;
 	showInMenu: boolean;
-	permissions?: Permissions;
+	showInMobile?: boolean;
 };
 
 interface Routes {
@@ -21,58 +30,78 @@ interface Routes {
 const routes: Routes = {
 	home: {
 		name: m.routes_home(),
-		url: '/',
+		url: resolve(`/`),
+		icon: Map,
 		isProtected: false,
-		showInMenu: false
-	},
-	profile: {
-		name: m.routes_profile(),
-		url: '/profile',
-		isProtected: true,
-		showInMenu: false
-	},
-	notifications: {
-		name: m.routes_notifications(),
-		url: '/user/notifications',
-		isProtected: true,
-		showInMenu: false
-	},
-	user: {
-		name: m.routes_user(),
-		url: '/user/:id',
-		isProtected: true,
-		showInMenu: false
+		showInMenu: false,
+		showInMobile: true
 	},
 	gang_add: {
 		name: m.routes_gang_add(),
-		url: '/gang/add',
+		short: m.routes_gang_add_short(),
+		url: resolve(`/gang/add`),
+		icon: MapPinPlus,
 		isProtected: true,
 		showInMenu: true
 	},
 	activities: {
 		name: m.routes_activities(),
-		url: '/activities',
+		url: resolve(`/activities`),
+		short: m.routes_activities_short(),
+		icon: Calendar,
 		isProtected: false,
 		showInMenu: true
 	},
+	notices: {
+		name: m.routes_notices(),
+		url: resolve(`/notices`),
+		icon: Megaphone,
+		isProtected: false,
+		showInMenu: true
+	},
+	profile: {
+		name: m.routes_profile(),
+		url: resolve(`/profile`),
+		icon: UserCircle,
+		isProtected: true,
+		showInMenu: false,
+		showInMobile: true
+	},
 	admin: {
 		name: 'Admin',
-		url: '/admin',
+		url: resolve(`/admin`),
+		icon: Shield,
 		isProtected: true,
-		showInMenu: true
+		showInMenu: false
 	},
 	admin_gangs: {
 		name: 'Admin Gangs',
-		url: '/admin/gangs',
+		url: resolve(`/admin/gangs`),
+		icon: Users,
 		isProtected: true,
 		showInMenu: false
 	},
 	admin_members: {
 		name: 'Admin Miembros',
-		url: '/admin/members',
+		url: resolve(`/admin/members`),
+		icon: UsersRound,
 		isProtected: true,
 		showInMenu: false
 	}
 };
 
-export { routes, type Routes, type Route };
+function getMenuRoutes(isMobile = false): Route[] {
+	return (
+		Object.entries(routes)
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			.filter(([key, route]: [string, Route]) => {
+				if (isMobile && route.showInMobile) return true;
+				if (!route.showInMenu) return false;
+				return true;
+			})
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			.map(([_, route]) => route)
+	);
+}
+
+export { routes, getMenuRoutes, type Routes, type Route };

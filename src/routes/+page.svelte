@@ -100,7 +100,7 @@
 	<button
 		id="imhere"
 		onclick={imHere}
-		class="btn absolute right-3 bottom-16 btn-active btn-circle btn-primary md:bottom-3"
+		class="btn absolute right-3 bottom-25 btn-active btn-circle btn-primary lg:bottom-10"
 		><Locate /></button
 	>
 {/if}

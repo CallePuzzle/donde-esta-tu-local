@@ -50,7 +50,7 @@
 			// Crear popup con botón
 			const popupContent = document.createElement('div');
 			const button = document.createElement('button');
-			button.className = 'btn btn-accent';
+			button.className = 'btn btn-dash btn-accent';
 			button.textContent = 'Añadir peña en esta localización';
 			button.onclick = () => {
 				modalAdd!.showModal();
