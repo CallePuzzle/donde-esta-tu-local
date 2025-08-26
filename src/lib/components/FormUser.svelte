@@ -77,8 +77,9 @@
 	}
 
 	function clearFileSelection() {
-		if (fileInput) {
-			fileInput.value = '';
+		if ($fileInput) {
+			const input = document.getElementById('imageFile') as HTMLInputElement;
+			input.value = '';
 		}
 		selectedFileName = null;
 		previewUrl = null;

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
-	import Heart from '@lucide/svelte/icons/heart';
 	import NavBarList from './NavBarList.svelte';
 	import NavBarEnd from './NavBarEnd.svelte';
 
