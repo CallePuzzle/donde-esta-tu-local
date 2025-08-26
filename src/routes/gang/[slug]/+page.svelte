@@ -83,7 +83,7 @@
 					/>
 				{:else if !data.user}
 					<button
-						class="btn flex h-full w-48 flex-col btn-secondary xl:h-[38px] xl:w-80 xl:flex-row"
+						class="btn flex h-full w-48 flex-col text-neutral btn-secondary xl:h-[38px] xl:w-80 xl:flex-row"
 						onclick={handleLogin}
 						><span>Inicia sesión </span><span>para unirte a la peña</span></button
 					>
@@ -134,8 +134,8 @@
 				<a class="btn text-accent btn-soft" href="/gang/{gang.id}/update"
 					><CircleFadingArrowUp /> {m.gang_update()}</a
 				>
-				{#if webShareAPISupported}
-					<button class="btn text-secondary btn-soft" onclick={handleWebShare}
+				{#if !webShareAPISupported}
+					<button class="btn text-[#ee3616] btn-soft" onclick={handleWebShare}
 						><Share2 size="1.2rem" /> {m.gang_share()}</button
 					>
 				{/if}
