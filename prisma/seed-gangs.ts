@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
-export async function SeedGangs(prisma: PrismaClient) {
+async function SeedGangs(prisma: PrismaClient) {
 	// Clear existing gangs
 	await prisma.gang.deleteMany();
 	console.log('✅ Cleared existing gangs');

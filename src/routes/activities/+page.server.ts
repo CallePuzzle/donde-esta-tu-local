@@ -14,9 +14,7 @@ export const load: PageServerLoad = async () => {
 			placeGang: {
 				select: {
 					id: true,
-					name: true,
-					latitude: true,
-					longitude: true
+					name: true
 				}
 			}
 		},

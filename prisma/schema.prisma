@@ -101,7 +101,7 @@ model Gang {
 model Activity {
   id   Int      @id @default(autoincrement())
   name String
-  desc String
+  desc String?
   date DateTime
 
   // Peñas organizadoras (relación many-to-many)

@@ -21,8 +21,8 @@
 	function getActivityLocation(activity: (typeof data.activities)[0]) {
 		if (activity.placeGang) {
 			return activity.placeGang.name;
-		} else if (activity.latitude && activity.longitude) {
-			return `Coordenadas: ${activity.latitude.toFixed(6)}, ${activity.longitude.toFixed(6)}`;
+		} else if (activity.desc) {
+			return activity.desc;
 		}
 		return 'Ubicación no especificada';
 	}
