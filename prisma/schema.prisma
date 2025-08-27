@@ -28,9 +28,7 @@ model User {
   gang                 Gang?  @relation(fields: [gangId], references: [id])
   membershipGangStatus String @default("PENDING")
 
-  requestAddedBy    UpdateGangRequest[] @relation("AddedBy")
-  requestReviewedBy UpdateGangRequest[] @relation("ReviewedBy")
-  validatedGangs    Gang[]              @relation("ValidatedBy")
+  validatedGangs Gang[] @relation("ValidatedBy")
 
   @@unique([email])
   @@map("user")
@@ -83,13 +81,12 @@ model Verification {
 }
 
 model Gang {
-  id                Int                 @id @default(autoincrement())
-  name              String
-  latitude          Float
-  longitude         Float
-  members           User[]
-  status            String              @default("PENDING")
-  UpdateGangRequest UpdateGangRequest[]
+  id        Int    @id @default(autoincrement())
+  name      String
+  latitude  Float
+  longitude Float
+  members   User[]
+  status    String @default("PENDING")
 
   validatedByUserId String?
   validatedBy       User?   @relation("ValidatedBy", fields: [validatedByUserId], references: [id])
@@ -99,28 +96,6 @@ model Gang {
   hostedActivities    Activity[] @relation("ActivityPlace")
 
   @@map("gang")
-}
-
-model UpdateGangRequest {
-  id Int @id @default(autoincrement())
-
-  relatedGangId Int?
-  relatedGang   Gang? @relation(fields: [relatedGangId], references: [id])
-
-  // Campos nuevos de la peña
-  name      String
-  latitude  Float
-  longitude Float
-
-  addedByUserId    String?
-  reviewedByUserId String?
-  addedBy          User?   @relation("AddedBy", fields: [addedByUserId], references: [id])
-  reviewedBy       User?   @relation("ReviewedBy", fields: [reviewedByUserId], references: [id])
-
-  status    String   @default("PENDING")
-  createdAt DateTime @default(now())
-
-  @@map("update_gang_request")
 }
 
 model Activity {
@@ -134,9 +109,7 @@ model Activity {
 
   // Lugar: puede ser una peña o coordenadas
   placeGangId Int?
-  placeGang   Gang?  @relation("ActivityPlace", fields: [placeGangId], references: [id])
-  latitude    Float?
-  longitude   Float?
+  placeGang   Gang? @relation("ActivityPlace", fields: [placeGangId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
