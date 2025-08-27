@@ -94,6 +94,10 @@ model Gang {
   validatedByUserId String?
   validatedBy       User?   @relation("ValidatedBy", fields: [validatedByUserId], references: [id])
 
+  // Relaciones con actividades
+  organisedActivities Activity[] @relation("ActivityOrganisers")
+  hostedActivities    Activity[] @relation("ActivityPlace")
+
   @@map("gang")
 }
 
@@ -117,4 +121,25 @@ model UpdateGangRequest {
   createdAt DateTime @default(now())
 
   @@map("update_gang_request")
+}
+
+model Activity {
+  id   Int      @id @default(autoincrement())
+  name String
+  desc String
+  date DateTime
+
+  // Peñas organizadoras (relación many-to-many)
+  organisingGangs Gang[] @relation("ActivityOrganisers")
+
+  // Lugar: puede ser una peña o coordenadas
+  placeGangId Int?
+  placeGang   Gang?  @relation("ActivityPlace", fields: [placeGangId], references: [id])
+  latitude    Float?
+  longitude   Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("activity")
 }
