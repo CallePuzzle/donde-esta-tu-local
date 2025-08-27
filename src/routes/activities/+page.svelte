@@ -41,7 +41,7 @@
 <div class="hero">
 	<div class="hero-content text-center">
 		<div class="flex max-w-md">
-			<h1 class="text-2xl font-bold">Actividades</h1>
+			<h1 class="text-2xl font-bold">Actividades de peñas</h1>
 		</div>
 	</div>
 </div>
