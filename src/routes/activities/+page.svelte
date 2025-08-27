@@ -38,9 +38,17 @@
 	let pastActivities = data.activities.filter((a) => new Date(a.date) < now);
 </script>
 
-<div class="container mx-auto px-4 py-8">
+<div class="hero">
+	<div class="hero-content text-center">
+		<div class="flex max-w-md">
+			<h1 class="text-2xl font-bold">Actividades</h1>
+		</div>
+	</div>
+</div>
+
+<div class="container mx-auto my-2">
 	<!-- name of each tab group should be unique -->
-	<div class="tabs-lift mb-15 tabs lg:mb-0">
+	<div class="tabs-lift tabs flex justify-center">
 		<input
 			type="radio"
 			name="activities_tabs"
@@ -48,7 +56,7 @@
 			aria-label="Cartel"
 			checked={true}
 		/>
-		<div class="tab-content border-base-300 bg-base-100 p-2">
+		<div class="tab-content border-base-300 bg-base-100 p-2 mb-20 lg:mb-0">
 			<enhanced:img src={Cartel} alt="Cartel actividades" />
 		</div>
 
@@ -56,9 +64,9 @@
 			type="radio"
 			name="activities_tabs"
 			class="tab bg-base-200 text-base-content"
-			aria-label="Próximas Actividades"
+			aria-label="Próximas"
 		/>
-		<div class="tab-content border-base-300 bg-base-100 p-2">
+		<div class="tab-content border-base-300 bg-base-100 p-2 mb-20 lg:mb-0">
 			{#if upcomingActivities.length > 0}
 				<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 					{#each upcomingActivities as activity (activity.id)}
@@ -126,9 +134,9 @@
 			type="radio"
 			name="activities_tabs"
 			class="tab bg-base-200 text-base-content"
-			aria-label="Actividades Pasadas"
+			aria-label="Pasadas"
 		/>
-		<div class="tab-content border-base-300 bg-base-100 p-2">
+		<div class="tab-content border-base-300 bg-base-100 p-2 mb-20 lg:mb-0">
 			{#if pastActivities.length > 0}
 				<div class="grid gap-6 opacity-75 md:grid-cols-2 lg:grid-cols-3">
 					{#each pastActivities as activity (activity.id)}
