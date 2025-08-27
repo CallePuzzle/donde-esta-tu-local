@@ -1,4 +1,5 @@
-import type { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+
 export async function SeedGangs(prisma: PrismaClient) {
 	// Clear existing gangs
 	await prisma.gang.deleteMany();
@@ -331,3 +332,22 @@ export async function SeedGangs(prisma: PrismaClient) {
 
 	console.log(`✅ Created ${gangs.length} gangs`);
 }
+
+const prisma = new PrismaClient();
+
+async function main() {
+	console.log('🌱 Starting seed...');
+
+	await SeedGangs(prisma);
+
+	console.log('🌱 Seed completed successfully!');
+}
+
+main()
+	.catch((e) => {
+		console.error('❌ Seed failed:', e);
+		process.exit(1);
+	})
+	.finally(async () => {
+		await prisma.$disconnect();
+	});
