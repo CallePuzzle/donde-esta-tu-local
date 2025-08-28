@@ -2,7 +2,7 @@
 	import Cartel from '$lib/assets/actividades2025.jpg?enhanced';
 
 	import type { PageData } from './$types';
-	import type { Activity, Gang } from '@prisma/client';
+	import type { Gang } from '@prisma/client';
 
 	let { data }: { data: PageData } = $props();
 
@@ -21,14 +21,14 @@
 	function getActivityLocation(activity: (typeof data.activities)[0]) {
 		if (activity.placeGang) {
 			return activity.placeGang.name;
-		} else if (activity.desc) {
-			return activity.desc;
+		} else if (activity.placeDesc) {
+			return activity.placeDesc;
 		}
-		return 'Ubicación no especificada';
+		return false;
 	}
 
 	function getOrganisers(gangs: Gang[]) {
-		if (gangs.length === 0) return 'Sin organizadores';
+		if (gangs.length === 0) return false;
 		return gangs.map((g) => g.name).join(', ');
 	}
 
@@ -77,16 +77,19 @@
 									<p class="text-sm text-gray-600">Fecha y hora:</p>
 									<p class="font-medium">{formatActivityDate(activity.date)}</p>
 								</div>
+								{#if getActivityLocation(activity)}
+									<div class="mb-3">
+										<p class="text-sm text-gray-600">Lugar:</p>
+										<p class="font-medium">{getActivityLocation(activity)}</p>
+									</div>
+								{/if}
 
-								<div class="mb-3">
-									<p class="text-sm text-gray-600">Lugar:</p>
-									<p class="font-medium">{getActivityLocation(activity)}</p>
-								</div>
-
-								<div class="mb-3">
-									<p class="text-sm text-gray-600">Organiza:</p>
-									<p class="font-medium">{getOrganisers(activity.organisingGangs)}</p>
-								</div>
+								{#if getOrganisers(activity.collaboratingGangs)}
+									<div class="mb-3">
+										<p class="text-sm text-gray-600">Colaboran:</p>
+										<p class="font-medium">{getOrganisers(activity.collaboratingGangs)}</p>
+									</div>
+								{/if}
 							</div>
 						</div>
 					{/each}

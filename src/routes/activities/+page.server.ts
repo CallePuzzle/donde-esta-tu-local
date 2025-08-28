@@ -5,7 +5,7 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async () => {
 	const activities = await prisma.activity.findMany({
 		include: {
-			organisingGangs: {
+			collaboratingGangs: {
 				select: {
 					id: true,
 					name: true

@@ -92,24 +92,25 @@ model Gang {
   validatedBy       User?   @relation("ValidatedBy", fields: [validatedByUserId], references: [id])
 
   // Relaciones con actividades
-  organisedActivities Activity[] @relation("ActivityOrganisers")
-  hostedActivities    Activity[] @relation("ActivityPlace")
+  collaboratorActivities Activity[] @relation("ActivityCollaborator")
+  hostedActivities       Activity[] @relation("ActivityPlace")
 
   @@map("gang")
 }
 
 model Activity {
-  id   Int      @id @default(autoincrement())
+  id   Int    @id @default(autoincrement())
   name String
-  desc String?
-  date DateTime @unique
 
-  // Peñas organizadoras (relación many-to-many)
-  organisingGangs Gang[] @relation("ActivityOrganisers")
+  date     DateTime @unique
+  dateDesc String?
 
-  // Lugar: puede ser una peña o coordenadas
+  // Peñas colaboradoras (relación many-to-many)
+  collaboratingGangs Gang[] @relation("ActivityCollaborator")
+
   placeGangId Int?
-  placeGang   Gang? @relation("ActivityPlace", fields: [placeGangId], references: [id])
+  placeGang   Gang?   @relation("ActivityPlace", fields: [placeGangId], references: [id])
+  placeDesc   String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -4,38 +4,56 @@ export type SeedActivityType = {
 	name: string;
 	date: Date;
 	dateDesc?: string;
-	desc?: string;
-	organisingGangNames?: string[];
+	placeDesc?: string;
+	collaboratingGangNames?: string[];
 	placeGangName?: string;
 };
 
 export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityType) {
-	type OrganisingGang = {
+	type CollaboratingGang = {
 		id: number;
 	};
 
-	const { name, date, desc: descInput, organisingGangNames, placeGangName } = activity;
-	const desc = descInput ?? null;
+	const {
+		name,
+		date,
+		dateDesc: dateDescIn,
+		collaboratingGangNames,
+		placeGangName,
+		placeDesc: placeDescIn
+	} = activity;
+	const dateDesc = dateDescIn ?? null;
+	const placeDesc = placeDescIn ?? null;
 
-	const organisingGangs: OrganisingGang[] = [];
+	const collaboratingGangs: CollaboratingGang[] = [];
 
-	if (organisingGangNames) {
-		for (let i = 0; i < organisingGangNames.length; i++) {
+	if (collaboratingGangNames) {
+		for (let i = 0; i < collaboratingGangNames.length; i++) {
 			const gang = await prisma.gang.findFirst({
 				where: {
-					name: organisingGangNames[i]
+					name: collaboratingGangNames[i]
 				}
 			});
 			if (!gang) {
-				console.log('⚠️  No se encontró la peña ' + organisingGangNames[i]);
+				console.log('⚠️  No se encontró la peña ' + collaboratingGangNames[i]);
 				return;
 			}
-			organisingGangs.push({ id: gang.id });
+			collaboratingGangs.push({ id: gang.id });
 		}
 	}
 
-	let update: Prisma.ActivityUpdateInput;
-	let create: Prisma.ActivityCreateInput;
+	let update: Prisma.ActivityUpdateInput = {
+		name,
+		dateDesc,
+		placeDesc
+	};
+
+	let create: Prisma.ActivityCreateInput = {
+		name,
+		date,
+		dateDesc,
+		placeDesc
+	};
 
 	if (placeGangName) {
 		const placeGang = await prisma.gang.findFirst({
@@ -47,41 +65,15 @@ export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityT
 			console.log('⚠️  No se encontró la peña ' + placeGangName);
 			return;
 		}
-		update = {
-			name,
-			desc,
-			organisingGangs: {
-				connect: organisingGangs
-			},
-			placeGang: { connect: { id: placeGang.id } }
-		};
 
-		create = {
-			name,
-			date,
-			desc,
-			organisingGangs: {
-				connect: organisingGangs
-			},
-			placeGang: { connect: { id: placeGang.id } }
-		};
-	} else {
-		update = {
-			name,
-			desc,
-			organisingGangs: {
-				connect: organisingGangs
-			}
-		};
+		update = { ...update, placeGang: { connect: { id: placeGang.id } } };
 
-		create = {
-			name,
-			date,
-			desc,
-			organisingGangs: {
-				connect: organisingGangs
-			}
-		};
+		create = { ...create, placeGang: { connect: { id: placeGang.id } } };
+	}
+
+	if (collaboratingGangs.length > 0) {
+		update = { ...update, collaboratingGangs: { connect: collaboratingGangs } };
+		create = { ...create, collaboratingGangs: { connect: collaboratingGangs } };
 	}
 
 	const activitySeeded = await prisma.activity.upsert({
