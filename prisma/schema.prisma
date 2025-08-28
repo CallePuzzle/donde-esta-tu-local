@@ -102,7 +102,7 @@ model Activity {
   id   Int      @id @default(autoincrement())
   name String
   desc String?
-  date DateTime
+  date DateTime @unique
 
   // Peñas organizadoras (relación many-to-many)
   organisingGangs Gang[] @relation("ActivityOrganisers")
