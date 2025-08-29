@@ -36,7 +36,7 @@
 	<NavBarEnd {session} {authClient} {userHasNotification} {notification} {searcher} {routes} />
 </div>
 
-<div class="navbar flex min-h-px bg-base-300 shadow-sm lg:hidden">
+<div class="navbar flex min-h-px justify-between bg-base-300 shadow-sm lg:hidden">
 	<button class="" onclick={() => history.back()}>
 		<ChevronLeft size={30} />
 	</button>
