@@ -25,7 +25,7 @@ async function SeedActivities(prisma: PrismaClient) {
 		},
 		{
 			name: 'V Danza del Sapo',
-			date: new Date('2025-09-14T02:00:00.000Z'),
+			date: new Date('2025-09-13T21:59:59.000Z'),
 			dateDesc: 'Después del baile',
 			placeGangName: 'El Desmadre'
 		},
@@ -47,7 +47,7 @@ async function SeedActivities(prisma: PrismaClient) {
 		},
 		{
 			name: 'Juego el Pañuelo',
-			date: new Date('2025-09-16T01:00:00.000Z'),
+			date: new Date('2025-09-15T21:59:01.000Z'),
 			dateDesc: 'Descanso del baile',
 			placeGangName: '13 la víspera'
 		},
@@ -59,13 +59,13 @@ async function SeedActivities(prisma: PrismaClient) {
 		},
 		{
 			name: 'III Bingo bingo',
-			date: new Date('2025-09-17T00:00:00.000Z'),
+			date: new Date('2025-09-16T21:59:01.000Z'),
 			dateDesc: 'Descanso del baile',
 			placeDesc: 'En el baile'
 		},
 		{
 			name: 'II El Komplote',
-			date: new Date('2025-09-17T02:00:00.000Z'),
+			date: new Date('2025-09-16T21:59:02.000Z'),
 			dateDesc: 'Después del baile',
 			placeGangName: 'El K-pote'
 		},
