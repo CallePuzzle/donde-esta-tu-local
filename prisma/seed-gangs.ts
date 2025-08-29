@@ -317,6 +317,12 @@ async function SeedGangs(prisma: PrismaClient) {
 			latitude: 41.51013232393657,
 			longitude: -4.455519318580628,
 			status: 'PENDING'
+		},
+		{
+			name: 'La bodega de Raúl',
+			latitude: 41.507281694567574,
+			longitude: -4.459717785325354,
+			status: 'VALIDATED'
 		}
 	];
 

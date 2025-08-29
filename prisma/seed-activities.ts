@@ -78,7 +78,7 @@ async function SeedActivities(prisma: PrismaClient) {
 		{
 			name: 'Vermut la Bodega',
 			date: new Date('2025-09-18T11:30:00.000Z'),
-			placeDesc: 'Raúl'
+			placeGangName: 'La bodega de Raúl'
 		},
 		{
 			name: 'Tardeo',
