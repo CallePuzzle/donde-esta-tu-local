@@ -13,7 +13,7 @@
 	let { children }: { children: Snippet } = $props();
 </script>
 
-<div class="main-div h-screen">
+<div class="main-div h-screen min-w-[348px]">
 	<Header {routes} menuRoutes={getMenuRoutes()} {session} {authClient}>
 		{#snippet title()}
 			<div class="flex items-center">

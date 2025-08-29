@@ -16,7 +16,9 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 
 	// Check if user is authenticated
 	if (!user) {
-		throw redirect(303, '/');
+		return {
+			user
+		};
 	}
 
 	const userGangDetail = await prisma.user.findUnique({

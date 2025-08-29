@@ -28,9 +28,7 @@ model User {
   gang                 Gang?  @relation(fields: [gangId], references: [id])
   membershipGangStatus String @default("PENDING")
 
-  requestAddedBy    UpdateGangRequest[] @relation("AddedBy")
-  requestReviewedBy UpdateGangRequest[] @relation("ReviewedBy")
-  validatedGangs    Gang[]              @relation("ValidatedBy")
+  validatedGangs Gang[] @relation("ValidatedBy")
 
   @@unique([email])
   @@map("user")
@@ -83,38 +81,39 @@ model Verification {
 }
 
 model Gang {
-  id                Int                 @id @default(autoincrement())
-  name              String
-  latitude          Float
-  longitude         Float
-  members           User[]
-  status            String              @default("PENDING")
-  UpdateGangRequest UpdateGangRequest[]
+  id        Int    @id @default(autoincrement())
+  name      String
+  latitude  Float
+  longitude Float
+  members   User[]
+  status    String @default("PENDING")
 
   validatedByUserId String?
   validatedBy       User?   @relation("ValidatedBy", fields: [validatedByUserId], references: [id])
 
+  // Relaciones con actividades
+  collaboratorActivities Activity[] @relation("ActivityCollaborator")
+  hostedActivities       Activity[] @relation("ActivityPlace")
+
   @@map("gang")
 }
 
-model UpdateGangRequest {
-  id Int @id @default(autoincrement())
+model Activity {
+  id   Int    @id @default(autoincrement())
+  name String
 
-  relatedGangId Int?
-  relatedGang   Gang? @relation(fields: [relatedGangId], references: [id])
+  date     DateTime @unique
+  dateDesc String?
 
-  // Campos nuevos de la peña
-  name      String
-  latitude  Float
-  longitude Float
+  // Peñas colaboradoras (relación many-to-many)
+  collaboratingGangs Gang[] @relation("ActivityCollaborator")
 
-  addedByUserId    String?
-  reviewedByUserId String?
-  addedBy          User?   @relation("AddedBy", fields: [addedByUserId], references: [id])
-  reviewedBy       User?   @relation("ReviewedBy", fields: [reviewedByUserId], references: [id])
+  placeGangId Int?
+  placeGang   Gang?   @relation("ActivityPlace", fields: [placeGangId], references: [id])
+  placeDesc   String?
 
-  status    String   @default("PENDING")
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@map("update_gang_request")
+  @@map("activity")
 }

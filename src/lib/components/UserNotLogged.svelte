@@ -7,7 +7,7 @@
 </script>
 
 <div class="hero min-h-screen bg-base-200">
-	<div class="hero-content text-center">
+	<div class="hero-content">
 		<div class="max-w-md">
 			<div role="alert" class="alert alert-error">
 				<svg
