@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Cartel from '$lib/assets/actividades2025.jpg?enhanced';
 	import ActivityCard from '$lib/components/ActivityCard.svelte';
+	import { Tabs, TabItem } from 'flowbite-svelte';
 
 	import type { PageData } from './$types';
 
@@ -21,7 +22,26 @@
 </div>
 
 <div class="container mx-auto my-2">
-	<!-- name of each tab group should be unique -->
+	<Tabs>
+		<TabItem open title="Cartel">
+			<enhanced:img src={Cartel} alt="Cartel actividades" />
+		</TabItem>
+		<TabItem title="Próximas">
+			<p class="text-sm text-gray-500 dark:text-gray-400">
+				<b>Settings:</b>
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+				labore et dolore magna aliqua.
+			</p>
+		</TabItem>
+		<TabItem title="Pasadas">
+			<p class="text-sm text-gray-500 dark:text-gray-400">
+				<b>Users:</b>
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+				labore et dolore magna aliqua.
+			</p>
+		</TabItem>
+	</Tabs>
+
 	<div class="tabs-lift tabs flex justify-center">
 		<input
 			type="radio"
@@ -30,9 +50,7 @@
 			aria-label="Cartel"
 			checked={true}
 		/>
-		<div class="tab-content mb-20 border-base-300 bg-base-100 p-2 lg:mb-0">
-			<enhanced:img src={Cartel} alt="Cartel actividades" />
-		</div>
+		<div class="tab-content mb-20 border-base-300 bg-base-100 p-2 lg:mb-0"></div>
 
 		<input
 			type="radio"
