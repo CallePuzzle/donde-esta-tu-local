@@ -22,43 +22,11 @@
 </div>
 
 <div class="container mx-auto my-2">
-	<Tabs>
-		<TabItem open title="Cartel">
+	<Tabs tabStyle="underline">
+		<TabItem open title="Cartel" class="flex w-full justify-center">
 			<enhanced:img src={Cartel} alt="Cartel actividades" />
 		</TabItem>
-		<TabItem title="Próximas">
-			<p class="text-sm text-gray-500 dark:text-gray-400">
-				<b>Settings:</b>
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-				labore et dolore magna aliqua.
-			</p>
-		</TabItem>
-		<TabItem title="Pasadas">
-			<p class="text-sm text-gray-500 dark:text-gray-400">
-				<b>Users:</b>
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-				labore et dolore magna aliqua.
-			</p>
-		</TabItem>
-	</Tabs>
-
-	<div class="tabs-lift tabs flex justify-center">
-		<input
-			type="radio"
-			name="activities_tabs"
-			class="tab bg-base-200 text-base-content"
-			aria-label="Cartel"
-			checked={true}
-		/>
-		<div class="tab-content mb-20 border-base-300 bg-base-100 p-2 lg:mb-0"></div>
-
-		<input
-			type="radio"
-			name="activities_tabs"
-			class="tab bg-base-200 text-base-content"
-			aria-label="Próximas"
-		/>
-		<div class="tab-content mb-20 border-base-300 bg-base-100 p-2 lg:mb-0">
+		<TabItem title="Próximas" class="flex w-full justify-center">
 			{#if upcomingActivities.length > 0}
 				<div class="grid grid-cols-1 justify-center md:grid-cols-2 lg:grid-cols-3">
 					{#each upcomingActivities as activity (activity.id)}
@@ -83,15 +51,8 @@
 					<span>No hay actividades próximas</span>
 				</div>
 			{/if}
-		</div>
-
-		<input
-			type="radio"
-			name="activities_tabs"
-			class="tab bg-base-200 text-base-content"
-			aria-label="Pasadas"
-		/>
-		<div class="tab-content mb-20 border-base-300 bg-base-100 p-2 lg:mb-0">
+		</TabItem>
+		<TabItem title="Pasadas" class="flex w-full justify-center">
 			{#if pastActivities.length > 0}
 				<div class="grid grid-cols-1 justify-center opacity-75 md:grid-cols-2 lg:grid-cols-3">
 					{#each pastActivities as activity (activity.id)}
@@ -116,12 +77,6 @@
 					<span>No hay actividades pasadas</span>
 				</div>
 			{/if}
-		</div>
-	</div>
+		</TabItem>
+	</Tabs>
 </div>
-
-<style>
-	.tabs input[type='radio']:checked {
-		background-image: none;
-	}
-</style>
