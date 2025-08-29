@@ -46,7 +46,7 @@
 	}
 </script>
 
-<div class="mx-auto flex max-w-xs flex-col">
+<div class="mx-auto flex flex-col">
 	{#if loading}
 		<span class="loading loading-lg loading-dots"></span>
 	{:else if message}

@@ -72,7 +72,7 @@
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 		<div class="rounded-lg bg-neutral p-4 shadow">
 			<div class="m-2 flex justify-between">
-				<h3 class="m-1 text-2xl font-bold">Miembros</h3>
+				<h3 class="m-1 mr-5 text-2xl font-bold">Miembros</h3>
 				{#if data.user && !isValidatedMember && !pendingMembers.some((m) => m.id === data.user?.id)}
 					{#snippet buttonText()}
 						<UserPlus />{m.request_new_member_title()}
