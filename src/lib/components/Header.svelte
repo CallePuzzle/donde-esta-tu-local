@@ -36,11 +36,12 @@
 	<NavBarEnd {session} {authClient} {userHasNotification} {notification} {searcher} {routes} />
 </div>
 
-<div class="navbar flex min-h-px bg-base-300 shadow-sm lg:hidden">
+<div class="navbar flex min-h-px justify-between bg-base-300 shadow-sm lg:hidden">
 	<button class="" onclick={() => history.back()}>
 		<ChevronLeft size={30} />
 	</button>
 	<div class="mx-2 px-2">
 		<a href={routes.home.url as string} data-sveltekit-reload>{@render title()}</a>
 	</div>
+	<NavBarEnd {session} {authClient} {userHasNotification} {notification} {searcher} {routes} />
 </div>
