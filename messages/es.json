@@ -16,6 +16,7 @@
 	"schema_add_gang_name_describe": "Por favor, ingrese un nombre válido para la peña.",
 	"routes_home": "Mapa",
 	"routes_profile": "Perfil",
+	"routes_profile_user_not_logged_in": "Es necesario estar logado para ver tu perfil",
 	"routes_login": "Iniciar sesión",
 	"routes_logout": "Cerrar sesión",
 	"routes_notifications": "Notificaciones",

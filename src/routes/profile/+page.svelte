@@ -1,13 +1,16 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import FormUser from '$lib/components/FormUser.svelte';
 	import { m } from '$lib/paraglide/messages';
+	import { authClient } from '$lib/auth-client';
 	import User from '@lucide/svelte/icons/user';
 	import Mail from '@lucide/svelte/icons/mail';
 	import Camera from '@lucide/svelte/icons/camera';
 	import Calendar from '@lucide/svelte/icons/calendar';
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import UserRound from '@lucide/svelte/icons/user-round';
+
+	import type { PageData } from './$types';
+	import { goto } from '$app/navigation';
 
 	let {
 		data
@@ -111,6 +114,17 @@
 			<!-- Update Form -->
 			<div class="divider">Actualizar información</div>
 			<FormUser dataForm={data.form} />
+			<div class="flex justify-center">
+				<button
+					class="btn max-w-max btn-error"
+					onclick={async () => {
+						await authClient.signOut();
+						goto('/');
+					}}
+				>
+					Cerrar sesión
+				</button>
+			</div>
 		</div>
 	</div>
 </div>
