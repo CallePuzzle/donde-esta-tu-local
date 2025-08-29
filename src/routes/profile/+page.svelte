@@ -8,15 +8,22 @@
 	import Calendar from '@lucide/svelte/icons/calendar';
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import UserRound from '@lucide/svelte/icons/user-round';
+	import { goto } from '$app/navigation';
 
 	import type { PageData } from './$types';
-	import { goto } from '$app/navigation';
+	import type { User as UserPrisma } from '@prisma/client';
+	import type { Props as FormUserProps } from '$lib/components/FormUser.svelte';
+	import type { UserGangDetail } from './type';
 
 	let {
 		data
 	}: {
 		data: PageData;
 	} = $props();
+
+	let user = $derived(data.user) as UserPrisma;
+	let form = $derived(data.form) as FormUserProps['dataForm'];
+	let userGangDetail = $derived(data.userGangDetail) as UserGangDetail;
 
 	const formatDate = (date: string | Date) => {
 		return new Date(date).toLocaleDateString('es-ES', {
@@ -47,8 +54,8 @@
 							<span class="text-sm text-base-content/60">Imagen:</span>
 							<div class="avatar px-4">
 								<div class="flex w-10 content-center justify-center rounded-full">
-									{#if data.user.image}
-										<img alt="Profile" src={data.user.image} />
+									{#if user.image}
+										<img alt="Profile" src={user.image} />
 									{:else}
 										<UserRound />
 									{/if}
@@ -62,7 +69,7 @@
 						<Mail class="h-5 w-5 text-base-content/60" />
 						<div>
 							<span class="text-sm text-base-content/60">Email:</span>
-							<p class="font-medium">{data.user.email}</p>
+							<p class="font-medium">{user.email}</p>
 						</div>
 					</div>
 
@@ -72,12 +79,12 @@
 						<div>
 							<span class="text-sm text-base-content/60">Peña:</span>
 							<p class="font-medium">
-								{#if data.userGangDetail.name}
-									<a href="/gang/{data.userGangDetail.id}" class="link link-primary"
-										>{data.userGangDetail.name}</a
+								{#if userGangDetail.name}
+									<a href="/gang/{userGangDetail.id}" class="link link-primary"
+										>{userGangDetail.name}</a
 									>
 								{:else}
-									{data.userGangDetail.name}
+									{userGangDetail.name}
 								{/if}
 							</p>
 						</div>
@@ -88,14 +95,14 @@
 						<Calendar class="h-5 w-5 text-base-content/60" />
 						<div>
 							<span class="text-sm text-base-content/60">Miembro desde:</span>
-							<p class="font-medium">{formatDate(data.user.createdAt)}</p>
+							<p class="font-medium">{formatDate(user.createdAt)}</p>
 						</div>
 					</div>
 
 					<!-- Email Verification Status -->
 					<div class="flex items-center gap-3">
 						<div class="flex h-5 w-5 items-center justify-center">
-							{#if data.user.emailVerified}
+							{#if user.emailVerified}
 								<span class="text-success">✓</span>
 							{:else}
 								<span class="text-warning">⚠</span>
@@ -104,7 +111,7 @@
 						<div>
 							<span class="text-sm text-base-content/60">Estado del email:</span>
 							<p class="font-medium">
-								{data.user.emailVerified ? 'Verificado' : 'Pendiente de verificación'}
+								{user.emailVerified ? 'Verificado' : 'Pendiente de verificación'}
 							</p>
 						</div>
 					</div>
@@ -113,7 +120,7 @@
 
 			<!-- Update Form -->
 			<div class="divider">Actualizar información</div>
-			<FormUser dataForm={data.form} />
+			<FormUser dataForm={form} />
 			<div class="flex justify-center">
 				<button
 					class="btn max-w-max btn-error"
