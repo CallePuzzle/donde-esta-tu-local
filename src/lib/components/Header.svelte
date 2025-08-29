@@ -43,4 +43,5 @@
 	<div class="mx-2 px-2">
 		<a href={routes.home.url as string} data-sveltekit-reload>{@render title()}</a>
 	</div>
+	<NavBarEnd {session} {authClient} {userHasNotification} {notification} {searcher} {routes} />
 </div>
