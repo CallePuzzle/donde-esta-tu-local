@@ -43,7 +43,7 @@
 	});
 </script>
 
-<div class="navbar-end">
+<div class="navbar-end w-auto md:w-[50%]">
 	{#if searcher}
 		<button class="btn btn-circle btn-ghost">
 			<Search />
