@@ -60,13 +60,19 @@
 			const gangName = typeof content === 'string' ? content.toLowerCase() : '';
 
 			if (gangName.includes(value)) {
+				// Añadir el marker al mapa si no está ya
+				if (!map.hasLayer(marker)) {
+					marker.addTo(map);
+				}
 				if (gang.status == 'VALIDATED') {
 					marker.setOpacity(1);
 				} else {
 					marker.setOpacity(0.6);
 				}
+				marker.openPopup();
 			} else {
-				marker.setOpacity(0);
+				// Remover el marker del mapa
+				map.removeLayer(marker);
 			}
 		});
 	}
