@@ -75,6 +75,7 @@
 				map.removeLayer(marker);
 			}
 		});
+		if (value === '') map.closePopup();
 	}
 </script>
 
