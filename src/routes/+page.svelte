@@ -82,7 +82,7 @@
 	<div class="hero-content p-0 text-center">
 		<div class="max-w-md">
 			<label class="input-bordered input flex items-center">
-				<input type="text" class="grow" placeholder="Filtrar por peña:" onchange={filterGangs} />
+				<input type="text" class="grow" placeholder="Filtrar por peña:" oninput={filterGangs} />
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 16 16"
