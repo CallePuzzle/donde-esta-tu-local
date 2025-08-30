@@ -52,7 +52,7 @@
 		const value = input.value.toLowerCase();
 
 		gangsInMap.forEach((gangInMap) => {
-			const { marker, gang } = gangInMap;
+			const { marker } = gangInMap;
 			const popup = marker.getPopup();
 			if (!popup) return;
 
