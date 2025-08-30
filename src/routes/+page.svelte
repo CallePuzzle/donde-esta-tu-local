@@ -64,11 +64,6 @@
 				if (!map.hasLayer(marker)) {
 					marker.addTo(map);
 				}
-				if (gang.status == 'VALIDATED') {
-					marker.setOpacity(1);
-				} else {
-					marker.setOpacity(0.6);
-				}
 				marker.openPopup();
 			} else {
 				// Remover el marker del mapa
