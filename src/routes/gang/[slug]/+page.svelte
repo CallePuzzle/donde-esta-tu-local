@@ -2,10 +2,12 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { coordsMonte } from '$lib/utils/coords-monte';
+	import { showMyPosition } from '$lib/utils/show-my-position';
 	import Share2 from '@lucide/svelte/icons/share-2';
 	import UserPlus from '@lucide/svelte/icons/user-plus';
 	import Check from '@lucide/svelte/icons/check';
 	import CircleFadingArrowUp from '@lucide/svelte/icons/circle-fading-arrow-up';
+	import Locate from '@lucide/svelte/icons/locate';
 	import X from '@lucide/svelte/icons/x';
 	import { m } from '$lib/paraglide/messages.js';
 	import ButtonRequest from '$lib/components/ButtonRequest.svelte';
@@ -13,20 +15,21 @@
 	import { loginModalStore } from '$lib/stores/loginModal';
 
 	import type { PageData } from './$types';
-
+	import type { Map } from 'leaflet';
 	import type { GangData, Member } from './type';
 
 	let { data }: { data: PageData } = $props();
-
+	let L: typeof import('leaflet');
+	let map: Map;
 	let gang: GangData = data.gang;
-
+	let showImHere = $state(false);
 	let members: Member[] = $state(data.members);
 	let pendingMembers: Member[] = $state(data.pendingMembers || []);
 	let isValidatedMember: boolean = $state(data.isValidatedMember || false);
 
 	onMount(async () => {
-		const L = await import('leaflet');
-		const map = L.map('map').setView(coordsMonte, 17);
+		L = await import('leaflet');
+		map = L.map('map').setView(coordsMonte, 17);
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution:
 				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -34,6 +37,7 @@
 
 		map.panTo([gang.latitude, gang.longitude]);
 		L.marker([gang.latitude, gang.longitude]).addTo(map).bindPopup(gang.name);
+		showImHere = true;
 	});
 
 	let webShareAPISupported = $state(browser && typeof navigator.share !== 'undefined');
@@ -54,12 +58,16 @@
 	function handleLogin() {
 		if ($loginModalStore) $loginModalStore.showModal();
 	}
+
+	function imHere() {
+		showMyPosition(L, map, coordsMonte);
+	}
 </script>
 
 <div class="hero">
 	<div class="hero-content text-center">
 		<div class="flex max-w-md">
-			<h1 class="text-5xl font-bold">
+			<h1 class="text-3xl font-bold md:text-5xl">
 				Peña {gang.name}
 			</h1>
 		</div>
@@ -68,9 +76,17 @@
 
 <div id="map" class="z-0"></div>
 
+{#if showImHere}
+	<button
+		id="imhere"
+		onclick={imHere}
+		class="btn absolute top-[39vh] right-3 btn-active btn-circle btn-primary"><Locate /></button
+	>
+{/if}
+
 <div class="container mx-auto my-2">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-		<div class="rounded-lg bg-neutral p-4 shadow">
+		<div class="rounded-lg bg-neutral p-2 shadow sm:p-4">
 			<div class="m-2 flex justify-between">
 				<h3 class="m-1 mr-5 text-2xl font-bold">Miembros</h3>
 				{#if data.user && !isValidatedMember && !pendingMembers.some((m) => m.id === data.user?.id)}
