@@ -6,6 +6,7 @@
       "dependencies": {
         "@prisma/client": "^6.15.0",
         "@prisma/extension-accelerate": "^2.0.2",
+        "@vercel/analytics": "^1.5.0",
         "@vercel/blob": "^1.1.1",
         "better-auth": "^1.3.7",
         "leaflet": "^1.9.4",
@@ -20,7 +21,7 @@
         "@lucide/svelte": "^0.539.0",
         "@sveltejs/adapter-auto": "^6.1.0",
         "@sveltejs/enhanced-img": "^0.8.1",
-        "@sveltejs/kit": "^2.36.3",
+        "@sveltejs/kit": "^2.37.0",
         "@sveltejs/vite-plugin-svelte": "^6.1.3",
         "@tailwindcss/forms": "^0.5.10",
         "@tailwindcss/typography": "^0.5.16",
@@ -31,14 +32,14 @@
         "daisyui": "^5.0.54",
         "eslint": "^9.34.0",
         "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-oxlint": "^1.13.0",
+        "eslint-plugin-oxlint": "^1.14.0",
         "eslint-plugin-svelte": "^3.11.0",
         "flowbite": "^3.1.2",
         "flowbite-svelte": "^1.13.4",
         "formsnap": "^2.0.1",
         "globals": "^16.3.0",
-        "nodemailer": "^7.0.5",
-        "oxlint": "^1.13.0",
+        "nodemailer": "^7.0.6",
+        "oxlint": "^1.14.0",
         "prettier": "^3.6.2",
         "prettier-plugin-svelte": "^3.4.0",
         "prettier-plugin-tailwindcss": "^0.6.14",
@@ -589,6 +590,8 @@
     "@typescript-eslint/utils": ["@typescript-eslint/utils@8.41.0", "", { "dependencies": { "@eslint-community/eslint-utils": "^4.7.0", "@typescript-eslint/scope-manager": "8.41.0", "@typescript-eslint/types": "8.41.0", "@typescript-eslint/typescript-estree": "8.41.0" }, "peerDependencies": { "eslint": "^8.57.0 || ^9.0.0", "typescript": ">=4.8.4 <6.0.0" } }, "sha512-udbCVstxZ5jiPIXrdH+BZWnPatjlYwJuJkDA4Tbo3WyYLh8NvB+h/bKeSZHDOFKfphsZYJQqaFtLeXEqurQn1A=="],
 
     "@typescript-eslint/visitor-keys": ["@typescript-eslint/visitor-keys@8.41.0", "", { "dependencies": { "@typescript-eslint/types": "8.41.0", "eslint-visitor-keys": "^4.2.1" } }, "sha512-+GeGMebMCy0elMNg67LRNoVnUFPIm37iu5CmHESVx56/9Jsfdpsvbv605DQ81Pi/x11IdKUsS5nzgTYbCQU9fg=="],
+
+    "@vercel/analytics": ["@vercel/analytics@1.5.0", "", { "peerDependencies": { "@remix-run/react": "^2", "@sveltejs/kit": "^1 || ^2", "next": ">= 13", "react": "^18 || ^19 || ^19.0.0-rc", "svelte": ">= 4", "vue": "^3", "vue-router": "^4" }, "optionalPeers": ["@remix-run/react", "@sveltejs/kit", "next", "react", "svelte", "vue", "vue-router"] }, "sha512-MYsBzfPki4gthY5HnYN7jgInhAZ7Ac1cYDoRWFomwGHWEX7odTEzbtg9kf/QSo7XEsEAqlQugA6gJ2WS2DEa3g=="],
 
     "@vercel/blob": ["@vercel/blob@1.1.1", "", { "dependencies": { "async-retry": "^1.3.3", "is-buffer": "^2.0.5", "is-node-process": "^1.2.0", "throttleit": "^2.1.0", "undici": "^5.28.4" } }, "sha512-heiJGj2qt5qTv6yiShH9f6KRAoZGj+lz61GQ+lBRL4lhvUmKI9A51KYlQTnsUd9ymdFlKHBlvmPeG+yGz2Qsbg=="],
 
