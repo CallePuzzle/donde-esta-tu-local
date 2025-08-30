@@ -65,13 +65,13 @@
 		</div>
 		{#if location}
 			<div class="mb-3">
-				<p class="flex text-sm text-gray-600">
+				<p class="flex items-center text-sm text-gray-600">
 					<MapPinned /><span class="mx-1">Lugar:</span>
 					{#if typeof location === 'string'}
 						<span class="font-medium text-base-content">{location}</span>
 					{:else}
 						<span class="font-medium text-base-content">
-							<a href="/gang/{location.id}" class="link link-hover">{location.name}</a>
+							<a href="/gang/{location.id}" class="btn btn-dash btn-info">{location.name}</a>
 						</span>
 					{/if}
 				</p>

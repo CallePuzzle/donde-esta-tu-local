@@ -8,8 +8,7 @@ import { logger } from '$lib/logger';
 import { put } from '@vercel/blob';
 
 import type { PageServerLoad, PageServerLoadEvent, Actions } from './$types';
-import type { Gang } from '@prisma/client';
-type UserGangDetail = Pick<Gang, 'id' | 'name'>;
+import type { UserGangDetail } from './type';
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 	const user = event.locals.user;
