@@ -5,7 +5,7 @@
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 </script>
 
-<div class="container mx-auto p-4">
+<div class="container mx-auto p-4 pb-20 lg:pb-0">
 	<div class="mb-8">
 		<div class="mb-4 flex items-center gap-3">
 			<Shield class="h-10 w-10 text-primary" />
@@ -109,7 +109,7 @@
 	</div>
 
 	<!-- Información adicional -->
-	<div class="mt-8 mb-15 lg:mb-0">
+	<div class="mt-8">
 		<div class="alert alert-info">
 			<Shield class="h-6 w-6" />
 			<div>

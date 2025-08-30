@@ -21,7 +21,7 @@
 	</div>
 </div>
 
-<div class="container mx-auto my-2">
+<div class="container mx-auto my-2 pb-20 lg:pb-0">
 	<Tabs tabStyle="underline">
 		<TabItem open title="Cartel" class="flex w-full justify-center">
 			<enhanced:img src={Cartel} alt="Cartel actividades" />
