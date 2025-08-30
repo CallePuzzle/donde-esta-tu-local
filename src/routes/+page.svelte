@@ -1,4 +1,6 @@
 <script lang="ts">
+	import '@sjmc11/tourguidejs/src/scss/tour.scss'; // Styles
+	import { TourGuideClient } from '@sjmc11/tourguidejs/src/Tour'; // JS
 	import { onMount } from 'svelte';
 	import { showMyPosition } from '$lib/utils/show-my-position';
 	import { coordsMonte } from '$lib/utils/coords-monte';
@@ -41,6 +43,9 @@
 		});
 
 		showImHere = true;
+
+		const tg = new TourGuideClient();
+		if (!tg.isFinished()) tg.start();
 	});
 
 	function imHere() {
