@@ -49,7 +49,7 @@
 		if (file) {
 			// Validate file size (5MB max)
 			if (file.size > 5 * 1024 * 1024) {
-				alert(m.schema_user_image_file_size_error());
+				$message = m.schema_user_image_file_size_error();
 				target.value = '';
 				return;
 			}
@@ -57,7 +57,7 @@
 			// Validate file type
 			const acceptedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 			if (!acceptedTypes.includes(file.type)) {
-				alert(m.schema_user_image_file_type_error());
+				$message = m.schema_user_image_file_type_error();
 				target.value = '';
 				return;
 			}
@@ -149,7 +149,7 @@
 		{#if $delayed}
 			<span class="loading loading-lg loading-dots"></span>
 		{:else}
-			<button class="btn w-fit btn-accent">
+			<button class="btn w-45 btn-accent">
 				{#if selectedFileName}
 					<Upload />
 				{:else}

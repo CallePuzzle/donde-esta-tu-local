@@ -122,7 +122,7 @@
 			<div class="divider">Actualizar información</div>
 			<FormUser dataForm={form} />
 			<div class="flex justify-center">
-				<ButtonSignOut {authClient} classNames="btn max-w-max btn-error" />
+				<ButtonSignOut {authClient} classNames="btn w-45 btn-error" />
 			</div>
 		</div>
 	</div>
