@@ -3,7 +3,8 @@ import { emailOTPClient, adminClient } from 'better-auth/client/plugins';
 
 export const authClient = createAuthClient({
 	plugins: [emailOTPClient(), adminClient()]
-}) as unknown as AuthClient;
+	// eslint-disable-next-line
+}) as any;
 
 export const { signIn, signUp, useSession } = authClient;
 
