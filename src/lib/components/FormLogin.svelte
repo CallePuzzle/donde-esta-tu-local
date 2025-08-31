@@ -8,7 +8,7 @@
 	import { defaults } from 'sveltekit-superforms/client';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { authClient } from '$lib/auth-client';
-	import cn from 'clsx';
+	import Dot from '@lucide/svelte/icons/dot';
 
 	import FormFields from './FormFields.svelte';
 	import { zodToFieldsJsonSchema } from '../schemas/utils.js';
@@ -46,7 +46,8 @@
 
 				if (data?.success) {
 					step = 2;
-				} else {
+				}
+				if (error) {
 					message = {
 						type: 'error',
 						text: error.message + ': ' + error.statusText
@@ -72,11 +73,16 @@
 			email: $formData.email,
 			otp
 		});
-		console.log(data, error);
+		afterCancelCallback();
 	}
 </script>
 
-<div class="mx-auto flex max-w-xs flex-col">
+<div class="mx-auto flex max-w-xs flex-col justify-center">
+	<ul class="steps">
+		<li class="step step-primary">Introduce tu email</li>
+		<li class="step {step == 2 ? 'step-primary' : ''}">Valida el código</li>
+	</ul>
+	<div class="divider"></div>
 	{#if step == 1}
 		<form use:enhance class="flex flex-col" method="POST">
 			<FormFields {form} {formData} {fields} />
@@ -88,7 +94,7 @@
 						{message.text}
 					</div>
 				{:else}
-					<button class="btn btn-accent"><Inbox />{m.form_login_sign_in()}</button>
+					<button class="btn w-42 btn-accent"><Inbox />{m.form_login_sign_in()}</button>
 				{/if}
 			</div>
 		</form>
@@ -112,7 +118,7 @@
 				</div>
 
 				<div class="flex w-10 items-center justify-center">
-					<div class="bg-border h-1 w-3 rounded-full"></div>
+					<Dot />
 				</div>
 
 				<div class="flex">
@@ -126,17 +132,13 @@
 		{#snippet Cell(cell: CellProps)}
 			<PinInput.Cell
 				{cell}
-				class={cn(
-					// Custom class to override global focus styles
-					'focus-override',
-					'relative h-14 w-10 text-[2rem]',
-					'flex items-center justify-center',
-					'transition-all duration-75',
-					'border-foreground/20 border-y border-r first:rounded-l-md first:border-l last:rounded-r-md',
-					'text-foreground group-focus-within/pininput:border-foreground/40 group-hover/pininput:border-foreground/40',
-					'outline-0',
-					'data-active:outline-1 data-active:outline-white'
-				)}
+				class="focus-override border-foreground/20 text-foreground group-focus-within/pininput:border-foreground/40 group-hover/pininput:border-foreground/40
+				relative flex h-14
+				w-10 items-center
+				justify-center border-y border-r text-[2rem] outline-0 transition-all
+				duration-75 first:rounded-l-md first:border-l
+				last:rounded-r-md
+				data-active:outline-1 data-active:outline-white"
 			>
 				{#if cell.char !== null}
 					<div>
@@ -152,10 +154,9 @@
 				{/if}
 			</PinInput.Cell>
 		{/snippet}
+		<p class="py-2">Introduce el código que has recibido en el correo</p>
 	{/if}
-
-	<ul class="steps">
-		<li class="step step-primary">Email</li>
-		<li class="step {step == 2 ? 'step-primary' : ''}">Validar</li>
-	</ul>
+	<div class="flex justify-center">
+		<a class="btn w-42 btn-error" href="/" data-sveltekit-reload>Reset</a>
+	</div>
 </div>
