@@ -9,6 +9,7 @@
 	import Image from '@lucide/svelte/icons/image';
 	import FormFields from './FormFields.svelte';
 	import { zodToFieldsJsonSchema } from '$lib/schemas/utils.js';
+
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { UpdateUserSchema } from '$lib/schemas/user.js';
 

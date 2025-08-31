@@ -6,14 +6,14 @@
 	import FormLogin from './FormLogin.svelte';
 	import { loginModalStore } from '$lib/stores/loginModal';
 
-	import type { Session } from '$lib/auth-client';
 	import type { Props as FormLoginProps } from './FormLogin.svelte';
 	import type { Routes } from '$lib/routes';
+	import type { User as UserPrisma } from '@prisma/client';
 	import ModalType from './Modal.svelte';
 
 	export type Props = {
 		routes: Routes;
-		session: Session;
+		user: UserPrisma;
 		userHasNotification?: boolean;
 		notification?: boolean;
 		searcher?: boolean;
@@ -21,14 +21,14 @@
 
 	let {
 		routes,
-		session,
+		user,
 		userHasNotification = false,
 		notification = false,
 		searcher = false
 	}: Props = $props();
 
 	let modal = $state<ModalType | null>(null);
-	let userIsLogged = $derived<boolean>($session?.data ? true : false);
+	let userIsLogged = $derived<boolean>(user ? true : false);
 
 	async function afterCancelCallback() {
 		await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -63,8 +63,8 @@
 				<div class="w-10 rounded-full">
 					<a href={routes.profile.url}>
 						<img
-							alt="{$session?.data?.user?.name || 'User'} avatar"
-							src={$session?.data?.user?.image ||
+							alt="{user?.name || 'User'} avatar"
+							src={user?.image ||
 								'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'}
 						/>
 					</a>

@@ -5,16 +5,19 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import Dock from '$lib/components/Dock.svelte';
 	import { getMenuRoutes, routes } from '$lib/routes';
-	import { session } from '$lib/auth-client';
 	import Logo from '$lib/assets/logo.png?enhanced';
 
 	import type { Snippet } from 'svelte';
+	import type { PageData } from './$types';
+	import type { User as UserPrisma } from '@prisma/client';
 
-	let { children }: { children: Snippet } = $props();
+	let { children, data }: { children: Snippet; data: PageData } = $props();
+
+	let user = $derived(data.user) as UserPrisma;
 </script>
 
 <div class="main-div h-screen min-w-[348px]">
-	<Header {routes} menuRoutes={getMenuRoutes()} {session}>
+	<Header {routes} menuRoutes={getMenuRoutes()} {user}>
 		{#snippet title()}
 			<div class="flex items-center">
 				<enhanced:img src={Logo} alt="Icono cabecera" class="w-6 lg:m-1 lg:w-14" />
