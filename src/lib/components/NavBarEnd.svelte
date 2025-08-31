@@ -5,6 +5,7 @@
 	import Link from './Link.svelte';
 	import Modal from './Modal.svelte';
 	import FormLogin from './FormLogin.svelte';
+	import ButtonSignOut from './ButtonSignOut.svelte';
 	import { loginModalStore } from '$lib/stores/loginModal';
 
 	import type { AuthClient, Session } from '$lib/auth-client';
@@ -78,13 +79,7 @@
 			>
 				<li><Link route={routes.profile} /></li>
 				<li>
-					<button
-						onclick={async () => {
-							await authClient.signOut();
-						}}
-					>
-						Sign Out
-					</button>
+					<ButtonSignOut {authClient} />
 				</li>
 			</ul>
 		{:else}

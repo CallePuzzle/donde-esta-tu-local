@@ -8,7 +8,7 @@
 	import Calendar from '@lucide/svelte/icons/calendar';
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import UserRound from '@lucide/svelte/icons/user-round';
-	import { goto } from '$app/navigation';
+	import ButtonSignOut from '$lib/components/ButtonSignOut.svelte';
 
 	import type { PageData } from './$types';
 	import type { User as UserPrisma } from '@prisma/client';
@@ -122,15 +122,7 @@
 			<div class="divider">Actualizar información</div>
 			<FormUser dataForm={form} />
 			<div class="flex justify-center">
-				<button
-					class="btn max-w-max btn-error"
-					onclick={async () => {
-						await authClient.signOut();
-						goto('/');
-					}}
-				>
-					Cerrar sesión
-				</button>
+				<ButtonSignOut {authClient} classNames="btn max-w-max btn-error" />
 			</div>
 		</div>
 	</div>
