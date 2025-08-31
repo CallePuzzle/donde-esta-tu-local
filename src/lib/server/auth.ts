@@ -57,7 +57,7 @@ function getBetterAuth(additionalOptions: BetterAuthOptions): ReturnType<typeof 
 									data: { lastMagicLinkSentAt: new Date() }
 								});
 							} else {
-								logger.error('Invalid OTP type');
+								logger.error(type, 'Invalid OTP type');
 							}
 						} catch (error) {
 							logger.error(error);
