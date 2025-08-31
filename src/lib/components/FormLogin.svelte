@@ -23,6 +23,7 @@
 	let { debug = false, afterCancelCallback = () => {} }: Props = $props();
 
 	let message = $state<{ type: 'success' | 'error'; text: string } | null>(null);
+	let sending = $state(false);
 	let step = $state<number>(1);
 	let otp = $state('');
 
@@ -35,6 +36,7 @@
 		validators: zod4Client(loginSchema),
 		dataType: 'json',
 		async onSubmit({ cancel }) {
+			sending = true;
 			cancel();
 			try {
 				message = null;
@@ -43,7 +45,7 @@
 					email: $formData.email,
 					type: 'sign-in'
 				});
-
+				sending = false;
 				if (data?.success) {
 					step = 2;
 				}
@@ -61,19 +63,31 @@
 			}
 		}
 	});
-	const { form: formData, enhance, delayed } = form;
+	const { form: formData, enhance } = form;
 
 	const fields = zodToFieldsJsonSchema(loginSchema);
 
 	type CellProps = PinInputRootSnippetProps['cells'][0];
 
 	async function onComplete() {
-		console.log(otp);
-		const { data, error } = await authClient.signIn.emailOtp({
+		sending = true;
+		const { error } = await authClient.signIn.emailOtp({
 			email: $formData.email,
 			otp
 		});
-		afterCancelCallback();
+		sending = false;
+		if (error) {
+			message = {
+				type: 'error',
+				text: error.message + ': ' + error.statusText
+			};
+		} else {
+			message = {
+				type: 'success',
+				text: m.form_login_success()
+			};
+			afterCancelCallback();
+		}
 	}
 </script>
 
@@ -87,7 +101,7 @@
 		<form use:enhance class="flex flex-col" method="POST">
 			<FormFields {form} {formData} {fields} />
 			<div class="my-2 flex justify-center">
-				{#if $delayed}
+				{#if sending}
 					<span class="loading loading-lg loading-dots"></span>
 				{:else if message}
 					<div class="alert {message.type === 'success' ? 'alert-success' : 'alert-error'} text-sm">
@@ -103,31 +117,27 @@
 		{/if}
 	{/if}
 	{#if step == 2}
-		<PinInput.Root
-			bind:value={otp}
-			class="group/pininput text-foreground flex items-center has-disabled:opacity-30"
-			maxlength={6}
-			{onComplete}
-			pattern={REGEXP_ONLY_DIGITS}
-		>
-			{#snippet children({ cells })}
-				<div class="flex">
-					{#each cells.slice(0, 3) as cell, i (i)}
+		{#if sending}
+			<span class="loading loading-lg loading-dots"></span>
+		{:else if message}
+			<div class="alert {message.type === 'success' ? 'alert-success' : 'alert-error'} text-sm">
+				{message.text}
+			</div>
+		{:else}
+			<PinInput.Root
+				bind:value={otp}
+				class="group/pininput text-foreground flex items-center has-disabled:opacity-30"
+				maxlength={6}
+				{onComplete}
+				pattern={REGEXP_ONLY_DIGITS}
+			>
+				{#snippet children({ cells })}
+					{#each cells as cell, i (i)}
 						{@render Cell(cell)}
 					{/each}
-				</div>
-
-				<div class="flex w-10 items-center justify-center">
-					<Dot />
-				</div>
-
-				<div class="flex">
-					{#each cells.slice(3, 6) as cell, i (i)}
-						{@render Cell(cell)}
-					{/each}
-				</div>
-			{/snippet}
-		</PinInput.Root>
+				{/snippet}
+			</PinInput.Root>
+		{/if}
 
 		{#snippet Cell(cell: CellProps)}
 			<PinInput.Cell

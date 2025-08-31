@@ -5,7 +5,7 @@
 	"form_email": "Email",
 	"form_login_sign_in": "Iniciar sessión",
 	"form_login_sign_out": "Cerrar sesión",
-	"form_login_magic_link_sent": "¡Enlace mágico enviado a tu email!",
+	"form_login_success": "Login realizado con exito",
 	"form_gang_add_submit": "Añadir peña",
 	"form_gang_name_duplicated": "Ya existe una peña con este nombre, por favor revisa o cambia el nombre.",
 	"form_gang_add_successfully": "Peña añadida con éxito",
