@@ -5,7 +5,7 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import Dock from '$lib/components/Dock.svelte';
 	import { getMenuRoutes, routes } from '$lib/routes';
-	import { session, authClient } from '$lib/auth-client';
+	import { session } from '$lib/auth-client';
 	import Logo from '$lib/assets/logo.png?enhanced';
 
 	import type { Snippet } from 'svelte';
@@ -14,7 +14,7 @@
 </script>
 
 <div class="main-div h-screen min-w-[348px]">
-	<Header {routes} menuRoutes={getMenuRoutes()} {session} {authClient}>
+	<Header {routes} menuRoutes={getMenuRoutes()} {session}>
 		{#snippet title()}
 			<div class="flex items-center">
 				<enhanced:img src={Logo} alt="Icono cabecera" class="w-6 lg:m-1 lg:w-14" />

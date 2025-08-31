@@ -2,13 +2,11 @@
 	import { onMount } from 'svelte';
 	import Search from '@lucide/svelte/icons/search';
 	import BellRing from '@lucide/svelte/icons/bell-ring';
-	import Link from './Link.svelte';
 	import Modal from './Modal.svelte';
 	import FormLogin from './FormLogin.svelte';
-	import ButtonSignOut from './ButtonSignOut.svelte';
 	import { loginModalStore } from '$lib/stores/loginModal';
 
-	import type { AuthClient, Session } from '$lib/auth-client';
+	import type { Session } from '$lib/auth-client';
 	import type { Props as FormLoginProps } from './FormLogin.svelte';
 	import type { Routes } from '$lib/routes';
 	import ModalType from './Modal.svelte';
@@ -16,7 +14,6 @@
 	export type Props = {
 		routes: Routes;
 		session: Session;
-		authClient: AuthClient;
 		userHasNotification?: boolean;
 		notification?: boolean;
 		searcher?: boolean;
@@ -25,7 +22,6 @@
 	let {
 		routes,
 		session,
-		authClient,
 		userHasNotification = false,
 		notification = false,
 		searcher = false
