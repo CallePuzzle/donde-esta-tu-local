@@ -79,7 +79,7 @@
 						<div>
 							<span class="text-sm text-base-content/60">Peña:</span>
 							<p class="font-medium">
-								{#if userGangDetail.name}
+								{#if userGangDetail.id}
 									<a href="/gang/{userGangDetail.id}" class="link link-primary"
 										>{userGangDetail.name}</a
 									>

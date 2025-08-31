@@ -63,27 +63,19 @@
 
 	<div class="dropdown dropdown-end">
 		{#if userIsLogged}
-			<div tabindex="0" role="button" class="btn avatar btn-circle btn-ghost">
+			<div class="btn avatar btn-circle btn-ghost">
 				<div class="w-10 rounded-full">
-					<img
-						alt="{$session?.data?.user?.name || 'User'} avatar"
-						src={$session?.data?.user?.image ||
-							'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'}
-					/>
+					<a href={routes.profile.url}>
+						<img
+							alt="{$session?.data?.user?.name || 'User'} avatar"
+							src={$session?.data?.user?.image ||
+								'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'}
+						/>
+					</a>
 				</div>
 			</div>
-			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-			<ul
-				tabindex="0"
-				class="dropdown-content menu z-1 mt-3 w-52 menu-sm rounded-box bg-base-100 p-2 shadow"
-			>
-				<li><Link route={routes.profile} /></li>
-				<li>
-					<ButtonSignOut {authClient} />
-				</li>
-			</ul>
 		{:else}
-			<Modal title="Login" bind:this={modal}>
+			<Modal title="Login" bind:this={modal} type="X">
 				<FormLogin {afterCancelCallback} />
 			</Modal>
 		{/if}

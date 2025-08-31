@@ -58,7 +58,7 @@
 			} catch (error) {
 				message = {
 					type: 'error',
-					text: 'An unexpected error occurred. Please try again.'
+					text: error as string
 				};
 			}
 		}
@@ -86,6 +86,7 @@
 				type: 'success',
 				text: m.form_login_success()
 			};
+			await new Promise((resolve) => setTimeout(resolve, 1000));
 			afterCancelCallback();
 		}
 	}
@@ -132,8 +133,18 @@
 				pattern={REGEXP_ONLY_DIGITS}
 			>
 				{#snippet children({ cells })}
-					{#each cells as cell, i (i)}
-						{@render Cell(cell)}
+					{#each cells.slice(0, 5) as cell, i (i)}
+						<div class="flex">
+							{@render Cell(cell)}
+						</div>
+						<div class="flex w-5 items-center justify-center">
+							<Dot />
+						</div>
+					{/each}
+					{#each cells.slice(5, 6) as cell, i (i)}
+						<div class="flex">
+							{@render Cell(cell)}
+						</div>
 					{/each}
 				{/snippet}
 			</PinInput.Root>
@@ -144,7 +155,7 @@
 				{cell}
 				class="focus-override border-foreground/20 text-foreground group-focus-within/pininput:border-foreground/40 group-hover/pininput:border-foreground/40
 				relative flex h-14
-				w-10 items-center
+				w-9 items-center
 				justify-center border-y border-r text-[2rem] outline-0 transition-all
 				duration-75 first:rounded-l-md first:border-l
 				last:rounded-r-md
