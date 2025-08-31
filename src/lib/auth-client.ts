@@ -1,9 +1,9 @@
 import { createAuthClient } from 'better-auth/svelte';
-import { magicLinkClient, adminClient } from 'better-auth/client/plugins';
+import { emailOTPClient, adminClient } from 'better-auth/client/plugins';
 
 export const authClient = createAuthClient({
-	plugins: [magicLinkClient(), adminClient()]
-}) as any;
+	plugins: [emailOTPClient(), adminClient()]
+});
 
 export const { signIn, signUp, useSession } = authClient;
 
