@@ -33,7 +33,6 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 	const form = await superValidate(
 		{
 			name: user.name || '',
-			image: user.image || undefined,
 			imageFile: undefined
 		},
 		zod4(updateUserSchema)
@@ -62,10 +61,8 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-
+		let imageUrl: string | null = null;
 		try {
-			let imageUrl = form.data.image;
-
 			// Handle file upload if a new image file is provided
 			const imageFile = formData.get('imageFile');
 			if (imageFile && imageFile instanceof File && imageFile.size > 0) {
@@ -86,6 +83,7 @@ export const actions: Actions = {
 					});
 
 					imageUrl = url;
+
 					logger.info(`Avatar uploaded successfully for user ${locals.user.email}: ${url}`);
 
 					// Optional: Delete old image from Vercel Blob if it exists and is a Vercel Blob URL
@@ -106,7 +104,7 @@ export const actions: Actions = {
 				},
 				data: {
 					name: form.data.name,
-					image: imageUrl || null,
+					image: imageUrl,
 					updatedAt: new Date()
 				}
 			});

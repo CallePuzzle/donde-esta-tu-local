@@ -9,10 +9,6 @@ export const updateUserSchema = z.object({
 		placeholder: 'John Doe',
 		description: m.schema_user_name_describe()
 	}),
-	image: z.url(m.schema_user_image_error()).optional().meta({
-		placeholder: 'https://example.com/avatar.jpg',
-		description: m.schema_user_image_describe()
-	}),
 	imageFile: z.file().max(MAX_FILE_SIZE).mime(ACCEPTED_IMAGE_TYPES).optional().meta({
 		placeholder: 'Choose a file',
 		description: m.schema_user_image_describe()

@@ -1,8 +1,9 @@
 import { createAuthClient } from 'better-auth/svelte';
-import { magicLinkClient, adminClient } from 'better-auth/client/plugins';
+import { emailOTPClient, adminClient } from 'better-auth/client/plugins';
 
 export const authClient = createAuthClient({
-	plugins: [magicLinkClient(), adminClient()]
+	plugins: [emailOTPClient(), adminClient()]
+	// eslint-disable-next-line
 }) as any;
 
 export const { signIn, signUp, useSession } = authClient;

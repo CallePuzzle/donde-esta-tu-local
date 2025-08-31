@@ -18,8 +18,7 @@
 		menuRoutes,
 		routes,
 		// NavBarEndProps
-		session,
-		authClient,
+		user,
 		userHasNotification = false,
 		notification = false,
 		searcher = false
@@ -33,7 +32,7 @@
 	<nav class="navbar-center hidden lg:block">
 		<NavBarList type="horizontal" routes={menuRoutes} />
 	</nav>
-	<NavBarEnd {session} {authClient} {userHasNotification} {notification} {searcher} {routes} />
+	<NavBarEnd {user} {userHasNotification} {notification} {searcher} {routes} />
 </div>
 
 <div class="navbar flex min-h-px justify-between bg-base-300 shadow-sm lg:hidden">
@@ -43,5 +42,5 @@
 	<div class="mx-2 px-2">
 		<a href={routes.home.url as string} data-sveltekit-reload>{@render title()}</a>
 	</div>
-	<NavBarEnd {session} {authClient} {userHasNotification} {notification} {searcher} {routes} />
+	<NavBarEnd {user} {userHasNotification} {notification} {searcher} {routes} />
 </div>

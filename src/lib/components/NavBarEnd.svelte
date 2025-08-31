@@ -2,20 +2,18 @@
 	import { onMount } from 'svelte';
 	import Search from '@lucide/svelte/icons/search';
 	import BellRing from '@lucide/svelte/icons/bell-ring';
-	import Link from './Link.svelte';
 	import Modal from './Modal.svelte';
 	import FormLogin from './FormLogin.svelte';
 	import { loginModalStore } from '$lib/stores/loginModal';
 
-	import type { AuthClient, Session } from '$lib/auth-client';
 	import type { Props as FormLoginProps } from './FormLogin.svelte';
 	import type { Routes } from '$lib/routes';
+	import type { User as UserPrisma } from '@prisma/client';
 	import ModalType from './Modal.svelte';
 
 	export type Props = {
 		routes: Routes;
-		session: Session;
-		authClient: AuthClient;
+		user: UserPrisma;
 		userHasNotification?: boolean;
 		notification?: boolean;
 		searcher?: boolean;
@@ -23,15 +21,14 @@
 
 	let {
 		routes,
-		session,
-		authClient,
+		user,
 		userHasNotification = false,
 		notification = false,
 		searcher = false
 	}: Props = $props();
 
 	let modal = $state<ModalType | null>(null);
-	let userIsLogged = $derived<boolean>($session?.data ? true : false);
+	let userIsLogged = $derived<boolean>(user ? true : false);
 
 	async function afterCancelCallback() {
 		await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -62,33 +59,19 @@
 
 	<div class="dropdown dropdown-end">
 		{#if userIsLogged}
-			<div tabindex="0" role="button" class="btn avatar btn-circle btn-ghost">
+			<div class="btn avatar btn-circle btn-ghost">
 				<div class="w-10 rounded-full">
-					<img
-						alt="{$session?.data?.user?.name || 'User'} avatar"
-						src={$session?.data?.user?.image ||
-							'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'}
-					/>
+					<a href={routes.profile.url}>
+						<img
+							alt="{user?.name || 'User'} avatar"
+							src={user?.image ||
+								'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'}
+						/>
+					</a>
 				</div>
 			</div>
-			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-			<ul
-				tabindex="0"
-				class="dropdown-content menu z-1 mt-3 w-52 menu-sm rounded-box bg-base-100 p-2 shadow"
-			>
-				<li><Link route={routes.profile} /></li>
-				<li>
-					<button
-						onclick={async () => {
-							await authClient.signOut();
-						}}
-					>
-						Sign Out
-					</button>
-				</li>
-			</ul>
 		{:else}
-			<Modal title="Login" bind:this={modal}>
+			<Modal title="Login" bind:this={modal} type="X">
 				<FormLogin {afterCancelCallback} />
 			</Modal>
 		{/if}
