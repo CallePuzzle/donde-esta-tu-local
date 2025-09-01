@@ -142,3 +142,11 @@ model GangHistory {
   @@index([createdAt])
   @@map("gang_history")
 }
+
+model EmailSent {
+  id    Int      @id @default(autoincrement())
+  email String
+  date  DateTime @default(now())
+
+  @@map("email_sent")
+}
