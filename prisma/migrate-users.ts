@@ -93,8 +93,18 @@ async function migrateFromAuth0() {
 			// Find the corresponding Auth0 user by matching dbUser.id with auth0User.user_id
 			const auth0User = auth0Users.find((user) => user.user_id === dbUser.id);
 
+			const migratedUser = await prisma.user.findUnique({
+				where: {
+					email: auth0User.email
+				}
+			});
+
+			if (migratedUser) {
+				console.log('User migrated: ' + migratedUser.email);
+				continue;
+			}
+
 			if (auth0User) {
-				console.log('Migrating user: ' + auth0User.email);
 				const baseUserData = {
 					id: auth0User.user_id,
 					email: auth0User.email,
@@ -104,6 +114,8 @@ async function migrateFromAuth0() {
 					createdAt: safeDateConversion(auth0User.created_at),
 					updatedAt: safeDateConversion(auth0User.updated_at)
 				};
+
+				console.log('Migrating user', baseUserData);
 
 				const createdUser = await ctx.adapter.create({
 					model: 'user',
@@ -117,22 +129,28 @@ async function migrateFromAuth0() {
 					throw new Error('Failed to create user');
 				}
 
-				const user = await prisma.user.update({
-					where: { id: createdUser.id },
-					data: {
-						subscription: dbUser.subscription,
-						membershipGangStatus: 'VALIDATED',
+				let data = { subscription: dbUser.subscription, membershipGangStatus: 'VALIDATED' };
+
+				if (dbUser.gangId) {
+					data = {
+						...data,
 						gang: {
 							connect: { id: dbUser.gangId }
 						}
-					}
+					};
+				}
+
+				console.log('Updating user data', data);
+
+				const user = await prisma.user.update({
+					where: { id: createdUser.id },
+					data
 				});
 
 				console.log('Created user', user);
 			} else {
 				console.warn(`No Auth0 user found for database user with id: ${dbUser.id}`);
 			}
-			break;
 		}
 
 		console.log(`Found ${auth0Users.length} users to migrate`);
