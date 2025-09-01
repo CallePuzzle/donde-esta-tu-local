@@ -60,7 +60,7 @@ function safeDateConversion(timestamp?: string | number): Date {
 	return date;
 }
 
-async function migrateFromAuth0() {
+async function main() {
 	try {
 		const ctx = await auth.$context;
 
@@ -160,7 +160,7 @@ async function migrateFromAuth0() {
 	}
 }
 
-migrateFromAuth0()
+main()
 	.then(() => {
 		console.log('Migration completed');
 		process.exit(0);

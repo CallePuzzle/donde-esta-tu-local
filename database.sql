@@ -140,6 +140,7 @@ INSERT INTO Session VALUES('wcozjryrjuprxfavvv3wcxih6arjnmrnc4eko2kd','google-oa
 INSERT INTO Session VALUES('fgoduow3thkmlcrcyzwyjp6vnezldxcryuyrezlw','google-oauth2|106937983063448046386',1759172480);
 INSERT INTO Session VALUES('qiimhsp6pn2ntxgklbsafnjlzil2cuukgljdgkt4','google-oauth2|106937983063448046386',1759172493);
 INSERT INTO Session VALUES('ofco7up2evhohjnse2bgooclsqt3b44pqsekrl3t','google-oauth2|114398174217494601644',1759237284);
+INSERT INTO Session VALUES('sjd7voxzo4s7ckq4ty5yoonlozhvwza6pylalgvy','google-oauth2|101504708054193667330',1759331438);
 CREATE TABLE IF NOT EXISTS "Gang" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
@@ -206,6 +207,7 @@ INSERT INTO Gang VALUES(59,'Los Rebeldes ',41.50824980695401,-4.460012018680573,
 INSERT INTO Gang VALUES(60,'El corralito',41.50886368328586,-4.454266391694547,'VALIDATED');
 INSERT INTO Gang VALUES(61,'Los de siempre ',41.51013232393657,-4.455519318580628,'VALIDATED');
 INSERT INTO Gang VALUES(62,'La talanquera ',41.51128565712153,-4.458080927397533,'VALIDATED');
+INSERT INTO Gang VALUES(63,'La bodega de Raúl',41.50728720577583,-4.45971965789795,'PENDING');
 CREATE TABLE IF NOT EXISTS "Notification" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "title" TEXT NOT NULL,
@@ -352,6 +354,7 @@ INSERT INTO Notification VALUES(136,'Nueva solicitud de miembro','Lucia Becerra 
 INSERT INTO Notification VALUES(137,'Nueva solicitud de miembro','alfonso sanz guadarrama ha solicitado unirse a la peña Badulake','gang-member-request','google-oauth2|113823846399030341881',NULL,37,'PENDING','2025-08-30T16:27:55.050+00:00');
 INSERT INTO Notification VALUES(138,'Nueva peña','Se ha añadido una nueva peña: La talanquera ','gang-added','google-oauth2|112478611190602722424','google-oauth2|108098906565629251299',62,'VALIDATED','2025-08-30T18:17:37.461+00:00');
 INSERT INTO Notification VALUES(139,'Nueva solicitud de miembro','Noelia Novo Martín ha solicitado unirse a la peña Tembleke y Amareyu','gang-member-request','google-oauth2|118132997052185431996','google-oauth2|114578621847038298121',9,'VALIDATED','2025-08-30T19:53:56.832+00:00');
+INSERT INTO Notification VALUES(140,'Nueva peña','Se ha añadido una nueva peña: La bodega de Raúl','gang-added','google-oauth2|101504708054193667330',NULL,63,'PENDING','2025-09-01T15:13:29.429+00:00');
 CREATE TABLE IF NOT EXISTS "_NotificationToUser" (
     "A" INTEGER NOT NULL,
     "B" TEXT NOT NULL,
@@ -578,6 +581,9 @@ INSERT INTO _NotificationToUser VALUES(138,'google-oauth2|114588154872331009076'
 INSERT INTO _NotificationToUser VALUES(139,'google-oauth2|114578621847038298121');
 INSERT INTO _NotificationToUser VALUES(139,'google-oauth2|103550572999459064532');
 INSERT INTO _NotificationToUser VALUES(139,'google-oauth2|103197441182942466518');
+INSERT INTO _NotificationToUser VALUES(140,'google-oauth2|101504708054193667330');
+INSERT INTO _NotificationToUser VALUES(140,'google-oauth2|108098906565629251299');
+INSERT INTO _NotificationToUser VALUES(140,'google-oauth2|114588154872331009076');
 CREATE TABLE IF NOT EXISTS "User" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT,
@@ -689,8 +695,8 @@ INSERT INTO _GangsVisited VALUES(5,'google-oauth2|115817027658363168738');
 INSERT INTO _GangsVisited VALUES(48,'google-oauth2|112118855523499273881');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('d1_migrations',3);
-INSERT INTO sqlite_sequence VALUES('Gang',62);
-INSERT INTO sqlite_sequence VALUES('Notification',139);
+INSERT INTO sqlite_sequence VALUES('Gang',63);
+INSERT INTO sqlite_sequence VALUES('Notification',140);
 CREATE UNIQUE INDEX "_NotificationToUser_AB_unique" ON "_NotificationToUser"("A", "B");
 CREATE INDEX "_NotificationToUser_B_index" ON "_NotificationToUser"("B");
 CREATE UNIQUE INDEX "_GangsVisited_AB_unique" ON "_GangsVisited"("A", "B");
