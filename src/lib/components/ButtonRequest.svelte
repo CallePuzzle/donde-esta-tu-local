@@ -46,11 +46,11 @@
 	}
 </script>
 
-<div class="mx-auto flex flex-col">
+<div class="mx-auto flex flex-col justify-center">
 	{#if loading}
 		<span class="loading loading-lg loading-dots"></span>
 	{:else if message}
-		<div class="my-2 alert {messageClass} text-sm">
+		<div class="alert {messageClass} text-sm">
 			{message}
 		</div>
 	{:else}

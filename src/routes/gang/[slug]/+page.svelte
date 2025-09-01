@@ -131,7 +131,7 @@
 									<ButtonRequest
 										buttonText={validateButtonText}
 										url={`/gang/validateMember?userId=${pendingMember.id}&gangId=${gang.id}`}
-										buttonClass="btn btn-sm btn-success"
+										buttonClass="btn btn-sm btn-accent"
 									/>
 
 									{#snippet rejectButtonText()}

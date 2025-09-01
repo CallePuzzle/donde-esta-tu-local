@@ -59,7 +59,7 @@
 	"gang_validate_no_permission": "No tienes permisos para validar miembros de esta peña",
 	"gang_validate_user_not_in_gang": "El usuario no pertenece a esta peña",
 	"gang_validate_already_validated": "El usuario ya está validado",
-	"gang_validate_success": "Miembro validado correctamente",
+	"gang_validate_success": "Validado",
 	"gang_validate_error": "Error al validar el miembro",
 	"gang_refuse_no_permission": "No tienes permisos para rechazar miembros de esta peña",
 	"gang_refuse_user_not_in_gang": "El usuario no pertenece a esta peña",
