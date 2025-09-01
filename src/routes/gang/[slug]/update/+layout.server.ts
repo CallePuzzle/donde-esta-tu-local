@@ -9,6 +9,18 @@ export const load: LayoutServerLoad = async (event: LayoutServerLoadEvent) => {
 	const gangId = event.params.slug;
 	const currentUser = event.locals.user;
 
+	if (!currentUser) {
+		return {
+			isValidatedMember: false
+		};
+	}
+
+	if (currentUser.role === 'admin') {
+		return {
+			isValidatedMember: true
+		};
+	}
+
 	const gang = await prisma.gang.findUnique({
 		where: {
 			status: {

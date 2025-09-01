@@ -3,6 +3,7 @@
 	import Building from '@lucide/svelte/icons/building';
 	import Shield from '@lucide/svelte/icons/shield';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
+	import History from '@lucide/svelte/icons/history';
 </script>
 
 <div class="container mx-auto p-4 pb-20 lg:pb-0">
@@ -18,7 +19,7 @@
 		</p>
 	</div>
 
-	<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+	<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 		<!-- Card para Administración de Gangs -->
 		<div class="card bg-base-100 shadow-xl transition-shadow hover:shadow-2xl">
 			<div class="card-body">
@@ -101,6 +102,50 @@
 				<div class="card-actions justify-end">
 					<a href="/admin/members" class="btn btn-secondary">
 						Ir a Miembros
+						<ArrowRight class="h-4 w-4" />
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<!-- Card para Historial de Cambios -->
+		<div class="card bg-base-100 shadow-xl transition-shadow hover:shadow-2xl">
+			<div class="card-body">
+				<div class="mb-4 flex items-center gap-3">
+					<div class="rounded-lg bg-accent/10 p-3">
+						<History class="h-8 w-8 text-accent" />
+					</div>
+					<h2 class="card-title text-2xl">Historial de Cambios</h2>
+				</div>
+
+				<p class="mb-4 text-base-content/70">
+					Consulta el historial de modificaciones de las peñas. Revisa cambios en nombres,
+					ubicaciones y otros datos importantes.
+				</p>
+
+				<div class="stats mb-4 stats-vertical shadow">
+					<div class="stat py-2">
+						<div class="stat-title text-sm">Información disponible</div>
+						<ul class="mt-2 space-y-1 text-sm">
+							<li class="flex items-center gap-2">
+								<span class="text-success">•</span> Cambios de nombre
+							</li>
+							<li class="flex items-center gap-2">
+								<span class="text-info">•</span> Cambios de ubicación
+							</li>
+							<li class="flex items-center gap-2">
+								<span class="text-warning">•</span> Fecha y hora del cambio
+							</li>
+							<li class="flex items-center gap-2">
+								<span class="text-primary">•</span> Usuario que realizó el cambio
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="card-actions justify-end">
+					<a href="/admin/history" class="btn btn-accent">
+						Ver Historial
 						<ArrowRight class="h-4 w-4" />
 					</a>
 				</div>

@@ -9,6 +9,7 @@
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { authClient } from '$lib/auth-client';
 	import Dot from '@lucide/svelte/icons/dot';
+	import { invalidateAll } from '$app/navigation';
 
 	import FormFields from './FormFields.svelte';
 	import { zodToFieldsJsonSchema } from '../schemas/utils.js';
@@ -86,7 +87,7 @@
 				type: 'success',
 				text: m.form_login_success()
 			};
-			await new Promise((resolve) => setTimeout(resolve, 1000));
+			await invalidateAll();
 			afterCancelCallback();
 		}
 	}
