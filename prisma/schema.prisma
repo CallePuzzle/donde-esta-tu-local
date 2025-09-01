@@ -22,8 +22,7 @@ model User {
   banExpires    DateTime?
   sessions      Session[]
   accounts      Account[]
-
-  subscription String?
+  subscription  String?
 
   gangId               Int?
   gang                 Gang?  @relation(fields: [gangId], references: [id])
