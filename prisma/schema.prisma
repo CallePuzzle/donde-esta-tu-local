@@ -23,6 +23,8 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  subscription String?
+
   gangId               Int?
   gang                 Gang?  @relation(fields: [gangId], references: [id])
   membershipGangStatus String @default("PENDING")
