@@ -48,11 +48,11 @@
 				const checkResult = await checkEmailSent.json();
 
 				if (!checkResult?.canSend) {
+					sending = false;
 					message = {
 						type: 'error',
 						text: checkResult.error || 'Cannot send opt email code at this time'
 					};
-					sending = false;
 					return;
 				}
 				const { data, error } = await authClient.emailOtp.sendVerificationOtp({
