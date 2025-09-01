@@ -10,9 +10,9 @@
 	import ButtonRequest from '$lib/components/ButtonRequest.svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 
-	let activeTab: 'pending' | 'validated' = 'pending';
+	let activeTab: 'pending' | 'validated' = $state('pending');
 
 	// Función para manejar la actualización después de validar/rechazar
 	async function handleActionComplete() {
@@ -71,13 +71,13 @@
 		<div class="tabs-boxed mb-6 tabs">
 			<button
 				class="tab {activeTab === 'pending' ? 'tab-active' : ''}"
-				on:click={() => (activeTab = 'pending')}
+				onclick={() => (activeTab = 'pending')}
 			>
 				Solicitudes Pendientes ({data.pendingMembers.length})
 			</button>
 			<button
 				class="tab {activeTab === 'validated' ? 'tab-active' : ''}"
-				on:click={() => (activeTab = 'validated')}
+				onclick={() => (activeTab = 'validated')}
 			>
 				Validados Recientemente ({data.recentlyValidatedMembers.length})
 			</button>

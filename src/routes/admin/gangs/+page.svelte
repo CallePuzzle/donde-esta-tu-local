@@ -8,10 +8,10 @@
 	import Clock from '@lucide/svelte/icons/clock';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 
-	let activeTab: 'validated' | 'pending' = 'pending';
-	let processingGangId: number | null = null;
+	let activeTab: 'validated' | 'pending' = $state('pending');
+	let processingGangId: number | null = $state(null);
 </script>
 
 <div class="container mx-auto p-4">
@@ -57,13 +57,13 @@
 		<div class="tabs-boxed mb-6 tabs">
 			<button
 				class="tab {activeTab === 'pending' ? 'tab-active' : ''}"
-				on:click={() => (activeTab = 'pending')}
+				onclick={() => (activeTab = 'pending')}
 			>
 				Pendientes de Validación ({data.pendingGangs.length})
 			</button>
 			<button
 				class="tab {activeTab === 'validated' ? 'tab-active' : ''}"
-				on:click={() => (activeTab = 'validated')}
+				onclick={() => (activeTab = 'validated')}
 			>
 				Gangs Validadas ({data.validatedGangs.length})
 			</button>
@@ -92,7 +92,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									{#each data.pendingGangs as gang}
+									{#each data.pendingGangs as gang (gang.id)}
 										<tr>
 											<td>{gang.id}</td>
 											<td class="font-semibold">{gang.name}</td>
@@ -207,7 +207,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									{#each data.validatedGangs as gang}
+									{#each data.validatedGangs as gang (gang.id)}
 										<tr>
 											<td>{gang.id}</td>
 											<td class="font-semibold">{gang.name}</td>
@@ -226,7 +226,7 @@
 												</div>
 												{#if gang.members.length > 0}
 													<div class="mt-1 text-xs text-base-content/60">
-														{#each gang.members as member}
+														{#each gang.members as member (member.id)}
 															<div class="flex items-center gap-1">
 																<span>{member.name || member.email}</span>
 																{#if member.membershipGangStatus === 'VALIDATED'}

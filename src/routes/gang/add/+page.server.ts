@@ -12,7 +12,12 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions = {
-	default: async ({ request }) => {
+	default: async ({ request, locals }) => {
+		const { user } = locals;
+		if (!user) {
+			return fail(401, { form: 'Unauthorized' });
+		}
+
 		const form = await superValidate(request, zod4(addGangSchema));
 		logger.info(form, 'Form submitted');
 
@@ -42,10 +47,25 @@ export const actions = {
 				}
 			});
 
-			logger.info({ gangId: newGang.id, name: newGang.name }, 'Nueva peña creada');
+			logger.info({ gangId: newGang.id, name: newGang.name }, 'New gang added');
+
+			const historyGang = await prisma.gangHistory.create({
+				data: {
+					gangId: newGang.id,
+					name: newGang.name,
+					latitude: newGang.latitude,
+					longitude: newGang.longitude,
+					changedByUserId: user.id,
+					changeType: 'CREATE',
+					createdAt: new Date()
+				}
+			});
+
+			logger.info({ historyId: historyGang.id }, 'New history entry created');
+
 			return message(form, m.form_gang_add_successfully());
 		} catch (error) {
-			logger.error(error, 'Error al crear la peña');
+			logger.error(error, 'Error creating gang');
 			return message(form, m.form_gang_add_error(), { status: 500 });
 		}
 	}

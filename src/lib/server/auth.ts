@@ -49,20 +49,12 @@ function getBetterAuth(additionalOptions: BetterAuthOptions): ReturnType<typeof 
 								await sender(transporterOptions, SMPT_SENDER, email, subject, text);
 								logger.info(`Magic link email sent to ${email}`);
 							}
-							const user = await prisma.user.findUnique({ where: { email } });
-							if (user) {
-								// Update the timestamp for last magic link sent
-								await prisma.user.update({
-									where: { email },
-									data: { lastMagicLinkSentAt: new Date() }
-								});
-							} else {
-								logger.error('Invalid OTP type: ' + type);
-							}
 						} catch (error) {
 							logger.error(error);
 							throw error;
 						}
+					} else {
+						logger.error('Invalid OTP type: ' + type);
 					}
 				}
 			}),
