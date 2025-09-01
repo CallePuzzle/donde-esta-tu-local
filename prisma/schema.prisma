@@ -9,20 +9,19 @@ datasource db {
 }
 
 model User {
-  id                  String    @id
-  name                String
-  email               String
-  emailVerified       Boolean
-  image               String?
-  createdAt           DateTime
-  updatedAt           DateTime
-  role                String?
-  banned              Boolean?
-  banReason           String?
-  banExpires          DateTime?
-  lastMagicLinkSentAt DateTime?
-  sessions            Session[]
-  accounts            Account[]
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  role          String?
+  banned        Boolean?
+  banReason     String?
+  banExpires    DateTime?
+  sessions      Session[]
+  accounts      Account[]
 
   gangId               Int?
   gang                 Gang?  @relation(fields: [gangId], references: [id])
@@ -95,6 +94,9 @@ model Gang {
   collaboratorActivities Activity[] @relation("ActivityCollaborator")
   hostedActivities       Activity[] @relation("ActivityPlace")
 
+  // Histórico de cambios
+  history GangHistory[]
+
   @@map("gang")
 }
 
@@ -116,4 +118,24 @@ model Activity {
   updatedAt DateTime @updatedAt
 
   @@map("activity")
+}
+
+model GangHistory {
+  id     Int  @id @default(autoincrement())
+  gangId Int
+  gang   Gang @relation(fields: [gangId], references: [id], onDelete: Cascade)
+
+  // Campos históricos
+  name      String
+  latitude  Float
+  longitude Float
+
+  // Metadatos del cambio
+  changedBy  String? // userId del usuario que realizó el cambio
+  changeType String // CREATE, UPDATE
+  createdAt  DateTime @default(now())
+
+  @@index([gangId])
+  @@index([createdAt])
+  @@map("gang_history")
 }
