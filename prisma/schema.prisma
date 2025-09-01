@@ -27,7 +27,8 @@ model User {
   gang                 Gang?  @relation(fields: [gangId], references: [id])
   membershipGangStatus String @default("PENDING")
 
-  validatedGangs Gang[] @relation("ValidatedBy")
+  validatedGangs Gang[]        @relation("ValidatedBy")
+  modifiedGangs  GangHistory[] @relation("ModifiedBy")
 
   @@unique([email])
   @@map("user")
@@ -131,9 +132,10 @@ model GangHistory {
   longitude Float
 
   // Metadatos del cambio
-  changedBy  String? // userId del usuario que realizó el cambio
-  changeType String // CREATE, UPDATE
-  createdAt  DateTime @default(now())
+  changedByUserId String
+  changedBy       User     @relation("ModifiedBy", fields: [changedByUserId], references: [id])
+  changeType      String // CREATE, UPDATE
+  createdAt       DateTime @default(now())
 
   @@index([gangId])
   @@index([createdAt])
