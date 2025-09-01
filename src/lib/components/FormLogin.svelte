@@ -42,6 +42,19 @@
 			try {
 				message = null;
 
+				const checkEmailSent = await fetch(
+					`/api/user/email-sent-check?email=${encodeURIComponent($formData.email)}`
+				);
+				const checkResult = await checkEmailSent.json();
+
+				if (!checkResult?.canSend) {
+					sending = false;
+					message = {
+						type: 'error',
+						text: checkResult.error || 'Cannot send opt email code at this time'
+					};
+					return;
+				}
 				const { data, error } = await authClient.emailOtp.sendVerificationOtp({
 					email: $formData.email,
 					type: 'sign-in'
