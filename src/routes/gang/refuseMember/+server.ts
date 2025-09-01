@@ -89,16 +89,6 @@ export const GET: RequestHandler = async (event: RequestEvent) => {
 			);
 		}
 
-		if (userToRefuse.membershipGangStatus === 'VALIDATED') {
-			return json(
-				{
-					success: false,
-					message: m.gang_refuse_cannot_refuse_validated()
-				},
-				{ status: 400 }
-			);
-		}
-
 		// Remove the member from the gang
 		const updatedUser = await prisma.user.update({
 			where: {

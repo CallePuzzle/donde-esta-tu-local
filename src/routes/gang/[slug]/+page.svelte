@@ -84,7 +84,7 @@
 	>
 {/if}
 
-<div class="container mx-auto my-2">
+<div class="container mx-auto my-2 pb-20 lg:pb-0">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 		<div class="rounded-lg bg-neutral p-2 shadow sm:p-4">
 			<div class="m-2 flex justify-between">
@@ -114,32 +114,36 @@
 			</ul>
 
 			<!-- Pending members section for validated members -->
-			{#if isValidatedMember && pendingMembers.length > 0}
+			{#if pendingMembers.length > 0}
 				<div class="divider"></div>
 				<h4 class="mb-2 text-xl font-bold">Solicitudes pendientes</h4>
 				<ul>
 					{#each pendingMembers as pendingMember (pendingMember.id)}
-						<li class="my-2 flex items-center justify-between">
+						<li
+							class="my-2 flex flex-col justify-between bg-base-100 p-2 lg:flex-row lg:items-center"
+						>
 							<MemberDetail name={pendingMember.name} image={pendingMember.image} />
-							<div class="flex gap-2">
-								{#snippet validateButtonText()}
-									<Check size="1rem" /> Validar
-								{/snippet}
-								<ButtonRequest
-									buttonText={validateButtonText}
-									url={`/gang/validateMember?userId=${pendingMember.id}&gangId=${gang.id}`}
-									buttonClass="btn btn-sm btn-success"
-								/>
+							{#if isValidatedMember}
+								<div class="flex gap-2">
+									{#snippet validateButtonText()}
+										<Check size="1rem" /> Validar
+									{/snippet}
+									<ButtonRequest
+										buttonText={validateButtonText}
+										url={`/gang/validateMember?userId=${pendingMember.id}&gangId=${gang.id}`}
+										buttonClass="btn btn-sm btn-accent"
+									/>
 
-								{#snippet rejectButtonText()}
-									<X size="1rem" /> Rechazar
-								{/snippet}
-								<ButtonRequest
-									buttonText={rejectButtonText}
-									url={`/gang/refuseMember?userId=${pendingMember.id}&gangId=${gang.id}`}
-									buttonClass="btn btn-sm btn-error"
-								/>
-							</div>
+									{#snippet rejectButtonText()}
+										<X size="1rem" /> Rechazar
+									{/snippet}
+									<ButtonRequest
+										buttonText={rejectButtonText}
+										url={`/gang/refuseMember?userId=${pendingMember.id}&gangId=${gang.id}`}
+										buttonClass="btn btn-sm btn-error"
+									/>
+								</div>
+							{/if}
 						</li>
 					{/each}
 				</ul>

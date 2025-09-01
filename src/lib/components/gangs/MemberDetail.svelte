@@ -9,13 +9,13 @@
 	let { name, image }: Props = $props();
 </script>
 
-<div class="flex items-center">
-	<div class="avatar">
-		<div class="flex w-10 content-center justify-center rounded-full">
+<div class="flex items-center py-1">
+	<div class="avatar flex w-10 items-center justify-center">
+		<div class="rounded-full">
 			{#if image}
 				<img alt="Profile" src={image} />
 			{:else}
-				<UserRound />
+				<UserRound size={32} />
 			{/if}
 		</div>
 	</div>

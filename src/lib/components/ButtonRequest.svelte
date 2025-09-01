@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
 	import { m } from '$lib/paraglide/messages.js';
 
 	import type { Snippet } from 'svelte';
@@ -27,8 +26,6 @@
 			if (response.ok) {
 				message = data.message;
 				messageClass = 'alert-success';
-				// Revalidate the page data to show the new member
-				await invalidateAll();
 				// Call onSuccess callback if provided
 				if (onSuccess) {
 					await onSuccess();
@@ -46,11 +43,11 @@
 	}
 </script>
 
-<div class="mx-auto flex flex-col">
+<div class="mx-auto flex flex-col justify-center">
 	{#if loading}
 		<span class="loading loading-lg loading-dots"></span>
 	{:else if message}
-		<div class="my-2 alert {messageClass} text-sm">
+		<div class="alert {messageClass} text-sm">
 			{message}
 		</div>
 	{:else}
