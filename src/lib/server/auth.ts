@@ -47,8 +47,13 @@ function getBetterAuth(additionalOptions: BetterAuthOptions): ReturnType<typeof 
 								const text = `Este es tu código para acceder: ${otp}`;
 
 								await sender(transporterOptions, SMPT_SENDER, email, subject, text);
-								logger.info(`Magic link email sent to ${email}`);
+								logger.info(`OTP email sent to ${email}`);
 							}
+							await prisma.emailSent.create({
+								data: {
+									email
+								}
+							});
 						} catch (error) {
 							logger.error(error);
 							throw error;
