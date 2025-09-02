@@ -23,8 +23,7 @@ async function SubscribeUser(
 			},
 			body: JSON.stringify({ sub: sub, userId: userId })
 		});
-		const response = await data.json();
-		console.log('notification_subscribe', response);
+		console.log('notification_subscribe', data);
 	}
 }
 

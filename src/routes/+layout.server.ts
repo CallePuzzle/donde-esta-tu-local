@@ -1,6 +1,5 @@
 import { logger } from '$lib/logger';
-import { JWK } from '$env/static/private';
-import { getPublicKeyFromJwk } from 'cf-webpush';
+import { VAPID_PUBLIC_KEY } from '$env/static/private';
 
 import type { LayoutServerLoad, LayoutServerLoadEvent } from './$types';
 
@@ -11,5 +10,5 @@ export const load: LayoutServerLoad = async (event: LayoutServerLoadEvent) => {
 	const path = event.route.id;
 	const appUrl = event.url.origin;
 
-	return { user, path, appUrl, JWKpublicKey: getPublicKeyFromJwk(JSON.parse(JWK)) };
+	return { user, path, appUrl, VAPID_PUBLIC_KEY };
 };

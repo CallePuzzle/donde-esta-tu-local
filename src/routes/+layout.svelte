@@ -20,14 +20,13 @@
 
 	onMount(async () => {
 		const status = await Notification.requestPermission();
-		console.log(status);
 		if (status !== 'granted') toast('Por favor, activa las notificaciones para recibir los avisos');
 
 		if ('serviceWorker' in navigator && user) {
 			console.log('trying to subscribe user');
 			const reg = await navigator.serviceWorker.ready;
 			console.log('reg', reg);
-			await SubscribeUser(user.id, reg, data.JWKpublicKey);
+			await SubscribeUser(user.id, reg, data.VAPID_PUBLIC_KEY);
 		}
 	});
 </script>
