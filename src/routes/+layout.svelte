@@ -1,6 +1,9 @@
 <script lang="ts">
 	import '../app.css';
 	import { page, navigating } from '$app/state';
+	import { onMount } from 'svelte';
+	import { SubscribeUser } from '$lib/notification/notification-subscribe-user';
+	import toast from 'svelte-french-toast';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import Dock from '$lib/components/Dock.svelte';
@@ -14,6 +17,18 @@
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 
 	let user = $derived(data.user) as UserPrisma;
+
+	onMount(async () => {
+		const status = await Notification.requestPermission();
+		console.log(status);
+		if (status !== 'granted') toast('Por favor, activa las notificaciones para recibir los avisos');
+
+		if ('serviceWorker' in navigator && user) {
+			const reg = await navigator.serviceWorker.ready;
+			console.log(reg);
+			await SubscribeUser(user.id, reg, data.JWKpublicKey);
+		}
+	});
 </script>
 
 <div class="main-div h-screen min-w-[348px]">

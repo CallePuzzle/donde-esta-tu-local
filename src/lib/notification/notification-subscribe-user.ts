@@ -1,8 +1,7 @@
 import { routes } from '$lib/routes';
 
 async function SubscribeUser(
-	userIsLogged: boolean,
-	userId: number,
+	userId: string,
 	reg: ServiceWorkerRegistration,
 	JWKpublicKey: string
 ): Promise<void> {
@@ -13,15 +12,18 @@ async function SubscribeUser(
 			applicationServerKey: urlBase64ToUint8Array(JWKpublicKey)
 		});
 	}
-	if (sub && userIsLogged) {
+	console.log('sub', sub);
+	if (sub) {
 		const url = routes.notification_subscribe.url as string;
-		await fetch(url, {
+		const data = await fetch(url, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({ sub: sub, userId: userId })
 		});
+		const response = await data.json();
+		console.log('notification_subscribe', response);
 	}
 }
 
