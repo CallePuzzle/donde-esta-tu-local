@@ -9,80 +9,94 @@ async function SeedActivities(prisma: PrismaClient) {
 		{
 			name: 'XX Concurso de limonada',
 			date: new Date('2025-09-12T17:30:00.000Z'),
+			notificationDate: new Date('2025-09-12T14:30:00.000Z'),
 			placeDesc: 'Salida desde la plaza mayor'
 		},
 		{
 			name: 'VI Babrera Circus Party con Chupitada',
 			date: new Date('2025-09-12T22:30:00.000Z'),
+			notificationDate: new Date('2025-09-12T21:30:00.000Z'),
 			placeGangName: 'La Babrera',
 			collaboratingGangNames: ['KPY']
 		},
 		{
 			name: 'Trucha Sound Festival X - Sidrada',
-			date: new Date('2025-09-13T19:00:00.000Z'),
+			date: new Date('2025-09-13T18:00:00.000Z'),
+			notificationDate: new Date('2025-09-13T17:30:00.000Z'),
 			dateDesc: 'Después del pregón',
 			placeGangName: 'Los Bugas'
 		},
 		{
 			name: 'V Danza del Sapo',
 			date: new Date('2025-09-13T21:59:59.000Z'),
+			notificationDate: new Date('2025-09-14T01:00:00.000Z'),
 			dateDesc: 'Después del baile',
 			placeGangName: 'El Desmadre'
 		},
 		{
 			name: 'II La Chanidad',
 			date: new Date('2025-09-15T14:00:00.000Z'),
+			notificationDate: new Date('2025-09-15T13:00:00.000Z'),
 			placeGangName: 'El K-pote'
 		},
 		{
 			name: 'Meterla en la viga',
-			date: new Date('2025-09-15T18:00:00.000Z'),
+			date: new Date('2025-09-15T18:30:00.000Z'),
+			notificationDate: new Date('2025-09-15T17:30:00.000Z'),
 			dateDesc: 'Después de los toros',
 			placeGangName: 'Badulake'
 		},
 		{
 			name: 'El Corzo',
 			date: new Date('2025-09-15T21:59:00.000Z'),
+			notificationDate: new Date('2025-09-15T20:59:00.000Z'),
 			placeGangName: 'La movida'
 		},
 		{
 			name: 'Juego el Pañuelo',
 			date: new Date('2025-09-15T21:59:01.000Z'),
+			notificationDate: new Date('2025-09-15T23:00:00.000Z'),
 			dateDesc: 'Descanso del baile',
 			placeGangName: '13 la víspera'
 		},
 		{
 			name: 'Viva el Vino Uve Palito',
-			date: new Date('2025-09-16T18:00:00.000Z'),
+			date: new Date('2025-09-16T18:30:00.000Z'),
+			notificationDate: new Date('2025-09-16T17:30:00.000Z'),
 			dateDesc: 'Después de los toros',
 			placeGangName: 'Talanquera'
 		},
 		{
 			name: 'III Bingo bingo',
 			date: new Date('2025-09-16T21:59:01.000Z'),
+			notificationDate: new Date('2025-09-16T23:00:00.000Z'),
 			dateDesc: 'Descanso del baile',
 			placeDesc: 'En el baile'
 		},
 		{
 			name: 'II El Komplote',
 			date: new Date('2025-09-16T21:59:02.000Z'),
+			notificationDate: new Date('2025-09-17T01:00:00.000Z'),
 			dateDesc: 'Después del baile',
 			placeGangName: 'El K-pote'
 		},
 		{
 			name: 'Charanga La Resaka',
-			date: new Date('2025-09-17T18:00:00.000Z'),
+			date: new Date('2025-09-16T18:30:00.000Z'),
+			notificationDate: new Date('2025-09-16T17:30:00.000Z'),
 			dateDesc: 'Después de los toros',
 			placeGangName: 'Las druidas'
 		},
 		{
 			name: 'Vermut la Bodega',
 			date: new Date('2025-09-18T11:30:00.000Z'),
+			notificationDate: new Date('2025-09-18T10:30:00.000Z'),
 			placeGangName: 'La bodega de Raúl'
 		},
 		{
 			name: 'Tardeo',
 			date: new Date('2025-09-18T14:30:00.000Z'),
+			notificationDate: new Date('2025-09-18T13:30:00.000Z'),
 			placeGangName: 'Las Nomadas'
 		}
 	];

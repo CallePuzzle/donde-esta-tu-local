@@ -21,10 +21,10 @@ export async function GET(): Promise<Response> {
 		// Find activities that start within the time window
 		const upcomingActivities = await prisma.activity.findMany({
 			where: {
-				date: {
-					gte: startWindow,
-					lte: endWindow
-				}
+				notificationDate: {
+					lte: new Date()
+				},
+				hasBeenNotified: false
 			},
 			include: {
 				placeGang: true // Include place information for the notification
