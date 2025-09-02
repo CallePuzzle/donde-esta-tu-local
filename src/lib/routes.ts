@@ -87,6 +87,12 @@ const routes: Routes = {
 		icon: UsersRound,
 		isProtected: true,
 		showInMenu: false
+	},
+	notification_subscribe: {
+		name: 'Subscribe',
+		url: resolve(`/notification/subscribe`),
+		isProtected: false,
+		showInMenu: false
 	}
 };
 
