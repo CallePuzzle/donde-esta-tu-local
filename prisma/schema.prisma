@@ -109,6 +109,9 @@ model Activity {
   date     DateTime @unique
   dateDesc String?
 
+  notificationDate DateTime?
+  hasBeenNotified  Boolean   @default(false)
+
   // Peñas colaboradoras (relación many-to-many)
   collaboratingGangs Gang[] @relation("ActivityCollaborator")
 
