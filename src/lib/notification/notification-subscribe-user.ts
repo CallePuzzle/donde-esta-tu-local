@@ -6,13 +6,14 @@ async function SubscribeUser(
 	JWKpublicKey: string
 ): Promise<void> {
 	let sub = await reg.pushManager.getSubscription();
+	console.log('getSubscription', sub);
 	if (!sub) {
 		sub = await reg.pushManager.subscribe({
 			userVisibleOnly: true,
 			applicationServerKey: urlBase64ToUint8Array(JWKpublicKey)
 		});
 	}
-	console.log('sub', sub);
+	console.log('subscribe', sub);
 	if (sub) {
 		const url = routes.notification_subscribe.url as string;
 		const data = await fetch(url, {

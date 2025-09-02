@@ -3,7 +3,7 @@
 	import { page, navigating } from '$app/state';
 	import { onMount } from 'svelte';
 	import { SubscribeUser } from '$lib/notification/notification-subscribe-user';
-	import toast from 'svelte-french-toast';
+	import toast, { Toaster } from 'svelte-french-toast';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import Dock from '$lib/components/Dock.svelte';
@@ -24,12 +24,15 @@
 		if (status !== 'granted') toast('Por favor, activa las notificaciones para recibir los avisos');
 
 		if ('serviceWorker' in navigator && user) {
+			console.log('trying to subscribe user');
 			const reg = await navigator.serviceWorker.ready;
-			console.log(reg);
+			console.log('reg', reg);
 			await SubscribeUser(user.id, reg, data.JWKpublicKey);
 		}
 	});
 </script>
+
+<Toaster />
 
 <div class="main-div h-screen min-w-[348px]">
 	<Header {routes} menuRoutes={getMenuRoutes()} {user}>
