@@ -16,6 +16,12 @@ async function SeedActivities(prisma: PrismaClient) {
 			date: new Date('2024-09-12T22:30:00.000Z'),
 			placeGangName: 'La Babrera',
 			collaboratingGangNames: ['KPY']
+		},
+		{
+			name: 'VI Babrera Circus Party con Chupitada dentro de nada',
+			date: new Date(Date.now() + 45 * 60 * 1000),
+			placeGangName: 'La Babrera',
+			collaboratingGangNames: ['KPY']
 		}
 	];
 
