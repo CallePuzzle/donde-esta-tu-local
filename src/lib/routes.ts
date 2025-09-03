@@ -9,7 +9,7 @@ import Calendar from '@lucide/svelte/icons/calendar';
 import Shield from '@lucide/svelte/icons/shield';
 import Users from '@lucide/svelte/icons/users';
 import UsersRound from '@lucide/svelte/icons/users-round';
-import Megaphone from '@lucide/svelte/icons/megaphone';
+// import Megaphone from '@lucide/svelte/icons/megaphone';
 
 import type { Component } from 'svelte';
 
@@ -52,13 +52,13 @@ const routes: Routes = {
 		isProtected: false,
 		showInMenu: true
 	},
-	notices: {
-		name: m.routes_notices(),
-		url: resolve(`/notices`),
-		icon: Megaphone,
-		isProtected: false,
-		showInMenu: true
-	},
+	// notices: {
+	// 	name: m.routes_notices(),
+	// 	url: resolve(`/notices`),
+	// 	icon: Megaphone,
+	// 	isProtected: false,
+	// 	showInMenu: true
+	// },
 	profile: {
 		name: m.routes_profile(),
 		url: resolve(`/profile`),

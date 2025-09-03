@@ -54,7 +54,7 @@
 	const organisers = getOrganisers(activity.collaboratingGangs);
 </script>
 
-<div class="card m-2 w-96 bg-base-200 shadow-sm card-md lg:w-70 xl:w-96">
+<div class="card my-2 w-full bg-base-200 shadow-sm card-md lg:w-70 xl:w-96">
 	<div class="card-body">
 		<h2 class="card-title uppercase">{activity.name}</h2>
 		<div class="mb-3">

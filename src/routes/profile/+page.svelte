@@ -9,6 +9,7 @@
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import UserRound from '@lucide/svelte/icons/user-round';
 	import ButtonSignOut from '$lib/components/ButtonSignOut.svelte';
+	import { routes } from '$lib/routes';
 
 	import type { PageData } from './$types';
 	import type { User as UserPrisma } from '@prisma/client';
@@ -124,6 +125,14 @@
 			<div class="flex justify-center">
 				<ButtonSignOut {authClient} classNames="btn w-45 btn-error" />
 			</div>
+
+			<!-- Admin Panel Link -->
+			{#if user.role === 'admin'}
+				<div class="divider">Administración</div>
+				<div class="flex justify-center">
+					<a href={routes.admin.url} class="btn w-45 btn-primary"> Panel de Administración </a>
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>
