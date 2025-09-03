@@ -14,7 +14,6 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"paraglide-js": "paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide",
-		"db:seed-gangs": "tsx prisma/seed-gangs.ts",
 		"db:seed-activities": "tsx prisma/seed-activities.ts"
 	},
 	"lint-staged": {
