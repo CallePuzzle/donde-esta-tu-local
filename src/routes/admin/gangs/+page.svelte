@@ -171,9 +171,7 @@
 														</button>
 													</form>
 
-													<a href="/gang/{gang.id}" class="btn btn-ghost btn-sm" target="_blank">
-														Ver
-													</a>
+													<a href="/gang/{gang.id}" class="btn btn-ghost btn-sm"> Ver </a>
 												</div>
 											</td>
 										</tr>

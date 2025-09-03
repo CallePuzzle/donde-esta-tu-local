@@ -143,11 +143,9 @@
 										<span class="font-semibold">
 											{change.gang.name}
 										</span>
-										{#if change.gang.status !== 'ACTIVE'}
-											<span class="badge badge-sm badge-warning">
-												{change.gang.status === 'PENDING' ? 'Pendiente' : 'Inactiva'}
-											</span>
-										{/if}
+										<span class="badge badge-sm badge-warning">
+											{change.gang.status}
+										</span>
 									</div>
 									<span class="text-sm text-base-content/60">
 										{formatDate(change.createdAt)}

@@ -136,7 +136,9 @@
 	{/if}
 	{#if step == 2}
 		{#if sending}
-			<span class="loading loading-lg loading-dots"></span>
+			<div class="my-2 flex justify-center">
+				<span class="loading loading-lg loading-dots"></span>
+			</div>
 		{:else if message}
 			<div class="alert {message.type === 'success' ? 'alert-success' : 'alert-error'} text-sm">
 				{message.text}
