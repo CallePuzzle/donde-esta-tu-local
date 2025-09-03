@@ -129,7 +129,7 @@ async function main() {
 					throw new Error('Failed to create user');
 				}
 
-				let data = { subscription: dbUser.subscription, membershipGangStatus: 'VALIDATED' };
+				let data = { membershipGangStatus: 'VALIDATED' };
 
 				if (dbUser.gangId) {
 					data = {
