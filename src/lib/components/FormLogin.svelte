@@ -53,6 +53,9 @@
 						type: 'error',
 						text: checkResult.error || 'Cannot send opt email code at this time'
 					};
+					await new Promise((resolve) => setTimeout(resolve, 1000));
+					step = 2;
+					message = null;
 					return;
 				}
 				const { data, error } = await authClient.emailOtp.sendVerificationOtp({
