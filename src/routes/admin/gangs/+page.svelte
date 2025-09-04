@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import CircleCheck from '@lucide/svelte/icons/circle-check';
@@ -171,7 +172,12 @@
 														</button>
 													</form>
 
-													<a href="/gang/{gang.id}" class="btn btn-ghost btn-sm"> Ver </a>
+													<a
+														href={resolve('/gang/[slug]', { slug: gang.id.toString() })}
+														class="btn btn-ghost btn-sm"
+													>
+														Ver
+													</a>
 												</div>
 											</td>
 										</tr>
@@ -248,7 +254,11 @@
 												{/if}
 											</td>
 											<td>
-												<a href="/gang/{gang.id}" class="btn btn-ghost btn-sm" target="_blank">
+												<a
+													href={resolve('/gang/[slug]', { slug: gang.id.toString() })}
+													class="btn btn-ghost btn-sm"
+													target="_blank"
+												>
 													Ver
 												</a>
 											</td>

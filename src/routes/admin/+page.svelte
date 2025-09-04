@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import Users from '@lucide/svelte/icons/users';
 	import Building from '@lucide/svelte/icons/building';
 	import Shield from '@lucide/svelte/icons/shield';
@@ -56,7 +57,7 @@
 				</div>
 
 				<div class="card-actions justify-end">
-					<a href="/admin/gangs" class="btn btn-primary">
+					<a href={resolve('/admin/gangs')} class="btn btn-primary">
 						Ir a Peñas
 						<ArrowRight class="h-4 w-4" />
 					</a>
@@ -100,7 +101,7 @@
 				</div>
 
 				<div class="card-actions justify-end">
-					<a href="/admin/members" class="btn btn-secondary">
+					<a href={resolve('/admin/members')} class="btn btn-secondary">
 						Ir a Miembros
 						<ArrowRight class="h-4 w-4" />
 					</a>
@@ -144,7 +145,7 @@
 				</div>
 
 				<div class="card-actions justify-end">
-					<a href="/admin/history" class="btn btn-accent">
+					<a href={resolve('/admin/history')} class="btn btn-accent">
 						Ver Historial
 						<ArrowRight class="h-4 w-4" />
 					</a>

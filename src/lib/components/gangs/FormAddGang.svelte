@@ -11,13 +11,14 @@
 	import type { AddGangSchema } from '$lib/schemas/gang.js';
 	import type { LatLng } from '$lib/components/gangs/types.ts';
 	import type { Snippet } from 'svelte';
+	import type { RouteId } from '$app/types';
 
 	export type Props = {
 		dataForm: SuperValidated<AddGangSchema>;
 		latlng: LatLng;
 		pageStatus: number;
 		buttonText: Snippet;
-		callbackUrl?: string;
+		callbackUrl?: Partial<RouteId>;
 		debug?: boolean;
 	};
 
@@ -33,6 +34,7 @@
 		onResult({ result }) {
 			if (result.type === 'success' && callbackUrl) {
 				setTimeout(() => {
+					// eslint-disable-next-line
 					goto(callbackUrl);
 				}, 1000);
 			}
