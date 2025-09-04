@@ -12,7 +12,7 @@
 </script>
 
 <nav class="dock flex lg:hidden">
-	{#each getMenuRoutes(routes) as route (route.id)}
+	{#each getMenuRoutes(routes, true) as route (route.id)}
 		<DockLink {route} {currentPath} href={route.id} />
 	{/each}
 </nav>
