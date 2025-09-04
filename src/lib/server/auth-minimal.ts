@@ -14,7 +14,7 @@ export const auth = betterAuth({
 	plugins: [
 		admin(),
 		emailOTP({
-			async sendVerificationOTP({ email, otp, type }) {
+			async sendVerificationOTP({ type }) {
 				if (type === 'sign-in') {
 					// Send the OTP for sign in
 				} else if (type === 'email-verification') {
