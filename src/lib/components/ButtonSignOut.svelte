@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	import type { AuthClient } from '$lib/auth-client';
 
@@ -16,7 +17,7 @@
 	class={classNames}
 	onclick={async () => {
 		await authClient.signOut();
-		goto('/');
+		goto(resolve('/'));
 	}}
 >
 	{m.form_login_sign_out()}

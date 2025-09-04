@@ -3,6 +3,8 @@ import sqlite3 from 'sqlite3';
 import { auth } from '../src/lib/server/auth-minimal';
 import prisma from '../src/lib/server/db';
 
+import { Prisma } from '@prisma/client';
+
 const auth0Client = new ManagementClient({
 	domain: process.env.AUTH0_DOMAIN!,
 	clientId: process.env.AUTH0_CLIENT_ID!,
@@ -23,6 +25,7 @@ db.exec(schema, (err) => {
 });
 
 // Function to get all users from the database
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getAllUsersFromDB(): Promise<any[]> {
 	return new Promise((resolve, reject) => {
 		db.all('SELECT * FROM User', (err, rows) => {
@@ -65,6 +68,7 @@ async function main() {
 		const ctx = await auth.$context;
 
 		const perPage = 100;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const auth0Users: any[] = [];
 		let pageNumber = 0;
 
@@ -75,6 +79,7 @@ async function main() {
 					page: pageNumber,
 					include_totals: true
 				};
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const response = (await auth0Client.users.getAll(params)).data as any;
 				const users = response.users || [];
 				if (users.length === 0) break;
@@ -95,7 +100,7 @@ async function main() {
 
 			const migratedUser = await prisma.user.findUnique({
 				where: {
-					email: auth0User.email
+					id: auth0User.user_id
 				}
 			});
 
@@ -129,7 +134,7 @@ async function main() {
 					throw new Error('Failed to create user');
 				}
 
-				let data = { membershipGangStatus: 'VALIDATED' };
+				let data: Prisma.UserUpdateInput = { membershipGangStatus: 'VALIDATED' };
 
 				if (dbUser.gangId) {
 					data = {

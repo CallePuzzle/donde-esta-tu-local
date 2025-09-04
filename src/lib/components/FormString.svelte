@@ -5,8 +5,8 @@
 	import type { SuperFormData } from 'sveltekit-superforms/client';
 
 	export type Props = {
-		form: SuperForm<any, any>;
-		formData: SuperFormData<any>;
+		form: SuperForm<Record<string, unknown>, unknown>;
+		formData: SuperFormData<Record<string, unknown>>;
 		field: string;
 		type: string;
 		placeholder: string;

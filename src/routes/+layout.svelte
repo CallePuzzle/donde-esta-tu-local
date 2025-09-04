@@ -17,7 +17,7 @@
 </script>
 
 <div class="main-div h-screen min-w-[348px]">
-	<Header {routes} menuRoutes={getMenuRoutes()} {user}>
+	<Header {routes} {user}>
 		{#snippet title()}
 			<div class="flex items-center">
 				<enhanced:img src={Logo} alt="Icono cabecera" class="w-6 lg:m-1 lg:w-14" />
@@ -37,5 +37,5 @@
 		{@render children()}
 	{/if}
 	<Footer />
-	<Dock menuRoutes={getMenuRoutes(true)} currentPath={page.url.pathname} />
+	<Dock {routes} currentPath={page.url.pathname} />
 </div>

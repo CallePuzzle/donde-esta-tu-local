@@ -1,31 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Search from '@lucide/svelte/icons/search';
-	import BellRing from '@lucide/svelte/icons/bell-ring';
 	import Modal from './Modal.svelte';
 	import FormLogin from './FormLogin.svelte';
 	import { loginModalStore } from '$lib/stores/loginModal';
+	import { resolve } from '$app/paths';
 
 	import type { Props as FormLoginProps } from './FormLogin.svelte';
-	import type { Routes } from '$lib/routes';
 	import type { User as UserPrisma } from '@prisma/client';
 	import ModalType from './Modal.svelte';
 
 	export type Props = {
-		routes: Routes;
 		user: UserPrisma;
-		userHasNotification?: boolean;
-		notification?: boolean;
-		searcher?: boolean;
 	} & FormLoginProps;
 
-	let {
-		routes,
-		user,
-		userHasNotification = false,
-		notification = false,
-		searcher = false
-	}: Props = $props();
+	let { user }: Props = $props();
 
 	let modal = $state<ModalType | null>(null);
 	let userIsLogged = $derived<boolean>(user ? true : false);
@@ -41,27 +29,11 @@
 </script>
 
 <div class="navbar-end w-auto md:w-[50%]">
-	{#if searcher}
-		<button class="btn btn-circle btn-ghost">
-			<Search />
-		</button>
-	{/if}
-	{#if notification}
-		<a href={routes.notifications.url as string} class="btn btn-circle btn-ghost">
-			<div class="indicator">
-				<BellRing />
-				{#if userIsLogged && userHasNotification}
-					<span class="indicator-item badge badge-xs badge-primary"></span>
-				{/if}
-			</div>
-		</a>
-	{/if}
-
 	<div class="dropdown dropdown-end">
 		{#if userIsLogged}
 			<div class="btn avatar btn-circle btn-ghost">
 				<div class="w-10 rounded-full">
-					<a href={routes.profile.url}>
+					<a href={resolve('/profile')}>
 						<img
 							alt="{user?.name || 'User'} avatar"
 							src={user?.image ||
