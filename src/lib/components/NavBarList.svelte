@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { Route } from '$lib/routes';
+	import { type Routes, getMenuRoutes } from '$lib/routes';
 	import Link from './Link.svelte';
 
 	export type Props = {
 		type: 'horizontal' | 'drawer';
-		routes: Route[];
+		routes: Routes;
 	};
 
 	let { type, routes }: Props = $props();
@@ -19,7 +19,7 @@
 </script>
 
 <ul class={getClass()}>
-	{#each routes as route (route.url)}
-		<li><Link {route} /></li>
+	{#each getMenuRoutes(routes) as route (route.id)}
+		<li><Link {route} href={route.id} /></li>
 	{/each}
 </ul>

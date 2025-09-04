@@ -10,6 +10,7 @@
 	import { authClient } from '$lib/auth-client';
 	import Dot from '@lucide/svelte/icons/dot';
 	import { invalidateAll } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	import FormFields from './FormFields.svelte';
 	import { zodToFieldsJsonSchema } from '../schemas/utils.js';
@@ -53,7 +54,7 @@
 						type: 'error',
 						text: checkResult.error || 'Cannot send opt email code at this time'
 					};
-					await new Promise((resolve) => setTimeout(resolve, 1000));
+					await new Promise((resolve) => setTimeout(resolve, 3000));
 					step = 2;
 					message = null;
 					return;
@@ -197,6 +198,6 @@
 		<p class="py-2">Introduce el código que has recibido en el correo</p>
 	{/if}
 	<div class="flex justify-center">
-		<a class="btn w-42 btn-error" href="/" data-sveltekit-reload>Reset</a>
+		<a class="btn w-42 btn-error" href={resolve('/')} data-sveltekit-reload>Reset</a>
 	</div>
 </div>

@@ -3,6 +3,7 @@
 	import Clock from '@lucide/svelte/icons/clock';
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import Users from '@lucide/svelte/icons/users';
+	import { resolve } from '$app/paths';
 
 	type ActivityCard = Activity & {
 		placeGang: Pick<Gang, 'id' | 'name'> | null;
@@ -71,7 +72,10 @@
 						<span class="font-medium text-base-content">{location}</span>
 					{:else}
 						<span class="font-medium text-base-content">
-							<a href="/gang/{location.id}" class="btn btn-dash btn-info">{location.name}</a>
+							<a
+								href={resolve('/gang/[slug]', { slug: location.id.toString() })}
+								class="btn btn-dash btn-info">{location.name}</a
+							>
 						</span>
 					{/if}
 				</p>

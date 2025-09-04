@@ -5,8 +5,9 @@
 	import type { Fields } from '$lib/schemas/utils.js';
 
 	export type Props = {
-		form: SuperForm<any, any>;
-		formData: SuperFormData<any>;
+		// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+		form: SuperForm<any, unknown>;
+		formData: SuperFormData<Record<string, unknown>>;
 		fields: Fields;
 	};
 

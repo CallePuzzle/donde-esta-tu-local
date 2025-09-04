@@ -1,6 +1,6 @@
 import { m } from './paraglide/messages.js';
 
-import { resolve } from '$app/paths';
+import type { RouteId } from '$app/types';
 
 import Map from '@lucide/svelte/icons/map';
 import UserCircle from '@lucide/svelte/icons/user-circle';
@@ -14,39 +14,37 @@ import UsersRound from '@lucide/svelte/icons/users-round';
 import type { Component } from 'svelte';
 
 type Route = {
+	id: Partial<RouteId>;
 	name: string;
 	short?: string;
-	url: string;
 	icon?: Component;
 	isProtected: boolean;
 	showInMenu: boolean;
 	showInMobile?: boolean;
 };
 
-interface Routes {
-	[id: string]: Route;
-}
+type Routes = Partial<Record<RouteId, Route>>;
 
 const routes: Routes = {
-	home: {
+	'/': {
+		id: '/',
 		name: m.routes_home(),
-		url: resolve(`/`),
 		icon: Map,
 		isProtected: false,
 		showInMenu: false,
 		showInMobile: true
 	},
-	gang_add: {
+	'/gang/add': {
+		id: '/gang/add',
 		name: m.routes_gang_add(),
 		short: m.routes_gang_add_short(),
-		url: resolve(`/gang/add`),
 		icon: MapPinPlus,
 		isProtected: true,
 		showInMenu: true
 	},
-	activities: {
+	'/activities': {
+		id: '/activities',
 		name: m.routes_activities(),
-		url: resolve(`/activities`),
 		short: m.routes_activities_short(),
 		icon: Calendar,
 		isProtected: false,
@@ -54,43 +52,43 @@ const routes: Routes = {
 	},
 	// notices: {
 	// 	name: m.routes_notices(),
-	// 	url: resolve(`/notices`),
+	// 	url: notices',
 	// 	icon: Megaphone,
 	// 	isProtected: false,
 	// 	showInMenu: true
 	// },
-	profile: {
+	'/profile': {
+		id: '/profile',
 		name: m.routes_profile(),
-		url: resolve(`/profile`),
 		icon: UserCircle,
 		isProtected: true,
 		showInMenu: false,
 		showInMobile: true
 	},
-	admin: {
+	'/admin': {
+		id: '/admin',
 		name: 'Admin',
-		url: resolve(`/admin`),
 		icon: Shield,
 		isProtected: true,
 		showInMenu: false
 	},
-	admin_gangs: {
+	'/admin/gangs': {
+		id: '/admin/gangs',
 		name: 'Admin Gangs',
-		url: resolve(`/admin/gangs`),
 		icon: Users,
 		isProtected: true,
 		showInMenu: false
 	},
-	admin_members: {
+	'/admin/members': {
+		id: '/admin/members',
 		name: 'Admin Miembros',
-		url: resolve(`/admin/members`),
 		icon: UsersRound,
 		isProtected: true,
 		showInMenu: false
 	}
 };
 
-function getMenuRoutes(isMobile = false): Route[] {
+function getMenuRoutes(routes: Routes, isMobile = false): Route[] {
 	return (
 		Object.entries(routes)
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars

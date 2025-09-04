@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	import { resolve } from '$app/paths';
 	import History from '@lucide/svelte/icons/history';
 	import MapPin from '@lucide/svelte/icons/map-pin';
 	import Calendar from '@lucide/svelte/icons/calendar';
@@ -7,6 +7,8 @@
 	import Building from '@lucide/svelte/icons/building';
 	import TrendingUp from '@lucide/svelte/icons/trending-up';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
+
+	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
@@ -69,7 +71,7 @@
 	<!-- Header -->
 	<div class="mb-8">
 		<div class="mb-4 flex items-center gap-4">
-			<a href="/admin" class="btn btn-ghost btn-sm">
+			<a href={resolve('/admin')} class="btn btn-ghost btn-sm">
 				<ArrowLeft class="h-4 w-4" />
 				Volver
 			</a>

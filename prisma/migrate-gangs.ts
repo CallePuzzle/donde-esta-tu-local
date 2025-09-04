@@ -13,7 +13,7 @@ db.exec(schema, (err) => {
 		process.exit(1);
 	}
 });
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getAllGangsFromDB(): Promise<any[]> {
 	return new Promise((resolve, reject) => {
 		db.all("SELECT * FROM Gang where status != 'REFUSED'", (err, rows) => {

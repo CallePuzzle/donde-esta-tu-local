@@ -9,7 +9,7 @@
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import UserRound from '@lucide/svelte/icons/user-round';
 	import ButtonSignOut from '$lib/components/ButtonSignOut.svelte';
-	import { routes } from '$lib/routes';
+	import { resolve } from '$app/paths';
 
 	import type { PageData } from './$types';
 	import type { User as UserPrisma } from '@prisma/client';
@@ -81,8 +81,9 @@
 							<span class="text-sm text-base-content/60">Peña:</span>
 							<p class="font-medium">
 								{#if userGangDetail.id}
-									<a href="/gang/{userGangDetail.id}" class="link link-primary"
-										>{userGangDetail.name}</a
+									<a
+										href={resolve('/gang/[slug]', { slug: userGangDetail.id.toString() })}
+										class="link link-primary">{userGangDetail.name}</a
 									>
 								{:else}
 									{userGangDetail.name}
@@ -130,7 +131,7 @@
 			{#if user.role === 'admin'}
 				<div class="divider">Administración</div>
 				<div class="flex justify-center">
-					<a href={routes.admin.url} class="btn w-45 btn-primary"> Panel de Administración </a>
+					<a href={resolve('/admin')} class="btn w-45 btn-primary"> Panel de Administración </a>
 				</div>
 			{/if}
 		</div>

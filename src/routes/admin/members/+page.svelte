@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { invalidateAll } from '$app/navigation';
 	import CircleCheck from '@lucide/svelte/icons/circle-check';
 	import CircleX from '@lucide/svelte/icons/circle-x';
@@ -136,7 +137,7 @@
 											<td>
 												{#if member.gang}
 													<a
-														href="/gang/{member.gang.id}"
+														href={resolve('/gang/[slug]', { slug: member.gang.id.toString() })}
 														class="link font-semibold link-primary"
 														target="_blank"
 													>
@@ -266,7 +267,7 @@
 											<td>
 												{#if member.gang}
 													<a
-														href="/gang/{member.gang.id}"
+														href={resolve('/gang/[slug]', { slug: member.gang.id.toString() })}
 														class="link font-semibold link-primary"
 														target="_blank"
 													>
