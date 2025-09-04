@@ -26,6 +26,22 @@ export const GET: RequestHandler = async ({ url }) => {
 			return json({ canSend: true });
 		}
 
+		// Check if user has a session created in the last 5 minutes
+		const userSession = await prisma.session.findFirst({
+			where: {
+				user: {
+					email: email as string
+				},
+				createdAt: {
+					gt: fiveMinutesAgo
+				}
+			}
+		});
+
+		if (userSession) {
+			return json({ canSend: true });
+		}
+
 		// Check if 5 minutes have passed since last magic link
 
 		const canSend = emailSent.date <= fiveMinutesAgo;
@@ -37,8 +53,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
 			return json({
 				canSend: false,
-				error: m.magic_link_already_sent(),
-				remainingSeconds
+				error: m.magic_link_already_sent({ remainingSeconds })
 			});
 		}
 
