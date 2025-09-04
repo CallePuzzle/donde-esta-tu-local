@@ -1,8 +1,9 @@
 import meIconUrl from '$lib/assets/person-arms-up.svg';
 
 import type { Marker, Map, LatLngTuple } from 'leaflet';
+import type { Leaflet } from '$lib/utils/types';
 
-export function showMyPosition(L: any, map: Map, origin: LatLngTuple, focus: boolean = true) {
+export function showMyPosition(L: Leaflet, map: Map, origin: LatLngTuple, focus: boolean = true) {
 	let me: Marker;
 
 	if (navigator.geolocation) {

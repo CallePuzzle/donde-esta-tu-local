@@ -13,13 +13,15 @@
 	import ButtonRequest from '$lib/components/ButtonRequest.svelte';
 	import MemberDetail from '$lib/components/gangs/MemberDetail.svelte';
 	import { loginModalStore } from '$lib/stores/loginModal';
+	import { resolve } from '$app/paths';
 
 	import type { PageData } from './$types';
 	import type { Map } from 'leaflet';
 	import type { GangData, Member } from './type';
+	import type { Leaflet } from '$lib/utils/types';
 
 	let { data }: { data: PageData } = $props();
-	let L: typeof import('leaflet');
+	let L: Leaflet;
 	let map: Map;
 	let gang: GangData = data.gang;
 	let showImHere = $state(false);
@@ -151,7 +153,9 @@
 		</div>
 		<div class="order-first rounded-lg bg-neutral p-4 shadow md:order-last">
 			<div class="m-2 flex justify-between">
-				<a class="btn text-accent btn-soft" href="/gang/{gang.id}/update"
+				<a
+					class="btn text-accent btn-soft"
+					href={resolve('/gang/[slug]/update', { slug: gang.id.toString() })}
 					><CircleFadingArrowUp /> {m.gang_update()}</a
 				>
 				{#if webShareAPISupported}

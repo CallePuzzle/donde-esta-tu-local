@@ -7,6 +7,7 @@
 	import type { PageData } from './$types';
 	import type { Map, Marker } from 'leaflet';
 	import type { Gang } from '@prisma/client';
+	import type { Leaflet } from '$lib/utils/types';
 
 	interface GangInMap {
 		gang: Gang;
@@ -14,7 +15,7 @@
 	}
 
 	let { data }: { data: PageData } = $props();
-	let L: typeof import('leaflet');
+	let L: Leaflet;
 	let map: Map;
 	let showImHere = $state(false);
 	let gangsInMap: GangInMap[] = [];

@@ -4,7 +4,7 @@
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import Dock from '$lib/components/Dock.svelte';
-	import { getMenuRoutes, routes } from '$lib/routes';
+	import { routes } from '$lib/routes';
 	import Logo from '$lib/assets/logo.png?enhanced';
 
 	import type { Snippet } from 'svelte';
