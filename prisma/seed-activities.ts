@@ -41,7 +41,7 @@ async function SeedActivities(prisma: PrismaClient) {
 			name: 'Fiesta Techno',
 			date: new Date('2025-09-14T11:00:00.000Z'),
 			dateDesc: 'Después del encierro',
-			// placeGangName: 'As de copas'
+			placeGangName: 'As de copas',
 			bannerPath: '/src/lib/assets/actividades/fiesta-techno-as-de-copas.jpg'
 		},
 		{
