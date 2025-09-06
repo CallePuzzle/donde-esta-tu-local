@@ -13,14 +13,14 @@
 
 	interface Props {
 		activity: ActivityCard;
-		activityBanners: Record<string, unknown>;
+		activityBanners: Record<string, { default: string }>;
 	}
 
 	let { activity, activityBanners }: Props = $props();
 
 	const activityBannerPath = '/src/lib/assets/actividades/circus-party.png';
 	console.log(activityBanners);
-	const ActivityBannerSrc = activityBanners[activityBannerPath].default;
+	const ActivityBannerSrc = activityBanners[activityBannerPath]?.default;
 
 	function formatActivityDate(activity: Activity) {
 		const d = new Date(activity.date);
