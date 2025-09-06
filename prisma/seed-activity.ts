@@ -7,6 +7,7 @@ export type SeedActivityType = {
 	placeDesc?: string;
 	collaboratingGangNames?: string[];
 	placeGangName?: string;
+	bannerPath?: string;
 };
 
 export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityType) {
@@ -20,10 +21,12 @@ export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityT
 		dateDesc: dateDescIn,
 		collaboratingGangNames,
 		placeGangName,
-		placeDesc: placeDescIn
+		placeDesc: placeDescIn,
+		bannerPath: bannerPathIn
 	} = activity;
 	const dateDesc = dateDescIn ?? null;
 	const placeDesc = placeDescIn ?? null;
+	const bannerPath = bannerPathIn ?? null;
 
 	const collaboratingGangs: CollaboratingGang[] = [];
 
@@ -45,14 +48,16 @@ export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityT
 	let update: Prisma.ActivityUpdateInput = {
 		name,
 		dateDesc,
-		placeDesc
+		placeDesc,
+		bannerPath
 	};
 
 	let create: Prisma.ActivityCreateInput = {
 		name,
 		date,
 		dateDesc,
-		placeDesc
+		placeDesc,
+		bannerPath
 	};
 
 	if (placeGangName) {

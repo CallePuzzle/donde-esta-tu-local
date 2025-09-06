@@ -12,16 +12,24 @@ async function SeedActivities(prisma: PrismaClient) {
 			placeDesc: 'Salida desde la plaza mayor'
 		},
 		{
-			name: 'VI Babrera Circus Party con Chupitada',
+			name: 'Tractor Dance',
 			date: new Date('2025-09-12T22:30:00.000Z'),
+			placeDesc: 'Salida desde la plaza de toros',
+			bannerPath: '/src/lib/assets/actividades/tractor.png'
+		},
+		{
+			name: 'VI Babrera Circus Party con Chupitada',
+			date: new Date('2025-09-13T00:00:00.000Z'),
 			placeGangName: 'La Babrera',
-			collaboratingGangNames: ['KPY']
+			collaboratingGangNames: ['KPY'],
+			bannerPath: '/src/lib/assets/actividades/circus-party.png'
 		},
 		{
 			name: 'Trucha Sound Festival X - Sidrada',
 			date: new Date('2025-09-13T19:00:00.000Z'),
 			dateDesc: 'Después del pregón',
-			placeGangName: 'Los Bugas'
+			placeGangName: 'Los Bugas',
+			bannerPath: '/src/lib/assets/actividades/trucha-sound.png'
 		},
 		{
 			name: 'V Danza del Sapo',
@@ -30,9 +38,23 @@ async function SeedActivities(prisma: PrismaClient) {
 			placeGangName: 'El Desmadre'
 		},
 		{
-			name: 'II La Chanidad',
+			name: 'Fiesta Techno',
+			date: new Date('2025-09-14T11:00:00.000Z'),
+			dateDesc: 'Después del encierro',
+			// placeGangName: 'As de copas'
+			bannerPath: '/src/lib/assets/actividades/fiesta-techno-as-de-copas.jpg'
+		},
+		{
+			name: 'Tardeo',
+			date: new Date('2025-09-14T14:30:00.000Z'),
+			placeGangName: 'Los Nicks',
+			bannerPath: '/src/lib/assets/actividades/tardo-niks.jpg'
+		},
+		{
+			name: 'III La Chanidad',
 			date: new Date('2025-09-15T14:00:00.000Z'),
-			placeGangName: 'El K-pote'
+			placeGangName: 'El K-pote',
+			bannerPath: '/src/lib/assets/actividades/la-chanidad.jpg'
 		},
 		{
 			name: 'Meterla en la viga',
@@ -43,7 +65,8 @@ async function SeedActivities(prisma: PrismaClient) {
 		{
 			name: 'El Corzo',
 			date: new Date('2025-09-15T21:59:00.000Z'),
-			placeGangName: 'La movida'
+			placeGangName: 'La movida',
+			bannerPath: '/src/lib/assets/actividades/fiesta-del-corzo.png'
 		},
 		{
 			name: 'Juego el Pañuelo',
@@ -83,7 +106,8 @@ async function SeedActivities(prisma: PrismaClient) {
 		{
 			name: 'Tardeo',
 			date: new Date('2025-09-18T14:30:00.000Z'),
-			placeGangName: 'Las Nomadas'
+			placeGangName: 'Las Nomadas',
+			bannerPath: '/src/lib/assets/actividades/tardeo-nomadas.jpg'
 		}
 	];
 

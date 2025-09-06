@@ -3,6 +3,7 @@
 	import Clock from '@lucide/svelte/icons/clock';
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import Users from '@lucide/svelte/icons/users';
+	import Image from '@lucide/svelte/icons/image';
 	import { resolve } from '$app/paths';
 	import Modal from '$lib/components/Modal.svelte';
 
@@ -18,9 +19,9 @@
 
 	let { activity, activityBanners }: Props = $props();
 
-	const activityBannerPath = '/src/lib/assets/actividades/circus-party.png';
-	console.log(activityBanners);
-	const ActivityBannerSrc = activityBanners[activityBannerPath]?.default;
+	let ActivityBannerSrc = $derived.by(() => {
+		if (activity.bannerPath) return activityBanners[activity.bannerPath]?.default;
+	});
 
 	function formatActivityDate(activity: Activity) {
 		const d = new Date(activity.date);
@@ -98,9 +99,17 @@
 			</div>
 		{/if}
 		{#if ActivityBannerSrc}
-			<Modal title="Cartel" type="X" buttonClass="btn btn-dash btn-accent">
-				<enhanced:img src={ActivityBannerSrc} alt="Cartel de {activity.name}" />
-			</Modal>
+			<div class="mb-3">
+				<p class="flex items-center text-sm text-gray-600">
+					<Image /><span class="mx-1">Cartel:</span><Modal
+						title="Ver cartel"
+						type="X"
+						buttonClass="btn btn-dash btn-accent"
+					>
+						<enhanced:img src={ActivityBannerSrc} alt="Cartel de {activity.name}" />
+					</Modal>
+				</p>
+			</div>
 		{/if}
 	</div>
 </div>
