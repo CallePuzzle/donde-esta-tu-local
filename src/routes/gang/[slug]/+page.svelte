@@ -58,7 +58,7 @@
 	};
 
 	function handleLogin() {
-		if ($loginModalStore) $loginModalStore.showModal();
+		$loginModalStore?.showModal();
 	}
 
 	function imHere() {

@@ -20,7 +20,7 @@
 				enhanced: true
 			}
 		}
-	);
+	) as Record<string, { default: string }>;
 </script>
 
 <div class="hero">

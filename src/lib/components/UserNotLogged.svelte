@@ -1,9 +1,16 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { loginModalStore } from '$lib/stores/loginModal';
 	export type Props = {
 		text: string;
 	};
 
 	let { text }: Props = $props();
+
+	onMount(async () => {
+		await new Promise((resolve) => setTimeout(resolve, 2000));
+		$loginModalStore?.showModal();
+	});
 </script>
 
 <div class="hero min-h-screen bg-base-200">
