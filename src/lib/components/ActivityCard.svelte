@@ -103,8 +103,9 @@
 				<p class="flex items-center text-sm text-gray-600">
 					<Image /><span class="mx-1">Cartel:</span><Modal
 						title="Ver cartel"
-						type="X"
+						type="button"
 						buttonClass="btn btn-dash btn-accent"
+						buttonCloseClass="btn btn-dash btn-accent"
 					>
 						<enhanced:img src={ActivityBannerSrc} alt="Cartel de {activity.name}" />
 					</Modal>

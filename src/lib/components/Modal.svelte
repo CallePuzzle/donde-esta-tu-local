@@ -9,6 +9,7 @@
 		type?: 'button' | 'X' | 'outside';
 		showButton?: boolean;
 		buttonClass?: string;
+		buttonCloseClass?: string;
 	};
 
 	let {
@@ -16,7 +17,8 @@
 		children,
 		type = 'outside',
 		showButton = true,
-		buttonClass = 'btn'
+		buttonClass = 'btn',
+		buttonCloseClass = 'btn'
 	}: Props = $props();
 
 	let modal: HTMLDialogElement | undefined = $state();
@@ -53,7 +55,7 @@
 			<div class="modal-action">
 				<form method="dialog">
 					<!-- if there is a button in form, it will close the modal -->
-					<button class="btn">{m.common_close()}</button>
+					<button class={buttonCloseClass}>{m.common_close()}</button>
 				</form>
 			</div>
 		{/if}
