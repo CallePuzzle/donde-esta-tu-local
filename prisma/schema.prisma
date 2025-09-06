@@ -116,6 +116,8 @@ model Activity {
   placeGang   Gang?   @relation("ActivityPlace", fields: [placeGangId], references: [id])
   placeDesc   String?
 
+  bannerPath String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

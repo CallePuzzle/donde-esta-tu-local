@@ -11,14 +11,14 @@
 	import type { AddGangSchema } from '$lib/schemas/gang.js';
 	import type { LatLng } from '$lib/components/gangs/types.ts';
 	import type { Snippet } from 'svelte';
-	import type { RouteId } from '$app/types';
+	import type { ResolvedPathname } from '$app/types';
 
 	export type Props = {
 		dataForm: SuperValidated<AddGangSchema>;
 		latlng: LatLng;
 		pageStatus: number;
 		buttonText: Snippet;
-		callbackUrl?: Partial<RouteId>;
+		callbackUrl?: Partial<ResolvedPathname>;
 		debug?: boolean;
 	};
 

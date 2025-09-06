@@ -3,7 +3,9 @@
 	import Clock from '@lucide/svelte/icons/clock';
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import Users from '@lucide/svelte/icons/users';
+	import Image from '@lucide/svelte/icons/image';
 	import { resolve } from '$app/paths';
+	import Modal from '$lib/components/Modal.svelte';
 
 	type ActivityCard = Activity & {
 		placeGang: Pick<Gang, 'id' | 'name'> | null;
@@ -12,9 +14,14 @@
 
 	interface Props {
 		activity: ActivityCard;
+		activityBanners: Record<string, { default: string }>;
 	}
 
-	let { activity }: Props = $props();
+	let { activity, activityBanners }: Props = $props();
+
+	let ActivityBannerSrc = $derived.by(() => {
+		if (activity.bannerPath) return activityBanners[activity.bannerPath]?.default;
+	});
 
 	function formatActivityDate(activity: Activity) {
 		const d = new Date(activity.date);
@@ -88,6 +95,19 @@
 					<Users /><span class="mx-1">Colaboran:</span><span class="font-medium text-base-content"
 						>{organisers}</span
 					>
+				</p>
+			</div>
+		{/if}
+		{#if ActivityBannerSrc}
+			<div class="mb-3">
+				<p class="flex items-center text-sm text-gray-600">
+					<Image /><span class="mx-1">Cartel:</span><Modal
+						title="Ver cartel"
+						type="X"
+						buttonClass="btn btn-dash btn-accent"
+					>
+						<enhanced:img src={ActivityBannerSrc} alt="Cartel de {activity.name}" />
+					</Modal>
 				</p>
 			</div>
 		{/if}

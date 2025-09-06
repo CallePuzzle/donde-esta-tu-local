@@ -7,15 +7,7 @@ function createModalStore() {
 	return {
 		subscribe,
 		set,
-		update,
-		open: (modal: Modal) => set(modal),
-		close: () => {
-			update((modal) => {
-				modal?.close();
-				return null;
-			});
-		},
-		reset: () => set(null)
+		update
 	};
 }
 

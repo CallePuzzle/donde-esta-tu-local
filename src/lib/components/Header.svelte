@@ -21,22 +21,22 @@
 	}: Props = $props();
 </script>
 
-<div class="navbar hidden bg-base-300 shadow-sm lg:flex">
-	<div class="mx-2 navbar-start px-2">
-		<a href={resolve('/')} data-sveltekit-reload>{@render title()}</a>
+<div class="navbar flex min-h-px justify-between bg-base-300 shadow-sm">
+	<div class="hidden w-full lg:flex">
+		<div class="mx-2 navbar-start px-2">
+			<a href={resolve('/')} data-sveltekit-reload>{@render title()}</a>
+		</div>
+		<nav class="my-2 navbar-center hidden lg:block">
+			<NavBarList type="horizontal" {routes} />
+		</nav>
 	</div>
-	<nav class="navbar-center hidden lg:block">
-		<NavBarList type="horizontal" {routes} />
-	</nav>
-	<NavBarEnd {user} />
-</div>
-
-<div class="navbar flex min-h-px justify-between bg-base-300 shadow-sm lg:hidden">
-	<button class="" onclick={() => history.back()}>
-		<ChevronLeft size={30} />
-	</button>
-	<div class="mx-2 px-2">
-		<a href={resolve('/')} data-sveltekit-reload>{@render title()}</a>
+	<div class="flex lg:hidden">
+		<button class="" onclick={() => history.back()}>
+			<ChevronLeft size={30} />
+		</button>
+		<div class="mx-2 px-2">
+			<a href={resolve('/')} data-sveltekit-reload>{@render title()}</a>
+		</div>
 	</div>
 	<NavBarEnd {user} />
 </div>

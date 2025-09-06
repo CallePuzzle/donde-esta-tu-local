@@ -18,12 +18,13 @@
 		showButton = true,
 		buttonClass = 'btn'
 	}: Props = $props();
-	let modal: HTMLDialogElement;
+
+	let modal: HTMLDialogElement | undefined = $state();
 
 	const uid = $props.id();
 
 	export function showModal() {
-		modal.showModal();
+		modal?.showModal();
 	}
 
 	onMount(() => {
@@ -31,7 +32,7 @@
 	});
 
 	export function close() {
-		modal.close();
+		modal?.close();
 	}
 </script>
 
