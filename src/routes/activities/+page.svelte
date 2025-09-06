@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Cartel from '$lib/assets/actividades2025.jpg?enhanced';
+	import Cartel from '$lib/assets/actividades/actividades2025.jpg?enhanced';
 	import ActivityCard from '$lib/components/ActivityCard.svelte';
 	import { Tabs, TabItem } from 'flowbite-svelte';
 
@@ -11,6 +11,16 @@
 	const now = new Date();
 	let upcomingActivities = data.activities.filter((a) => new Date(a.date) >= now);
 	let pastActivities = data.activities.filter((a) => new Date(a.date) < now);
+
+	const activityBanners = import.meta.glob(
+		'$lib/assets/actividades/*.{avif,gif,heif,jpeg,jpg,png,tiff,webp,svg}',
+		{
+			eager: true,
+			query: {
+				enhanced: true
+			}
+		}
+	);
 </script>
 
 <div class="hero">
@@ -30,7 +40,7 @@
 			{#if upcomingActivities.length > 0}
 				<div class="grid grid-cols-1 justify-center md:grid-cols-2 lg:grid-cols-3">
 					{#each upcomingActivities as activity (activity.id)}
-						<ActivityCard {activity} />
+						<ActivityCard {activity} {activityBanners} />
 					{/each}
 				</div>
 			{:else}
@@ -56,7 +66,7 @@
 			{#if pastActivities.length > 0}
 				<div class="grid grid-cols-1 justify-center opacity-75 md:grid-cols-2 lg:grid-cols-3">
 					{#each pastActivities as activity (activity.id)}
-						<ActivityCard {activity} />
+						<ActivityCard {activity} {activityBanners} />
 					{/each}
 				</div>
 			{:else}

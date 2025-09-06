@@ -4,6 +4,7 @@
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import Users from '@lucide/svelte/icons/users';
 	import { resolve } from '$app/paths';
+	import Modal from '$lib/components/Modal.svelte';
 
 	type ActivityCard = Activity & {
 		placeGang: Pick<Gang, 'id' | 'name'> | null;
@@ -12,9 +13,14 @@
 
 	interface Props {
 		activity: ActivityCard;
+		activityBanners: Record<string, unknown>;
 	}
 
-	let { activity }: Props = $props();
+	let { activity, activityBanners }: Props = $props();
+
+	const activityBannerPath = '/src/lib/assets/actividades/circus-party.png';
+	console.log(activityBanners);
+	const ActivityBannerSrc = activityBanners[activityBannerPath].default;
 
 	function formatActivityDate(activity: Activity) {
 		const d = new Date(activity.date);
@@ -90,6 +96,11 @@
 					>
 				</p>
 			</div>
+		{/if}
+		{#if ActivityBannerSrc}
+			<Modal title="Cartel" type="X" buttonClass="btn btn-dash btn-accent">
+				<enhanced:img src={ActivityBannerSrc} alt="Cartel de {activity.name}" />
+			</Modal>
 		{/if}
 	</div>
 </div>
