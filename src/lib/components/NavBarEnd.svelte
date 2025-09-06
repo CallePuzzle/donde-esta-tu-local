@@ -26,8 +26,6 @@
 	onMount(() => {
 		loginModalStore.set(modal);
 	});
-
-	$inspect($loginModalStore);
 </script>
 
 <div class="navbar-end w-auto md:w-[50%]">
