@@ -8,6 +8,7 @@
 	import FormAddGang from '$lib/components/gangs/FormAddGang.svelte';
 	import { m } from '$lib/paraglide/messages.js';
 	import CircleFadingArrowUp from '@lucide/svelte/icons/circle-fading-arrow-up';
+	import { resolve } from '$app/paths';
 
 	import type { PageData } from './$types';
 	import type { GangData } from '../type';
@@ -86,7 +87,7 @@
 				dataForm={data.form}
 				{latlng}
 				{buttonText}
-				callbackUrl={`/gang/${gang.id}`}
+				callbackUrl={resolve('/gang/[slug]', { slug: gang.id.toString() })}
 			/>
 		{/if}
 	</div>
