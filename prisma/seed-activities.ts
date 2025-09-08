@@ -60,7 +60,8 @@ async function SeedActivities(prisma: PrismaClient) {
 			name: 'Meterla en la viga',
 			date: new Date('2025-09-15T18:00:00.000Z'),
 			dateDesc: 'Después de los toros',
-			placeGangName: 'Badulake'
+			placeGangName: 'Badulake',
+			bannerPath: '/src/lib/assets/actividades/badulaque-punta.jpg'
 		},
 		{
 			name: 'El Corzo',
