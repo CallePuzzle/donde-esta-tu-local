@@ -4,35 +4,55 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+// D3 (T10 aplazada): antes String comparado con literales en ~12 sitios del
+// código; el código ya estaba unificado a estos valores exactos.
+enum MembershipGangStatus {
+  PENDING
+  VALIDATED
+  REFUSED
+}
+
+enum GangStatus {
+  PENDING
+  VALIDATED
+  REFUSED
+}
+
+enum GangChangeType {
+  CREATE
+  UPDATE
 }
 
 model User {
-  id                  String    @id
-  name                String
-  email               String
-  emailVerified       Boolean
-  image               String?
-  createdAt           DateTime
-  updatedAt           DateTime
-  role                String?
-  banned              Boolean?
-  banReason           String?
-  banExpires          DateTime?
-  lastMagicLinkSentAt DateTime?
-  sessions            Session[]
-  accounts            Account[]
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  role          String?
+  banned        Boolean?
+  banReason     String?
+  banExpires    DateTime?
+  sessions      Session[]
+  accounts      Account[]
 
   gangId               Int?
-  gang                 Gang?  @relation(fields: [gangId], references: [id])
-  membershipGangStatus String @default("PENDING")
+  gang                 Gang?                @relation(fields: [gangId], references: [id])
+  membershipGangStatus MembershipGangStatus @default(PENDING)
 
-  requestAddedBy    UpdateGangRequest[] @relation("AddedBy")
-  requestReviewedBy UpdateGangRequest[] @relation("ReviewedBy")
-  validatedGangs    Gang[]              @relation("ValidatedBy")
+  validatedGangs Gang[]        @relation("ValidatedBy")
+  modifiedGangs  GangHistory[] @relation("ModifiedBy")
 
   @@unique([email])
+  @@index([gangId])
+  @@index([membershipGangStatus])
   @@map("user")
 }
 
@@ -83,38 +103,72 @@ model Verification {
 }
 
 model Gang {
-  id                Int                 @id @default(autoincrement())
-  name              String
-  latitude          Float
-  longitude         Float
-  members           User[]
-  status            String              @default("PENDING")
-  UpdateGangRequest UpdateGangRequest[]
+  id             Int        @id @default(autoincrement())
+  name           String
+  // Nombre en minúsculas, mantenido a mano por la app en cada create/update,
+  // para poder exigir unicidad case-insensitive real (B2).
+  normalizedName String     @unique
+  latitude       Float
+  longitude      Float
+  members        User[]
+  status         GangStatus @default(PENDING)
 
   validatedByUserId String?
   validatedBy       User?   @relation("ValidatedBy", fields: [validatedByUserId], references: [id])
 
+  // Relaciones con actividades
+  collaboratorActivities Activity[] @relation("ActivityCollaborator")
+  hostedActivities       Activity[] @relation("ActivityPlace")
+
+  // Histórico de cambios
+  history GangHistory[]
+
+  @@index([status])
   @@map("gang")
 }
 
-model UpdateGangRequest {
-  id Int @id @default(autoincrement())
+model Activity {
+  id   Int    @id @default(autoincrement())
+  name String
 
-  relatedGangId Int?
-  relatedGang   Gang? @relation(fields: [relatedGangId], references: [id])
+  // D2: confirmado con el usuario que es intencionado — no debe haber dos
+  // actividades a la misma hora. No tocar sin repetir esa conversación.
+  date     DateTime @unique
+  dateDesc String?
 
-  // Campos nuevos de la peña
+  // Peñas colaboradoras (relación many-to-many)
+  collaboratingGangs Gang[] @relation("ActivityCollaborator")
+
+  placeGangId Int?
+  placeGang   Gang?   @relation("ActivityPlace", fields: [placeGangId], references: [id])
+  placeDesc   String?
+
+  bannerPath String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("activity")
+}
+
+model GangHistory {
+  id     Int  @id @default(autoincrement())
+  gangId Int
+  gang   Gang @relation(fields: [gangId], references: [id], onDelete: Cascade)
+
+  // Campos históricos
   name      String
   latitude  Float
   longitude Float
 
-  addedByUserId    String?
-  reviewedByUserId String?
-  addedBy          User?   @relation("AddedBy", fields: [addedByUserId], references: [id])
-  reviewedBy       User?   @relation("ReviewedBy", fields: [reviewedByUserId], references: [id])
+  // Metadatos del cambio
+  changedByUserId String
+  changedBy       User           @relation("ModifiedBy", fields: [changedByUserId], references: [id])
+  changeType      GangChangeType
+  createdAt       DateTime       @default(now())
 
-  status    String   @default("PENDING")
-  createdAt DateTime @default(now())
-
-  @@map("update_gang_request")
+  @@index([gangId])
+  @@index([createdAt])
+  @@index([changedByUserId])
+  @@map("gang_history")
 }

@@ -1,0 +1,34 @@
+{
+	"name": "Peñas Montemayor",
+	"short_name": "Peñas Montemayor",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#fff",
+	"description": "Localiza las peñas de tu pueblo",
+	"icons": [
+		{
+			"sizes": "192x192",
+			"src": "icon192.png",
+			"type": "image/png"
+		},
+		{
+			"sizes": "512x512",
+			"src": "icon512.png",
+			"type": "image/png"
+		}
+	],
+	"screenshots": [
+		{
+			"src": "screenshot-narrow.png",
+			"type": "image/png",
+			"sizes": "428x926",
+			"form_factor": "narrow"
+		},
+		{
+			"src": "screenshot-wide.png",
+			"type": "image/jpg",
+			"sizes": "926x428",
+			"form_factor": "wide"
+		}
+	]
+}

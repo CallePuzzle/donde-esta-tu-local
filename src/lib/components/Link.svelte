@@ -1,10 +1,12 @@
 <script lang="ts">
 	import type { Route } from '$lib/routes';
+	import { resolve } from '$app/paths';
 	export type Props = {
 		route: Route;
+		href: Route['id'];
 	};
 
-	let { route }: Props = $props();
+	let { route, href }: Props = $props();
 </script>
 
-<a href={route.url as string}>{route.name}</a>
+<a href={resolve(href)}>{route.name}</a>

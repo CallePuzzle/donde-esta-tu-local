@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import CircleCheck from '@lucide/svelte/icons/circle-check';
@@ -6,17 +7,37 @@
 	import MapPin from '@lucide/svelte/icons/map-pin';
 	import Users from '@lucide/svelte/icons/users';
 	import Clock from '@lucide/svelte/icons/clock';
+	import { m } from '$lib/paraglide/messages.js';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 
-	let activeTab: 'validated' | 'pending' = 'pending';
-	let processingGangId: number | null = null;
+	let activeTab: 'validated' | 'pending' = $state('pending');
+	let processingGangId: number | null = $state(null);
+	let actionMessage: { type: 'success' | 'error'; text: string } | null = $state(null);
+
+	// result.data no está tipado igual en éxito (objeto plano) que en fail()
+	// (ActionFailure<T>), así que se extrae el mensaje con una comprobación
+	// en tiempo de ejecución en vez de asumir su forma.
+	function extractMessage(data: unknown): string {
+		return data !== null &&
+			typeof data === 'object' &&
+			'message' in data &&
+			typeof data.message === 'string'
+			? data.message
+			: '';
+	}
 </script>
 
 <div class="container mx-auto p-4">
 	<div class="mb-8">
-		<h1 class="mb-4 text-3xl font-bold">Administración de Peñas</h1>
+		<h1 class="mb-4 text-3xl font-bold">{m.admin_gangs_page_title()}</h1>
+
+		{#if actionMessage}
+			<div class="alert {actionMessage.type === 'success' ? 'alert-success' : 'alert-error'} mb-4">
+				<span>{actionMessage.text}</span>
+			</div>
+		{/if}
 
 		<!-- Estadísticas -->
 		<div class="stats mb-6 w-full shadow">
@@ -24,7 +45,7 @@
 				<div class="stat-figure text-primary">
 					<Users class="h-8 w-8" />
 				</div>
-				<div class="stat-title">Total Peñas</div>
+				<div class="stat-title">{m.admin_gangs_stat_total()}</div>
 				<div class="stat-value text-primary">{data.stats.totalGangs}</div>
 			</div>
 
@@ -32,7 +53,7 @@
 				<div class="stat-figure text-success">
 					<CircleCheck class="h-8 w-8" />
 				</div>
-				<div class="stat-title">Validadas</div>
+				<div class="stat-title">{m.admin_gangs_stat_validated()}</div>
 				<div class="stat-value text-success">{data.stats.validatedGangs}</div>
 			</div>
 
@@ -40,7 +61,7 @@
 				<div class="stat-figure text-warning">
 					<Clock class="h-8 w-8" />
 				</div>
-				<div class="stat-title">Pendientes</div>
+				<div class="stat-title">{m.admin_gangs_stat_pending()}</div>
 				<div class="stat-value text-warning">{data.stats.pendingGangs}</div>
 			</div>
 
@@ -48,24 +69,24 @@
 				<div class="stat-figure text-error">
 					<CircleX class="h-8 w-8" />
 				</div>
-				<div class="stat-title">Rechazadas</div>
+				<div class="stat-title">{m.admin_gangs_stat_refused()}</div>
 				<div class="stat-value text-error">{data.stats.refusedGangs}</div>
 			</div>
 		</div>
 
 		<!-- Tabs -->
-		<div class="tabs-boxed mb-6 tabs">
+		<div class="tabs-boxed tabs mb-6">
 			<button
 				class="tab {activeTab === 'pending' ? 'tab-active' : ''}"
-				on:click={() => (activeTab = 'pending')}
+				onclick={() => (activeTab = 'pending')}
 			>
-				Pendientes de Validación ({data.pendingGangs.length})
+				{m.admin_gangs_tab_pending({ count: data.pendingGangs.length })}
 			</button>
 			<button
 				class="tab {activeTab === 'validated' ? 'tab-active' : ''}"
-				on:click={() => (activeTab = 'validated')}
+				onclick={() => (activeTab = 'validated')}
 			>
-				Gangs Validadas ({data.validatedGangs.length})
+				{m.admin_gangs_tab_validated({ count: data.validatedGangs.length })}
 			</button>
 		</div>
 
@@ -73,26 +94,32 @@
 		{#if activeTab === 'pending'}
 			<div class="card bg-base-100 shadow-xl">
 				<div class="card-body">
-					<h2 class="mb-4 card-title">Gangs Pendientes de Validación</h2>
+					<h2 class="mb-4 card-title">{m.admin_gangs_pending_title()}</h2>
+
+					{#if data.pendingGangsTruncated}
+						<div class="mb-4 alert alert-warning">
+							<span>{m.admin_gangs_list_truncated({ count: data.pendingGangs.length })}</span>
+						</div>
+					{/if}
 
 					{#if data.pendingGangs.length === 0}
 						<div class="alert alert-info">
-							<span>No hay gangs pendientes de validación</span>
+							<span>{m.admin_gangs_pending_empty()}</span>
 						</div>
 					{:else}
 						<div class="overflow-x-auto">
 							<table class="table table-zebra">
 								<thead>
 									<tr>
-										<th>ID</th>
-										<th>Nombre</th>
-										<th>Ubicación</th>
-										<th>Miembros</th>
-										<th>Acciones</th>
+										<th>{m.admin_table_id()}</th>
+										<th>{m.admin_table_name()}</th>
+										<th>{m.admin_table_location()}</th>
+										<th>{m.admin_table_members()}</th>
+										<th>{m.admin_table_actions()}</th>
 									</tr>
 								</thead>
 								<tbody>
-									{#each data.pendingGangs as gang}
+									{#each data.pendingGangs as gang (gang.id)}
 										<tr>
 											<td>{gang.id}</td>
 											<td class="font-semibold">{gang.name}</td>
@@ -111,7 +138,7 @@
 												</div>
 												{#if gang.members.length > 0}
 													<div class="mt-1 text-xs text-base-content/60">
-														{gang.members.map((m) => m.name || m.email).join(', ')}
+														{gang.members.map((member) => member.displayName).join(', ')}
 													</div>
 												{/if}
 											</td>
@@ -122,7 +149,14 @@
 														action="?/validate"
 														use:enhance={() => {
 															processingGangId = gang.id;
+															actionMessage = null;
 															return async ({ result }) => {
+																if (result.type === 'success' || result.type === 'failure') {
+																	actionMessage = {
+																		type: result.type === 'success' ? 'success' : 'error',
+																		text: extractMessage(result.data)
+																	};
+																}
 																if (result.type === 'success') {
 																	await invalidateAll();
 																}
@@ -140,7 +174,7 @@
 															{:else}
 																<CircleCheck class="h-4 w-4" />
 															{/if}
-															Validar
+															{m.action_validate()}
 														</button>
 													</form>
 
@@ -149,7 +183,14 @@
 														action="?/refuse"
 														use:enhance={() => {
 															processingGangId = gang.id;
+															actionMessage = null;
 															return async ({ result }) => {
+																if (result.type === 'success' || result.type === 'failure') {
+																	actionMessage = {
+																		type: result.type === 'success' ? 'success' : 'error',
+																		text: extractMessage(result.data)
+																	};
+																}
 																if (result.type === 'success') {
 																	await invalidateAll();
 																}
@@ -159,7 +200,7 @@
 													>
 														<input type="hidden" name="gangId" value={gang.id} />
 														<button
-															class="btn btn-sm btn-error"
+															class="btn btn-error btn-sm"
 															disabled={processingGangId === gang.id}
 														>
 															{#if processingGangId === gang.id}
@@ -167,12 +208,15 @@
 															{:else}
 																<CircleX class="h-4 w-4" />
 															{/if}
-															Rechazar
+															{m.action_reject()}
 														</button>
 													</form>
 
-													<a href="/gang/{gang.id}" class="btn btn-ghost btn-sm" target="_blank">
-														Ver
+													<a
+														href={resolve('/gang/[slug]', { slug: gang.id.toString() })}
+														class="btn btn-ghost btn-sm"
+													>
+														{m.admin_action_view()}
 													</a>
 												</div>
 											</td>
@@ -187,27 +231,33 @@
 		{:else if activeTab === 'validated'}
 			<div class="card bg-base-100 shadow-xl">
 				<div class="card-body">
-					<h2 class="mb-4 card-title">Gangs Validadas</h2>
+					<h2 class="mb-4 card-title">{m.admin_gangs_validated_title()}</h2>
+
+					{#if data.validatedGangsTruncated}
+						<div class="mb-4 alert alert-warning">
+							<span>{m.admin_gangs_list_truncated({ count: data.validatedGangs.length })}</span>
+						</div>
+					{/if}
 
 					{#if data.validatedGangs.length === 0}
 						<div class="alert alert-info">
-							<span>No hay gangs validadas</span>
+							<span>{m.admin_gangs_validated_empty()}</span>
 						</div>
 					{:else}
 						<div class="overflow-x-auto">
 							<table class="table table-zebra">
 								<thead>
 									<tr>
-										<th>ID</th>
-										<th>Nombre</th>
-										<th>Ubicación</th>
-										<th>Miembros</th>
-										<th>Validado por</th>
-										<th>Acciones</th>
+										<th>{m.admin_table_id()}</th>
+										<th>{m.admin_table_name()}</th>
+										<th>{m.admin_table_location()}</th>
+										<th>{m.admin_table_members()}</th>
+										<th>{m.admin_table_validated_by()}</th>
+										<th>{m.admin_table_actions()}</th>
 									</tr>
 								</thead>
 								<tbody>
-									{#each data.validatedGangs as gang}
+									{#each data.validatedGangs as gang (gang.id)}
 										<tr>
 											<td>{gang.id}</td>
 											<td class="font-semibold">{gang.name}</td>
@@ -226,13 +276,17 @@
 												</div>
 												{#if gang.members.length > 0}
 													<div class="mt-1 text-xs text-base-content/60">
-														{#each gang.members as member}
+														{#each gang.members as member (member.id)}
 															<div class="flex items-center gap-1">
-																<span>{member.name || member.email}</span>
+																<span>{member.displayName}</span>
 																{#if member.membershipGangStatus === 'VALIDATED'}
-																	<span class="badge badge-xs badge-success">verificado</span>
+																	<span class="badge badge-xs badge-success"
+																		>{m.admin_badge_verified()}</span
+																	>
 																{:else if member.membershipGangStatus === 'PENDING'}
-																	<span class="badge badge-xs badge-warning">pendiente</span>
+																	<span class="badge badge-xs badge-warning"
+																		>{m.admin_badge_pending()}</span
+																	>
 																{/if}
 															</div>
 														{/each}
@@ -250,8 +304,12 @@
 												{/if}
 											</td>
 											<td>
-												<a href="/gang/{gang.id}" class="btn btn-ghost btn-sm" target="_blank">
-													Ver
+												<a
+													href={resolve('/gang/[slug]', { slug: gang.id.toString() })}
+													class="btn btn-ghost btn-sm"
+													target="_blank"
+												>
+													{m.admin_action_view()}
 												</a>
 											</td>
 										</tr>

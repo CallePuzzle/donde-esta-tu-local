@@ -1,6 +1,11 @@
 import { browser, dev } from '$app/environment';
 import pino, { type LoggerOptions } from 'pino';
-import { get, readable } from 'svelte/store';
+
+// Q16: medido el coste real del build de navegador de pino que arrastran
+// ButtonRequest.svelte, show-my-position.ts y gang/[slug]/+page.svelte: el
+// chunk que lo contiene pesa ~12 KB sin comprimir / ~3.4 KB con gzip (bun run
+// only-build + inspección de .svelte-kit/output/client). No se justifica un
+// wrapper mínimo para ahorrar eso; se deja pino tal cual.
 
 const level = dev ? 'debug' : 'info';
 
@@ -34,6 +39,4 @@ const options: LoggerOptions = dev
 		? browserOptions
 		: baseOptions;
 
-const pinoLogger = readable(pino(options));
-
-export const logger = get(pinoLogger);
+export const logger = pino(options);

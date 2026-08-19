@@ -1,4 +1,28 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
-@plugin "daisyui";
+
+@plugin 'flowbite/plugin';
+
+@source '../node_modules/flowbite-svelte/dist';
+@source '../node_modules/flowbite-svelte-icons/dist';
+
+@layer base {
+	/* disable chrome cancel button */
+	input[type='search']::-webkit-search-cancel-button {
+		display: none;
+	}
+}
+
+@plugin 'daisyui' {
+	themes: dark;
+}
+@plugin 'daisyui/theme' {
+	name: 'dark';
+	default: true;
+	--color-accent: #4caf50;
+	--color-primary: #2196f3;
+	--color-secondary: #ffc107;
+	--color-error: #ee3616;
+	--color-success: #2196f3;
+}

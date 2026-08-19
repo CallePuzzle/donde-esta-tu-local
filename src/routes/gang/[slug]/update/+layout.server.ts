@@ -1,53 +1,22 @@
-import { logger } from '$lib/logger';
-import prisma from '$lib/server/db';
 import { error } from '@sveltejs/kit';
+import { requireValidatedMember } from '$lib/server/membership';
+import { m } from '$lib/paraglide/messages.js';
 
 import type { LayoutServerLoad, LayoutServerLoadEvent } from './$types';
-import type { Member } from '../type';
 
 export const load: LayoutServerLoad = async (event: LayoutServerLoadEvent) => {
-	const gangId = event.params.slug;
-	const currentUser = event.locals.user;
+	const gangId = Number(event.params.slug);
 
-	const gang = await prisma.gang.findUnique({
-		where: {
-			status: {
-				not: 'REFUSED'
-			},
-			id: parseInt(gangId)
-		},
-		include: {
-			members: {
-				select: {
-					id: true,
-					email: true,
-					name: true,
-					image: true,
-					membershipGangStatus: true,
-					gangId: true
-				}
-			}
-		}
-	});
-
-	logger.debug(gang, 'gang');
-
-	if (!gang) {
-		return error(404, 'Peña no encontrada');
+	// Un slug no numérico es un 404 (la peña no existe), no un 403
+	if (Number.isNaN(gangId)) {
+		throw error(404, m.error_gang_not_found());
 	}
 
-	// Separate validated and pending members
-	const validatedMembers = gang.members.filter(
-		(member: Member) => member.membershipGangStatus === 'VALIDATED'
-	);
-
-	// Check if current user is a validated member
-	let isValidatedMember = false;
-	if (currentUser) {
-		isValidatedMember = validatedMembers.some((member: Member) => member.id === currentUser.id);
-	}
+	// Corta en servidor (401/403) en vez de dejar pasar el load y confiar en
+	// que +layout.svelte oculte el contenido con un {#if} (B20).
+	await requireValidatedMember(event.locals, gangId);
 
 	return {
-		isValidatedMember: isValidatedMember
+		isValidatedMember: true
 	};
 };

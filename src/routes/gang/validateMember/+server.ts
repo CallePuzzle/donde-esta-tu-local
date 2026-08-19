@@ -1,55 +1,21 @@
 import { json } from '@sveltejs/kit';
 import { logger } from '$lib/logger';
 import prisma from '$lib/server/db';
+import { canManageGangMembers } from '$lib/server/membership';
+import { parseMemberRequest } from '$lib/server/member-request';
 import { m } from '$lib/paraglide/messages.js';
 import type { RequestHandler, RequestEvent } from './$types';
 
-export const GET: RequestHandler = async (event: RequestEvent) => {
-	const userLogged = event.locals.user;
-	const url = event.url;
-	const userId = url.searchParams.get('userId');
-	const gangId = url.searchParams.get('gangId');
+export const POST: RequestHandler = async (event: RequestEvent) => {
+	const parsed = await parseMemberRequest(event);
+	if (!parsed.ok) return parsed.response;
+	const { userId, gangId, userLogged } = parsed;
 
-	logger.info({ userId, gangId, validatorId: userLogged?.id }, 'Validate member request received');
-
-	if (!userId || !gangId) {
-		return json(
-			{
-				success: false,
-				message: m.error_missing_parameters()
-			},
-			{ status: 400 }
-		);
-	}
-
-	if (!userLogged) {
-		return json(
-			{
-				success: false,
-				message: m.error_user_not_logged_in()
-			},
-			{ status: 401 }
-		);
-	}
+	logger.info({ userId, gangId, validatorId: userLogged.id }, 'Validate member request received');
 
 	try {
-		// Check if the logged user is a validated member of the gang
-		const validatorMember = await prisma.user.findUnique({
-			where: {
-				id: userLogged.id
-			},
-			select: {
-				gangId: true,
-				membershipGangStatus: true
-			}
-		});
-
-		if (
-			userLogged.role !== 'admin' &&
-			(!validatorMember ||
-				validatorMember.gangId !== parseInt(gangId) ||
-				validatorMember.membershipGangStatus !== 'VALIDATED')
-		) {
+		// Solo miembros validados de la peña o admin/system pueden validar
+		if (!(await canManageGangMembers(userLogged, gangId))) {
 			return json(
 				{
 					success: false,
@@ -80,7 +46,7 @@ export const GET: RequestHandler = async (event: RequestEvent) => {
 			);
 		}
 
-		if (userToValidate.gangId !== parseInt(gangId)) {
+		if (userToValidate.gangId !== gangId) {
 			return json(
 				{
 					success: false,
@@ -107,15 +73,21 @@ export const GET: RequestHandler = async (event: RequestEvent) => {
 			},
 			data: {
 				membershipGangStatus: 'VALIDATED'
+			},
+			select: {
+				id: true,
+				gangId: true
 			}
 		});
 
-		logger.info({ user: updatedUser }, 'Member validated successfully');
+		logger.info(
+			{ userId: updatedUser.id, gangId: updatedUser.gangId },
+			'Member validated successfully'
+		);
 
 		return json({
 			success: true,
-			message: m.gang_validate_success(),
-			user: updatedUser
+			message: m.gang_validate_success()
 		});
 	} catch (error) {
 		logger.error(error, 'Error validating member');

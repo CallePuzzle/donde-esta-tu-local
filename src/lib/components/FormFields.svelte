@@ -1,12 +1,12 @@
-<script lang="ts">
+<script lang="ts" generics="T extends Record<string, unknown>">
 	import FormString from './FormString.svelte';
 	import type { SuperForm } from 'sveltekit-superforms';
 	import type { SuperFormData } from 'sveltekit-superforms/client';
 	import type { Fields } from '$lib/schemas/utils.js';
 
-	export type Props = {
-		form: SuperForm<any, any>;
-		formData: SuperFormData<any>;
+	type Props = {
+		form: SuperForm<T, unknown>;
+		formData: SuperFormData<T>;
 		fields: Fields;
 	};
 
@@ -19,9 +19,9 @@
 			{form}
 			{formData}
 			field={field.name}
-			type={(field.format as string) ?? 'text'}
+			type={field.format ?? 'text'}
 			placeholder={field.placeholder}
-			description={(field.description as string) ?? undefined}
+			description={field.description}
 			required={field.required}
 		/>
 	{/each}

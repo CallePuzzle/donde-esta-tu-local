@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer';
 
+import type { Transporter } from 'nodemailer';
+
 interface TransporterOptions {
 	host: string;
 	port: number;
@@ -10,6 +12,10 @@ interface TransporterOptions {
 	};
 }
 
+// Cacheado a nivel de módulo: las opciones vienen siempre de las mismas env vars,
+// así que reutilizamos la misma conexión/pool en vez de crear una por email enviado.
+let transporter: Transporter | undefined;
+
 const sender = async (
 	transporterOptions: TransporterOptions,
 	from: string,
@@ -17,7 +23,7 @@ const sender = async (
 	subject: string,
 	text: string
 ) => {
-	const transporter = nodemailer.createTransport(transporterOptions);
+	transporter ??= nodemailer.createTransport(transporterOptions);
 	await transporter.sendMail({
 		from: from,
 		to,

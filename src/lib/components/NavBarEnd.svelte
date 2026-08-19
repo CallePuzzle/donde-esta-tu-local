@@ -1,37 +1,22 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Search from '@lucide/svelte/icons/search';
-	import BellRing from '@lucide/svelte/icons/bell-ring';
-	import Link from './Link.svelte';
 	import Modal from './Modal.svelte';
 	import FormLogin from './FormLogin.svelte';
-	import { loginModalStore } from '$lib/stores/loginModal';
+	import { loginModalStore } from '$lib/stores/loginModal.svelte';
+	import { resolve } from '$app/paths';
+	import { memberDisplayName, memberInitial } from '$lib/utils/member-display';
+	import { m } from '$lib/paraglide/messages.js';
 
-	import type { AuthClient, Session } from '$lib/auth-client';
-	import type { Props as FormLoginProps } from './FormLogin.svelte';
-	import type { Routes } from '$lib/routes';
-	import ModalType from './Modal.svelte';
-
+	// El tipo de sesión inferido de better-auth, no el User de @prisma/client
+	// (que no es lo que viaja en locals.user/data.user).
 	export type Props = {
-		routes: Routes;
-		session: Session;
-		authClient: AuthClient;
-		userHasNotification?: boolean;
-		notification?: boolean;
-		searcher?: boolean;
-	} & FormLoginProps;
+		user: App.Locals['user'];
+	};
 
-	let {
-		routes,
-		session,
-		authClient,
-		userHasNotification = false,
-		notification = false,
-		searcher = false
-	}: Props = $props();
+	let { user }: Props = $props();
 
-	let modal = $state<ModalType | null>(null);
-	let userIsLogged = $derived<boolean>($session?.data ? true : false);
+	let modal = $state<Modal | null>(null);
+	let userIsLogged = $derived<boolean>(user ? true : false);
 
 	async function afterCancelCallback() {
 		await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -39,56 +24,30 @@
 	}
 
 	onMount(() => {
-		loginModalStore.set(modal);
+		loginModalStore.value = modal;
 	});
 </script>
 
-<div class="navbar-end">
-	{#if searcher}
-		<button class="btn btn-circle btn-ghost">
-			<Search />
-		</button>
-	{/if}
-	{#if notification}
-		<a href={routes.notifications.url as string} class="btn btn-circle btn-ghost">
-			<div class="indicator">
-				<BellRing />
-				{#if userIsLogged && userHasNotification}
-					<span class="indicator-item badge badge-xs badge-primary"></span>
-				{/if}
-			</div>
-		</a>
-	{/if}
-
+<div class="navbar-end w-auto md:w-[50%]">
 	<div class="dropdown dropdown-end">
-		{#if userIsLogged}
-			<div tabindex="0" role="button" class="btn avatar btn-circle btn-ghost">
+		{#if userIsLogged && user}
+			<div class="btn avatar btn-circle btn-ghost">
 				<div class="w-10 rounded-full">
-					<img
-						alt="{$session?.data?.user?.name || 'User'} avatar"
-						src={$session?.data?.user?.image ||
-							'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'}
-					/>
+					<a href={resolve('/profile')}>
+						{#if user.image}
+							<img alt={m.common_avatar_alt({ name: memberDisplayName(user) })} src={user.image} />
+						{:else}
+							<div
+								class="flex h-full w-full items-center justify-center bg-neutral text-neutral-content"
+							>
+								{memberInitial(user)}
+							</div>
+						{/if}
+					</a>
 				</div>
 			</div>
-			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-			<ul
-				tabindex="0"
-				class="dropdown-content menu z-1 mt-3 w-52 menu-sm rounded-box bg-base-100 p-2 shadow"
-			>
-				<li><Link route={routes.profile} /></li>
-				<li>
-					<button
-						onclick={async () => {
-							await authClient.signOut();
-						}}
-					>
-						Sign Out
-					</button>
-				</li>
-			</ul>
 		{:else}
-			<Modal title="Login" bind:this={modal}>
+			<Modal title={m.form_login_sign_in()} bind:this={modal} type="X">
 				<FormLogin {afterCancelCallback} />
 			</Modal>
 		{/if}

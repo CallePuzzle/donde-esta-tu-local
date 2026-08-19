@@ -1,12 +1,15 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import { showMyPosition } from '$lib/utils/show-my-position';
 	import { coordsMonte } from '$lib/utils/coords-monte';
+	import GangMap from '$lib/components/gangs/GangMap.svelte';
 	import Locate from '@lucide/svelte/icons/locate';
+	import { m } from '$lib/paraglide/messages.js';
 
 	import type { PageData } from './$types';
 	import type { Map, Marker } from 'leaflet';
 	import type { Gang } from '@prisma/client';
+	import type { Leaflet } from '$lib/utils/types';
 
 	interface GangInMap {
 		gang: Gang;
@@ -14,61 +17,77 @@
 	}
 
 	let { data }: { data: PageData } = $props();
-	let L: typeof import('leaflet');
+	let L: Leaflet;
 	let map: Map;
 	let showImHere = $state(false);
 	let gangsInMap: GangInMap[] = [];
 
-	onMount(async () => {
-		L = await import('leaflet');
-		map = L.map('map').setView(coordsMonte, 17);
-		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			attribution:
-				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-		}).addTo(map);
+	function handleMapReady(context: { L: Leaflet; map: Map }) {
+		({ L, map } = context);
 
-		data.gangs.map((gang: Gang) => {
-			let message = '<a href="/gang/' + gang.id + '">' + gang.name + '</a>';
+		for (const gang of data.gangs) {
+			// Construir el popup con elementos DOM (textContent) para evitar XSS
+			const popupContent = document.createElement('div');
+			const link = document.createElement('a');
+			link.href = '/gang/' + gang.id;
+			link.textContent = gang.name;
+			popupContent.appendChild(link);
+			if (gang.status !== 'VALIDATED') {
+				const suffix = document.createElement('span');
+				suffix.textContent = m.home_gang_unvalidated_suffix();
+				popupContent.appendChild(suffix);
+			}
 
-			message = gang.status == 'VALIDATED' ? message : message + ' (sin validar)';
 			const marker = L.marker([gang.latitude, gang.longitude], {
 				opacity: gang.status == 'VALIDATED' ? 1 : 0.6
 			})
 				.addTo(map)
-				.bindPopup(message);
+				.bindPopup(popupContent);
 			const gangInMap: GangInMap = { gang, marker };
 			gangsInMap.push(gangInMap);
-		});
+		}
 
 		showImHere = true;
-	});
+	}
+
+	let stopWatchingPosition: (() => void) | undefined;
 
 	function imHere() {
-		showMyPosition(L, map, coordsMonte);
+		stopWatchingPosition?.();
+		stopWatchingPosition = showMyPosition(L, map, coordsMonte);
 	}
+
+	onDestroy(() => stopWatchingPosition?.());
+
+	const FILTER_DEBOUNCE_MS = 200;
+	let filterDebounceTimeout: ReturnType<typeof setTimeout> | undefined;
 
 	function filterGangs(event: Event) {
 		const input = event.target as HTMLInputElement;
 		const value = input.value.toLowerCase();
 
-		gangsInMap.forEach((gangInMap) => {
-			const { marker, gang } = gangInMap;
-			const popup = marker.getPopup();
-			if (!popup) return;
+		clearTimeout(filterDebounceTimeout);
+		filterDebounceTimeout = setTimeout(() => {
+			// El mapa puede no haber cargado aún si el usuario filtra antes de
+			// que Leaflet termine de inicializarse
+			if (!map) return;
+			gangsInMap.forEach((gangInMap) => {
+				const { marker, gang } = gangInMap;
+				const gangName = gang.name.toLowerCase();
 
-			const content = popup.getContent();
-			const gangName = typeof content === 'string' ? content.toLowerCase() : '';
-
-			if (gangName.includes(value)) {
-				if (gang.status == 'VALIDATED') {
-					marker.setOpacity(1);
+				if (gangName.includes(value)) {
+					// Añadir el marker al mapa si no está ya
+					if (!map.hasLayer(marker)) {
+						marker.addTo(map);
+					}
+					marker.openPopup();
 				} else {
-					marker.setOpacity(0.6);
+					// Remover el marker del mapa
+					map.removeLayer(marker);
 				}
-			} else {
-				marker.setOpacity(0);
-			}
-		});
+			});
+			if (value === '') map.closePopup();
+		}, FILTER_DEBOUNCE_MS);
 	}
 </script>
 
@@ -76,7 +95,13 @@
 	<div class="hero-content p-0 text-center">
 		<div class="max-w-md">
 			<label class="input-bordered input flex items-center">
-				<input type="text" class="grow" placeholder="Filtrar por peña:" onchange={filterGangs} />
+				<input
+					type="text"
+					class="grow"
+					placeholder={m.home_filter_placeholder()}
+					aria-label={m.home_filter_placeholder()}
+					oninput={filterGangs}
+				/>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 16 16"
@@ -94,26 +119,14 @@
 	</div>
 </div>
 
-<div id="map" class="z-0"></div>
+<GangMap onReady={handleMapReady} />
 
 {#if showImHere}
 	<button
+		type="button"
 		id="imhere"
 		onclick={imHere}
-		class="btn absolute right-3 bottom-16 btn-active btn-circle btn-primary md:bottom-3"
+		class="btn absolute right-3 bottom-25 btn-active btn-circle btn-primary lg:bottom-10"
 		><Locate /></button
 	>
 {/if}
-
-<link
-	rel="stylesheet"
-	href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-	integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-	crossorigin=""
-/>
-
-<style>
-	#map {
-		height: 80vh;
-	}
-</style>

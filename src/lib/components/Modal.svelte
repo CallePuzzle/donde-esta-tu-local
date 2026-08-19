@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { onMount } from 'svelte';
 	import { m } from '../paraglide/messages.js';
 
 	export type Props = {
@@ -9,6 +8,7 @@
 		type?: 'button' | 'X' | 'outside';
 		showButton?: boolean;
 		buttonClass?: string;
+		buttonCloseClass?: string;
 	};
 
 	let {
@@ -16,29 +16,27 @@
 		children,
 		type = 'outside',
 		showButton = true,
-		buttonClass = 'btn'
+		buttonClass = 'btn',
+		buttonCloseClass = 'btn'
 	}: Props = $props();
-	let modal: HTMLDialogElement;
+
+	let modal: HTMLDialogElement | undefined = $state();
 
 	const uid = $props.id();
 
 	export function showModal() {
-		modal.showModal();
+		modal?.showModal();
 	}
 
-	onMount(() => {
-		modal = document.getElementById('modal-' + uid) as HTMLDialogElement;
-	});
-
 	export function close() {
-		modal.close();
+		modal?.close();
 	}
 </script>
 
 {#if showButton}
-	<button class={buttonClass} onclick={showModal}>{title}</button>
+	<button type="button" class={buttonClass} onclick={showModal}>{title}</button>
 {/if}
-<dialog id="modal-{uid}" class="modal">
+<dialog bind:this={modal} id="modal-{uid}" class="modal">
 	<div class="modal-box">
 		{#if type == 'X'}
 			<form method="dialog">
@@ -52,7 +50,7 @@
 			<div class="modal-action">
 				<form method="dialog">
 					<!-- if there is a button in form, it will close the modal -->
-					<button class="btn">{m.common_close()}</button>
+					<button class={buttonCloseClass}>{m.common_close()}</button>
 				</form>
 			</div>
 		{/if}

@@ -1,13 +1,20 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { loginModalStore } from '$lib/stores/loginModal.svelte';
 	export type Props = {
 		text: string;
 	};
 
 	let { text }: Props = $props();
+
+	onMount(async () => {
+		await new Promise((resolve) => setTimeout(resolve, 2000));
+		loginModalStore.value?.showModal();
+	});
 </script>
 
 <div class="hero min-h-screen bg-base-200">
-	<div class="hero-content text-center">
+	<div class="hero-content">
 		<div class="max-w-md">
 			<div role="alert" class="alert alert-error">
 				<svg

@@ -11,13 +11,14 @@
 	import type { AddGangSchema } from '$lib/schemas/gang.js';
 	import type { LatLng } from '$lib/components/gangs/types.ts';
 	import type { Snippet } from 'svelte';
+	import type { ResolvedPathname } from '$app/types';
 
 	export type Props = {
 		dataForm: SuperValidated<AddGangSchema>;
 		latlng: LatLng;
 		pageStatus: number;
 		buttonText: Snippet;
-		callbackUrl?: string;
+		callbackUrl?: Partial<ResolvedPathname>;
 		debug?: boolean;
 	};
 
@@ -25,6 +26,11 @@
 
 	const uid = $props.id();
 
+	// T5: superForm(dataForm) debe llamarse una sola vez por instancia (gestiona
+	// su propio estado reactivo internamente); envolverlo en $derived o una
+	// closure lo reinvocaría en cada cambio de dataForm y rompería el
+	// formulario. No es el mismo bug que B9 (ver su commit).
+	// svelte-ignore state_referenced_locally
 	const form = superForm(dataForm, {
 		id: uid,
 		validators: zod4Client(addGangSchema),
@@ -45,24 +51,24 @@
 
 	const filteredFields = fields.filter((field) => field.name !== 'lat' && field.name !== 'lng');
 
+	// latlng.lat/lng nunca son undefined (LatLng los tipa como number), así que
+	// no hace falta comprobarlo; se sincronizan en $formData porque son los
+	// campos que se envían (dataType: 'json' serializa $formData entero).
 	$effect(() => {
-		if (latlng.lat !== undefined && latlng.lng !== undefined) {
-			$formData.lat = latlng.lat;
-			$formData.lng = latlng.lng;
-		}
+		$formData.lat = latlng.lat;
+		$formData.lng = latlng.lng;
 	});
 
 	let messageClass = $derived.by(() => {
 		if (pageStatus === 200) return 'alert-success';
-		if (pageStatus === 400) return 'alert-warning';
-		if (pageStatus === 500) return 'alert-error';
+		if (pageStatus >= 500) return 'alert-error';
+		if (pageStatus >= 400) return 'alert-warning';
+		return 'alert-info';
 	});
 </script>
 
 <form use:enhance class="mx-auto flex max-w-xs flex-col" method="POST">
 	<FormFields {form} {formData} fields={filteredFields} />
-	<input type="hidden" name="lat" bind:value={$formData.lat} />
-	<input type="hidden" name="lng" bind:value={$formData.lng} />
 	<div class="my-2 flex flex-col items-center">
 		{#if $delayed}
 			<span class="loading loading-lg loading-dots"></span>
