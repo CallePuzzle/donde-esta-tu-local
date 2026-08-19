@@ -74,6 +74,7 @@ Decisión consciente (code review 2026-08): un usuario con `membershipGangStatus
 - **i18n**: no escribas texto de usuario hardcodeado (tampoco en utils de servidor/cliente que no sean `.svelte`); añade la clave a `messages/es.json` y usa `m.clave()`. Recompila con `bun run paraglide-js` si es necesario. Registro: tú (informal), no usted.
 - **Logging**: usa `logger` de `$lib/logger` en vez de `console.log` — funciona tanto en servidor como en cliente (`browserOptions` en `logger.ts`).
 - **Nombre visible de un usuario/miembro**: usa `memberDisplayName`/`memberInitial` de `$lib/utils/member-display.ts` (nombre → email → "Sin nombre"), no reimplementes el fallback.
+- **Commits**: en inglés, siguiendo el formato [Conventional Commits](https://www.conventionalcommits.org/): `<type>(<scope>): <description>`.
 
 ## Variables de entorno
 
