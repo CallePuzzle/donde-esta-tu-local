@@ -45,6 +45,10 @@ Ver [`.env.example`](./.env.example) para la lista completa. Resumen:
 - `bun run check` — type-check (`svelte-check`).
 - `bun run lint` / `bun run format` — comprobar / aplicar formato y lint (Prettier + ESLint).
 - `bun run test` — tests unitarios (Vitest).
+- `bun run test:e2e` — tests E2E (Playwright): levanta un PostgreSQL de test con
+  `docker compose` (puerto 55433, credenciales de `.env.test`) y ejecuta los specs de `e2e/`.
+  Requiere Docker y, la primera vez, `bunx playwright install chromium`. Al terminar, para la BD con
+  `bun run db:test:down`.
 - `bun run only-build` — build de producción **sin** tocar la base de datos. Úsalo para verificar
   localmente.
 - `bun run build` — build real de despliegue: aplica migraciones pendientes contra la base de datos
