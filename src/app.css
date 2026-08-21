@@ -4,8 +4,8 @@
 
 @plugin 'flowbite/plugin';
 
-@source "../node_modules/flowbite-svelte/dist";
-@source "../node_modules/flowbite-svelte-icons/dist";
+@source '../node_modules/flowbite-svelte/dist';
+@source '../node_modules/flowbite-svelte-icons/dist';
 
 @layer base {
 	/* disable chrome cancel button */
@@ -14,10 +14,10 @@
 	}
 }
 
-@plugin "daisyui" {
+@plugin 'daisyui' {
 	themes: dark;
 }
-@plugin "daisyui/theme" {
+@plugin 'daisyui/theme' {
 	name: 'dark';
 	default: true;
 	--color-accent: #4caf50;

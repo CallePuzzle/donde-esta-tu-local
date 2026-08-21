@@ -1,16 +1,24 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages.js';
+	import { logger } from '$lib/logger';
 
 	import type { Snippet } from 'svelte';
 
 	export type Props = {
-		url: string;
+		endpoint: string;
+		body: Record<string, string | number>;
 		buttonText: Snippet;
 		buttonClass?: string;
 		onSuccess?: () => void | Promise<void>;
 	};
 
-	let { url, buttonText, buttonClass = 'btn w-fit btn-accent', onSuccess }: Props = $props();
+	let {
+		endpoint,
+		body,
+		buttonText,
+		buttonClass = 'btn w-fit btn-accent',
+		onSuccess
+	}: Props = $props();
 
 	let loading = $state(false);
 	let message = $state('');
@@ -20,9 +28,13 @@
 		loading = true;
 		message = '';
 		try {
-			const response = await fetch(url);
+			const response = await fetch(endpoint, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(body)
+			});
 			const data = await response.json();
-			console.log(data);
+			logger.debug(data, 'Respuesta de la petición');
 			if (response.ok) {
 				message = data.message;
 				messageClass = 'alert-success';
@@ -35,7 +47,8 @@
 				messageClass = response.status === 404 ? 'alert-warning' : 'alert-error';
 			}
 		} catch (error) {
-			console.error('Error adding member:', error);
+			logger.error(error, 'Error adding member');
+			message = m.request_new_member_error();
 			messageClass = 'alert-error';
 		} finally {
 			loading = false;
@@ -50,6 +63,11 @@
 		<div class="alert {messageClass} text-sm">
 			{message}
 		</div>
+		{#if messageClass !== 'alert-success'}
+			<button type="button" class="btn mt-1 btn-ghost btn-sm" onclick={request}>
+				{m.common_retry()}
+			</button>
+		{/if}
 	{:else}
 		<button class={buttonClass} onclick={request}>
 			{@render buttonText()}

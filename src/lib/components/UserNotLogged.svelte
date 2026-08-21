@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { loginModalStore } from '$lib/stores/loginModal';
+	import { loginModalStore } from '$lib/stores/loginModal.svelte';
 	export type Props = {
 		text: string;
 	};
@@ -9,7 +9,7 @@
 
 	onMount(async () => {
 		await new Promise((resolve) => setTimeout(resolve, 2000));
-		$loginModalStore?.showModal();
+		loginModalStore.value?.showModal();
 	});
 </script>
 

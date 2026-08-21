@@ -7,3 +7,11 @@ bun.lockb
 
 # Miscellaneous
 /static/
+/.codegraph/
+
+# Generated code
+/src/lib/paraglide/
+
+# Playwright
+/test-results/
+/playwright-report/

@@ -1,0 +1,21 @@
+# PostgreSQL dedicado a los tests E2E (Playwright). No lo usa la app en
+# desarrollo ni en producción: solo `bun run test:e2e` / `db:test:up`.
+services:
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: donde-esta-tu-local-e2e-db
+    environment:
+      POSTGRES_DB: e2e
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    ports:
+      - '55433:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U test -d e2e']
+      interval: 2s
+      timeout: 5s
+      retries: 10
+    # Sin volumen: los datos viven en la capa del contenedor. Además los tests
+    # truncan las tablas antes de cada spec (resetDb), así que `db:test:down`
+    # es `stop` y no `down`: así la red de podman no se desmonta y se evita el
+    # fallo intermitente de netavark al recrearla (ver e2e/scripts/db-test-up.sh).

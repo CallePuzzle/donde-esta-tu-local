@@ -2,20 +2,20 @@
 	import { onMount } from 'svelte';
 	import Modal from './Modal.svelte';
 	import FormLogin from './FormLogin.svelte';
-	import { loginModalStore } from '$lib/stores/loginModal';
+	import { loginModalStore } from '$lib/stores/loginModal.svelte';
 	import { resolve } from '$app/paths';
+	import { memberDisplayName, memberInitial } from '$lib/utils/member-display';
+	import { m } from '$lib/paraglide/messages.js';
 
-	import type { Props as FormLoginProps } from './FormLogin.svelte';
-	import type { User as UserPrisma } from '@prisma/client';
-	import ModalType from './Modal.svelte';
-
+	// El tipo de sesión inferido de better-auth, no el User de @prisma/client
+	// (que no es lo que viaja en locals.user/data.user).
 	export type Props = {
-		user: UserPrisma;
-	} & FormLoginProps;
+		user: App.Locals['user'];
+	};
 
 	let { user }: Props = $props();
 
-	let modal = $state<ModalType | null>(null);
+	let modal = $state<Modal | null>(null);
 	let userIsLogged = $derived<boolean>(user ? true : false);
 
 	async function afterCancelCallback() {
@@ -24,26 +24,30 @@
 	}
 
 	onMount(() => {
-		loginModalStore.set(modal);
+		loginModalStore.value = modal;
 	});
 </script>
 
 <div class="navbar-end w-auto md:w-[50%]">
 	<div class="dropdown dropdown-end">
-		{#if userIsLogged}
+		{#if userIsLogged && user}
 			<div class="btn avatar btn-circle btn-ghost">
 				<div class="w-10 rounded-full">
 					<a href={resolve('/profile')}>
-						<img
-							alt="{user?.name || 'User'} avatar"
-							src={user?.image ||
-								'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'}
-						/>
+						{#if user.image}
+							<img alt={m.common_avatar_alt({ name: memberDisplayName(user) })} src={user.image} />
+						{:else}
+							<div
+								class="flex h-full w-full items-center justify-center bg-neutral text-neutral-content"
+							>
+								{memberInitial(user)}
+							</div>
+						{/if}
 					</a>
 				</div>
 			</div>
 		{:else}
-			<Modal title="Login" bind:this={modal} type="X">
+			<Modal title={m.form_login_sign_in()} bind:this={modal} type="X">
 				<FormLogin {afterCancelCallback} />
 			</Modal>
 		{/if}

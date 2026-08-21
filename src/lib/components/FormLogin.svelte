@@ -43,22 +43,6 @@
 			try {
 				message = null;
 
-				const checkEmailSent = await fetch(
-					`/api/user/email-sent-check?email=${encodeURIComponent($formData.email)}`
-				);
-				const checkResult = await checkEmailSent.json();
-
-				if (!checkResult?.canSend) {
-					sending = false;
-					message = {
-						type: 'error',
-						text: checkResult.error || 'Cannot send opt email code at this time'
-					};
-					await new Promise((resolve) => setTimeout(resolve, 3000));
-					step = 2;
-					message = null;
-					return;
-				}
 				const { data, error } = await authClient.emailOtp.sendVerificationOtp({
 					email: $formData.email,
 					type: 'sign-in'
@@ -70,13 +54,17 @@
 				if (error) {
 					message = {
 						type: 'error',
-						text: error.message + ': ' + error.statusText
+						text:
+							error.status === 429
+								? m.form_login_rate_limited()
+								: error.message + ': ' + error.statusText
 					};
 				}
 			} catch (error) {
+				sending = false;
 				message = {
 					type: 'error',
-					text: error as string
+					text: error instanceof Error ? error.message : m.form_login_error()
 				};
 			}
 		}
@@ -89,31 +77,39 @@
 
 	async function onComplete() {
 		sending = true;
-		const { error } = await authClient.signIn.emailOtp({
-			email: $formData.email,
-			otp
-		});
-		sending = false;
-		if (error) {
-			message = {
-				type: 'error',
-				text: error.message + ': ' + error.statusText
-			};
-		} else {
+		try {
+			const { error } = await authClient.signIn.emailOtp({
+				email: $formData.email,
+				otp
+			});
+			sending = false;
+			if (error) {
+				message = {
+					type: 'error',
+					text: error.message + ': ' + error.statusText
+				};
+				return;
+			}
 			message = {
 				type: 'success',
 				text: m.form_login_success()
 			};
 			await invalidateAll();
 			afterCancelCallback();
+		} catch (error) {
+			sending = false;
+			message = {
+				type: 'error',
+				text: error instanceof Error ? error.message : m.form_login_error()
+			};
 		}
 	}
 </script>
 
 <div class="mx-auto flex max-w-xs flex-col justify-center">
 	<ul class="steps">
-		<li class="step step-primary">Introduce tu email</li>
-		<li class="step {step == 2 ? 'step-primary' : ''}">Valida el código</li>
+		<li class="step step-primary">{m.form_login_step_email()}</li>
+		<li class="step {step == 2 ? 'step-primary' : ''}">{m.form_login_step_otp()}</li>
 	</ul>
 	<div class="divider"></div>
 	{#if step == 1}
@@ -195,9 +191,11 @@
 				{/if}
 			</PinInput.Cell>
 		{/snippet}
-		<p class="py-2">Introduce el código que has recibido en el correo</p>
+		<p class="py-2">{m.form_login_otp_description()}</p>
 	{/if}
 	<div class="flex justify-center">
-		<a class="btn w-42 btn-error" href={resolve('/')} data-sveltekit-reload>Reset</a>
+		<a class="btn w-42 btn-error" href={resolve('/')} data-sveltekit-reload
+			>{m.form_login_start_over()}</a
+		>
 	</div>
 </div>

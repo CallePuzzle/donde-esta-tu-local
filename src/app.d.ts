@@ -4,14 +4,12 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			session?: import('@prisma/client').Session;
-			user?: import('@prisma/client').User;
+			session?: import('$lib/server/auth').auth.$Infer.Session['session'];
+			user?: import('$lib/server/auth').auth.$Infer.Session['user'];
 		}
 		// interface PageData {}
 		// interface PageState {}
-		interface Platform {
-			caches: CacheStorage & { default: Cache };
-		}
+		// interface Platform {}
 	}
 }
 

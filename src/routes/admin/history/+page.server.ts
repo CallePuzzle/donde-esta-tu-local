@@ -1,70 +1,62 @@
 import prisma from '$lib/server/db';
-import { error, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
+import { logger } from '$lib/logger';
+import { m } from '$lib/paraglide/messages.js';
 
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals }) => {
-	// Verificar que el usuario esté autenticado
-	if (!locals.user) {
-		throw redirect(303, '/');
-	}
-
-	// Verificar que el usuario tenga rol de admin
-	if (locals.user.role !== 'admin' && locals.user.role !== 'system') {
-		throw error(403, 'No tienes permisos para acceder a esta página');
-	}
+export const load: PageServerLoad = async () => {
+	// La comprobación de rol admin/system ya la hace admin/+layout.server.ts
 
 	try {
-		// Obtener el historial de cambios con información de la peña
-		const history = await prisma.gangHistory.findMany({
-			include: {
-				gang: {
-					select: {
-						id: true,
-						name: true,
-						status: true
+		// Consultas independientes: se lanzan todas en paralelo. changeType solo
+		// vale CREATE/UPDATE en cualquier flujo existente (no hay DELETE), así
+		// que no se cuenta.
+		const [history, total, createCount, updateCount] = await Promise.all([
+			// Historial de cambios con información de la peña (últimos 100)
+			prisma.gangHistory.findMany({
+				include: {
+					gang: {
+						select: {
+							id: true,
+							name: true,
+							status: true
+						}
+					},
+					changedBy: {
+						select: {
+							id: true,
+							name: true,
+							email: true
+						}
 					}
 				},
-				changedBy: {
-					select: {
-						id: true,
-						name: true,
-						email: true
-					}
-				}
-			},
-			orderBy: {
-				createdAt: 'desc'
-			},
-			take: 100 // Limitar a los últimos 100 cambios
-		});
-
-		// Obtener estadísticas del historial
-		const createCount = await prisma.gangHistory.count({
-			where: { changeType: 'CREATE' }
-		});
-
-		const updateCount = await prisma.gangHistory.count({
-			where: { changeType: 'UPDATE' }
-		});
-
-		const deleteCount = await prisma.gangHistory.count({
-			where: { changeType: 'DELETE' }
-		});
+				orderBy: {
+					createdAt: 'desc'
+				},
+				take: 100
+			}),
+			prisma.gangHistory.count(),
+			prisma.gangHistory.count({
+				where: { changeType: 'CREATE' }
+			}),
+			prisma.gangHistory.count({
+				where: { changeType: 'UPDATE' }
+			})
+		]);
 
 		return {
 			history,
 			stats: {
-				total: history.length,
+				total,
 				byType: {
 					CREATE: createCount,
-					UPDATE: updateCount,
-					DELETE: deleteCount
+					UPDATE: updateCount
 				}
 			}
 		};
 	} catch (err) {
-		console.error('Error al cargar el historial:', err);
-		throw error(500, 'Error al cargar el historial de cambios');
+		logger.error(err, 'Error al cargar el historial');
+		throw error(500, m.admin_history_load_error());
 	}
 };

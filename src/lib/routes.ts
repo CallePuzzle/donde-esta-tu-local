@@ -2,6 +2,8 @@ import { m } from './paraglide/messages.js';
 
 import type { RouteId } from '$app/types';
 
+type RouteIdWithoutParams = Exclude<RouteId, `${string}[${string}`>;
+
 import Map from '@lucide/svelte/icons/map';
 import UserCircle from '@lucide/svelte/icons/user-circle';
 import MapPinPlus from '@lucide/svelte/icons/map-pin-plus';
@@ -13,93 +15,68 @@ import UsersRound from '@lucide/svelte/icons/users-round';
 
 import type { Component } from 'svelte';
 
-type Route = {
-	id: Partial<RouteId>;
+// Sin `id`: se deriva de la propia clave del objeto routes (Q6), en vez de
+// repetirse a mano en cada entrada. La protección real vive en los
+// +layout.server.ts (ver B20); `isProtected` no se llegó a leer en ningún
+// sitio y se quita.
+type RouteConfig = {
 	name: string;
 	short?: string;
 	icon?: Component;
-	isProtected: boolean;
 	showInMenu: boolean;
 	showInMobile?: boolean;
 };
 
-type Routes = Partial<Record<RouteId, Route>>;
+type Route = RouteConfig & { id: RouteIdWithoutParams };
+
+type Routes = Partial<Record<RouteId, RouteConfig>>;
 
 const routes: Routes = {
 	'/': {
-		id: '/',
 		name: m.routes_home(),
 		icon: Map,
-		isProtected: false,
 		showInMenu: false,
 		showInMobile: true
 	},
 	'/gang/add': {
-		id: '/gang/add',
 		name: m.routes_gang_add(),
 		short: m.routes_gang_add_short(),
 		icon: MapPinPlus,
-		isProtected: true,
 		showInMenu: true
 	},
 	'/activities': {
-		id: '/activities',
 		name: m.routes_activities(),
 		short: m.routes_activities_short(),
 		icon: Calendar,
-		isProtected: false,
 		showInMenu: true
 	},
-	// notices: {
-	// 	name: m.routes_notices(),
-	// 	url: notices',
-	// 	icon: Megaphone,
-	// 	isProtected: false,
-	// 	showInMenu: true
-	// },
 	'/profile': {
-		id: '/profile',
 		name: m.routes_profile(),
 		icon: UserCircle,
-		isProtected: true,
 		showInMenu: false,
 		showInMobile: true
 	},
 	'/admin': {
-		id: '/admin',
-		name: 'Admin',
+		name: m.routes_admin(),
 		icon: Shield,
-		isProtected: true,
 		showInMenu: false
 	},
 	'/admin/gangs': {
-		id: '/admin/gangs',
-		name: 'Admin Gangs',
+		name: m.routes_admin_gangs(),
 		icon: Users,
-		isProtected: true,
 		showInMenu: false
 	},
 	'/admin/members': {
-		id: '/admin/members',
-		name: 'Admin Miembros',
+		name: m.routes_admin_members(),
 		icon: UsersRound,
-		isProtected: true,
 		showInMenu: false
 	}
 };
 
 function getMenuRoutes(routes: Routes, isMobile = false): Route[] {
-	return (
-		Object.entries(routes)
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			.filter(([key, route]: [string, Route]) => {
-				if (isMobile && route.showInMobile) return true;
-				if (!route.showInMenu) return false;
-				return true;
-			})
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			.map(([_, route]) => route)
-	);
+	return Object.entries(routes)
+		.filter(([, route]) => (isMobile && route?.showInMobile) || route?.showInMenu)
+		.map(([id, route]) => ({ id: id as RouteIdWithoutParams, ...route! }));
 }
 
 export { routes, getMenuRoutes, type Routes, type Route };

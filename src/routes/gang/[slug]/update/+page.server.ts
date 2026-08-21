@@ -1,5 +1,7 @@
 import { logger } from '$lib/logger';
 import prisma from '$lib/server/db';
+import { Prisma } from '@prisma/client';
+import { requireValidatedMember } from '$lib/server/membership';
 import { error } from '@sveltejs/kit';
 import { superValidate, message, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -9,22 +11,28 @@ import { m } from '$lib/paraglide/messages.js';
 import type { PageServerLoad, PageServerLoadEvent, Actions, RequestEvent } from './$types';
 import type { GangData } from '../type';
 
+const UNIQUE_CONSTRAINT_VIOLATION = 'P2002';
+
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
-	const gangId = event.params.slug;
+	const gangId = parseInt(event.params.slug);
+
+	if (Number.isNaN(gangId)) {
+		return error(404, m.error_gang_not_found());
+	}
 
 	const gang = await prisma.gang.findUnique({
 		where: {
 			status: {
 				not: 'REFUSED'
 			},
-			id: parseInt(gangId)
+			id: gangId
 		}
 	});
 
 	logger.debug(gang, 'gang');
 
 	if (!gang) {
-		return error(404, 'Peña no encontrada');
+		return error(404, m.error_gang_not_found());
 	}
 
 	return {
@@ -34,36 +42,38 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 			latitude: gang.latitude,
 			longitude: gang.longitude,
 			status: gang.status
-		} as GangData,
+		} satisfies GangData,
 		form: await superValidate(gang, zod4(addGangSchema))
 	};
 };
 
 export const actions: Actions = {
 	default: async (event: RequestEvent) => {
-		const { user } = event.locals;
-		if (!user) {
-			return fail(401, { form: 'Unauthorized' });
+		const gangId = parseInt(event.params.slug);
+
+		if (Number.isNaN(gangId)) {
+			return error(404, m.error_gang_not_found());
 		}
+
+		// Solo miembros validados de la peña o admin/system pueden editarla
+		const user = await requireValidatedMember(event.locals, gangId);
 
 		const request = event.request;
 		const form = await superValidate(request, zod4(addGangSchema));
-		logger.info(form, 'Form submitted');
+		logger.info({ userId: user.id }, 'Form submitted');
 
 		if (!form.valid) return fail(400, { form });
-
-		const gangId = event.params.slug;
 
 		try {
 			// Obtener datos actuales antes de actualizar
 			const currentGang = await prisma.gang.findUnique({
 				where: {
-					id: parseInt(gangId)
+					id: gangId
 				}
 			});
 
 			if (!currentGang) {
-				return message(form, 'Peña no encontrada', { status: 404 });
+				return message(form, m.error_gang_not_found(), { status: 404 });
 			}
 
 			// Verificar si hay cambios en los campos que queremos historizar
@@ -72,30 +82,36 @@ export const actions: Actions = {
 				currentGang.latitude !== form.data.lat ||
 				currentGang.longitude !== form.data.lng;
 
-			// Actualizar la peña
-			const newGang = await prisma.gang.update({
-				where: {
-					id: parseInt(gangId)
-				},
-				data: {
-					name: form.data.name,
-					latitude: form.data.lat,
-					longitude: form.data.lng
-				}
-			});
+			if (!hasChanges) {
+				return message(form, m.form_gang_no_changes());
+			}
 
-			// Crear registro en el historial si hubo cambios
-			if (hasChanges) {
-				await prisma.gangHistory.create({
+			// Actualizar la peña y registrar el historial en la misma transacción:
+			// si el segundo write fallara, no debe quedar una peña actualizada sin
+			// su entrada de historial.
+			const newGang = await prisma.$transaction(async (tx) => {
+				const updatedGang = await tx.gang.update({
+					where: {
+						id: gangId
+					},
+					data: {
+						name: form.data.name,
+						normalizedName: form.data.name.toLowerCase(),
+						latitude: form.data.lat,
+						longitude: form.data.lng
+					}
+				});
+
+				await tx.gangHistory.create({
 					data: {
 						gang: {
 							connect: {
-								id: newGang.id
+								id: updatedGang.id
 							}
 						},
-						name: newGang.name,
-						latitude: newGang.latitude,
-						longitude: newGang.longitude,
+						name: updatedGang.name,
+						latitude: updatedGang.latitude,
+						longitude: updatedGang.longitude,
 						changeType: 'UPDATE',
 						changedBy: {
 							connect: {
@@ -104,12 +120,19 @@ export const actions: Actions = {
 						}
 					}
 				});
-				logger.info({ gangId: newGang.id, name: newGang.name }, 'Gang updated with history');
-			}
 
-			logger.info({ gangId: newGang.id, name: newGang.name }, 'Gang updated');
+				return updatedGang;
+			});
+
+			logger.info({ gangId: newGang.id, name: newGang.name }, 'Gang updated with history');
 			return message(form, m.form_gang_add_successfully());
 		} catch (error) {
+			if (
+				error instanceof Prisma.PrismaClientKnownRequestError &&
+				error.code === UNIQUE_CONSTRAINT_VIOLATION
+			) {
+				return message(form, m.form_gang_name_duplicated(), { status: 400 });
+			}
 			logger.error(error, 'Error updating gang');
 			return message(form, m.form_gang_add_error(), { status: 500 });
 		}

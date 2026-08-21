@@ -6,6 +6,8 @@
 	import Image from '@lucide/svelte/icons/image';
 	import { resolve } from '$app/paths';
 	import Modal from '$lib/components/Modal.svelte';
+	import { m } from '$lib/paraglide/messages.js';
+	import { formatWeekdayDay, formatWeekdayDayTime } from '$lib/utils/format-date';
 
 	type ActivityCard = Activity & {
 		placeGang: Pick<Gang, 'id' | 'name'> | null;
@@ -14,34 +16,23 @@
 
 	interface Props {
 		activity: ActivityCard;
-		activityBanners: Record<string, { default: string }>;
+		activityBannerLoaders: Record<string, () => Promise<{ default: string }>>;
 	}
 
-	let { activity, activityBanners }: Props = $props();
+	let { activity, activityBannerLoaders }: Props = $props();
 
-	let ActivityBannerSrc = $derived.by(() => {
-		if (activity.bannerPath) return activityBanners[activity.bannerPath]?.default;
+	let activityBannerSrcPromise = $derived.by(async () => {
+		if (!activity.bannerPath) return undefined;
+		const loadBanner = activityBannerLoaders[activity.bannerPath];
+		return (await loadBanner?.())?.default;
 	});
 
 	function formatActivityDate(activity: Activity) {
-		const d = new Date(activity.date);
+		if (activity.dateDesc) {
+			return formatWeekdayDay(activity.date) + ', ' + activity.dateDesc;
+		}
 
-		if (activity.dateDesc)
-			return (
-				new Intl.DateTimeFormat('es-ES', {
-					weekday: 'long',
-					day: 'numeric'
-				}).format(d) +
-				', ' +
-				activity.dateDesc
-			);
-
-		return new Intl.DateTimeFormat('es-ES', {
-			weekday: 'long',
-			day: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit'
-		}).format(d);
+		return formatWeekdayDayTime(activity.date);
 	}
 
 	function getActivityLocation(activity: ActivityCard) {
@@ -58,8 +49,8 @@
 		return gangs.map((g) => g.name).join(', ');
 	}
 
-	const location = getActivityLocation(activity);
-	const organisers = getOrganisers(activity.collaboratingGangs);
+	const location = $derived(getActivityLocation(activity));
+	const organisers = $derived(getOrganisers(activity.collaboratingGangs));
 </script>
 
 <div class="card my-2 w-full bg-base-200 shadow-sm card-md lg:w-70 xl:w-96">
@@ -67,14 +58,14 @@
 		<h2 class="card-title uppercase">{activity.name}</h2>
 		<div class="mb-3">
 			<p class="flex text-sm text-gray-600">
-				<Clock /><span class="mx-1">Fecha y hora:</span>
+				<Clock /><span class="mx-1">{m.activity_date_label()}</span>
 				<span class="font-medium text-base-content">{formatActivityDate(activity)}</span>
 			</p>
 		</div>
 		{#if location}
 			<div class="mb-3">
 				<p class="flex items-center text-sm text-gray-600">
-					<MapPinned /><span class="mx-1">Lugar:</span>
+					<MapPinned /><span class="mx-1">{m.activity_place_label()}</span>
 					{#if typeof location === 'string'}
 						<span class="font-medium text-base-content">{location}</span>
 					{:else}
@@ -92,25 +83,32 @@
 		{#if organisers}
 			<div class="mb-3">
 				<p class="flex text-sm text-gray-600">
-					<Users /><span class="mx-1">Colaboran:</span><span class="font-medium text-base-content"
-						>{organisers}</span
+					<Users /><span class="mx-1">{m.activity_organisers_label()}</span><span
+						class="font-medium text-base-content">{organisers}</span
 					>
 				</p>
 			</div>
 		{/if}
-		{#if ActivityBannerSrc}
-			<div class="mb-3">
-				<p class="flex items-center text-sm text-gray-600">
-					<Image /><span class="mx-1">Cartel:</span><Modal
-						title="Ver cartel"
-						type="button"
-						buttonClass="btn btn-dash btn-accent"
-						buttonCloseClass="btn btn-dash btn-accent"
-					>
-						<enhanced:img src={ActivityBannerSrc} alt="Cartel de {activity.name}" />
-					</Modal>
-				</p>
-			</div>
+		{#if activity.bannerPath}
+			{#await activityBannerSrcPromise then activityBannerSrc}
+				{#if activityBannerSrc}
+					<div class="mb-3">
+						<p class="flex items-center text-sm text-gray-600">
+							<Image /><span class="mx-1">{m.activity_poster_label()}</span><Modal
+								title={m.activity_poster_modal_title()}
+								type="button"
+								buttonClass="btn btn-dash btn-accent"
+								buttonCloseClass="btn btn-dash btn-accent"
+							>
+								<enhanced:img
+									src={activityBannerSrc}
+									alt={m.activity_poster_alt({ name: activity.name })}
+								/>
+							</Modal>
+						</p>
+					</div>
+				{/if}
+			{/await}
 		{/if}
 	</div>
 </div>

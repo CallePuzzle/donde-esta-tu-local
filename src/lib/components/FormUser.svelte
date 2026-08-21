@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { superForm, fileProxy } from 'sveltekit-superforms/client';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
-	import { updateUserSchema } from '$lib/schemas/user.js';
+	import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE, updateUserSchema } from '$lib/schemas/user.js';
 	import SuperDebug from 'sveltekit-superforms';
 	import { m } from '$lib/paraglide/messages.js';
 	import UserCheck from '@lucide/svelte/icons/user-check';
@@ -15,13 +15,19 @@
 
 	export type Props = {
 		dataForm: SuperValidated<UpdateUserSchema>;
+		pageStatus: number;
 		debug?: boolean;
 	};
 
-	let { dataForm, debug = false }: Props = $props();
+	let { dataForm, pageStatus, debug = false }: Props = $props();
 
 	const uid = $props.id();
 
+	// T5: superForm(dataForm) debe llamarse una sola vez por instancia (gestiona
+	// su propio estado reactivo internamente); envolverlo en $derived o una
+	// closure lo reinvocaría en cada cambio de dataForm y rompería el
+	// formulario. No es el mismo bug que B9 (ver su commit).
+	// svelte-ignore state_referenced_locally
 	const form = superForm(dataForm, {
 		id: uid,
 		validators: zod4Client(updateUserSchema),
@@ -33,9 +39,14 @@
 
 	const fields = zodToFieldsJsonSchema(updateUserSchema);
 
+	// Los mensajes de validación del fichero se generan en cliente, sin respuesta del servidor
+	let clientError = $state(false);
+
 	let messageClass = $derived.by(() => {
-		if ($message && $message.includes('éxito')) return 'alert-success';
-		if ($message && $message.includes('Error')) return 'alert-error';
+		if (clientError) return 'alert-error';
+		if (pageStatus === 200) return 'alert-success';
+		if (pageStatus === 400) return 'alert-warning';
+		if (pageStatus === 500) return 'alert-error';
 		return 'alert-info';
 	});
 
@@ -48,21 +59,21 @@
 		const file = target.files?.[0];
 
 		if (file) {
-			// Validate file size (5MB max)
-			if (file.size > 5 * 1024 * 1024) {
+			if (file.size > MAX_FILE_SIZE) {
 				$message = m.schema_user_image_file_size_error();
+				clientError = true;
 				target.value = '';
 				return;
 			}
 
-			// Validate file type
-			const acceptedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-			if (!acceptedTypes.includes(file.type)) {
+			if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
 				$message = m.schema_user_image_file_type_error();
+				clientError = true;
 				target.value = '';
 				return;
 			}
 
+			clientError = false;
 			selectedFileName = file.name;
 
 			// Create preview URL
@@ -78,10 +89,10 @@
 	}
 
 	function clearFileSelection() {
-		if ($fileInput) {
-			const input = document.getElementById('imageFile') as HTMLInputElement;
-			input.value = '';
-		}
+		// Asignar un FileList vacío (vía DataTransfer) limpia también el input
+		// real gracias a bind:files; solo vaciar el input dejaba el fichero en
+		// $formData.
+		$fileInput = new DataTransfer().files;
 		selectedFileName = null;
 		previewUrl = null;
 	}
@@ -131,7 +142,7 @@
 					<div class="flex items-center gap-4">
 						<div class="avatar">
 							<div class="w-20 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
-								<img src={previewUrl} alt="Vista previa" />
+								<img src={previewUrl} alt={m.schema_user_image_file_preview()} />
 							</div>
 						</div>
 						<div class="flex-1">

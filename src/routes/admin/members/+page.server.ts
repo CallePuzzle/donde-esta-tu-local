@@ -1,96 +1,126 @@
-import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import prisma from '$lib/server/db';
+import { memberDisplayName } from '$lib/utils/member-display';
 
-export const load: PageServerLoad = async ({ locals }) => {
-	// Verificar que el usuario esté autenticado y tenga rol de admin
-	if (!locals.user) {
-		throw error(401, 'No autenticado');
-	}
+// D4: esta lista no tenía take; sin paginación real, al menos un límite
+// explícito y visible (aviso de "solo se muestran los N primeros" en la UI).
+const ADMIN_PENDING_MEMBERS_LIMIT = 100;
 
-	if (locals.user.role !== 'admin' && locals.user.role !== 'system') {
-		throw error(403, 'No tienes permisos para acceder a esta página');
-	}
+export const load: PageServerLoad = async () => {
+	// La comprobación de rol admin/system ya la hace admin/+layout.server.ts
 
-	// Obtener todos los usuarios con membershipGangStatus PENDING
-	const pendingMembers = await prisma.user.findMany({
-		where: {
-			membershipGangStatus: 'PENDING',
-			gangId: {
-				not: null
-			}
-		},
-		include: {
-			gang: {
-				select: {
-					id: true,
-					name: true,
-					status: true,
-					members: {
-						where: {
-							membershipGangStatus: 'VALIDATED'
-						},
-						select: {
-							id: true,
-							name: true,
-							email: true,
-							image: true
-						}
-					}
-				}
-			}
-		},
-		orderBy: {
-			updatedAt: 'desc'
-		}
-	});
-
-	// Obtener usuarios validados recientemente (últimos 30 días)
 	const thirtyDaysAgo = new Date();
 	thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-	const recentlyValidatedMembers = await prisma.user.findMany({
-		where: {
-			membershipGangStatus: 'VALIDATED',
-			gangId: {
-				not: null
-			},
-			updatedAt: {
-				gte: thirtyDaysAgo
-			}
-		},
-		include: {
-			gang: {
-				select: {
-					id: true,
-					name: true,
-					status: true
+	// Consultas independientes: se lanzan todas en paralelo
+	const [
+		pendingMembers,
+		pendingMembersTotal,
+		recentlyValidatedMembers,
+		totalUsers,
+		validatedMembers,
+		refusedMembers,
+		usersWithoutGang
+	] = await Promise.all([
+		// Usuarios con membershipGangStatus PENDING (hasta ADMIN_PENDING_MEMBERS_LIMIT)
+		prisma.user.findMany({
+			where: {
+				membershipGangStatus: 'PENDING',
+				gangId: {
+					not: null
 				}
+			},
+			include: {
+				gang: {
+					select: {
+						id: true,
+						name: true,
+						status: true,
+						members: {
+							where: {
+								membershipGangStatus: 'VALIDATED'
+							},
+							select: {
+								id: true,
+								name: true,
+								email: true
+							}
+						}
+					}
+				}
+			},
+			orderBy: {
+				updatedAt: 'desc'
+			},
+			take: ADMIN_PENDING_MEMBERS_LIMIT
+		}),
+		prisma.user.count({
+			where: {
+				membershipGangStatus: 'PENDING',
+				gangId: { not: null }
 			}
-		},
-		orderBy: {
-			updatedAt: 'desc'
-		},
-		take: 50
-	});
-
-	// Obtener estadísticas
-	const stats = {
-		totalUsers: await prisma.user.count(),
-		pendingMembers: pendingMembers.length,
-		validatedMembers: await prisma.user.count({
+		}),
+		// Usuarios validados recientemente (últimos 30 días)
+		prisma.user.findMany({
+			where: {
+				membershipGangStatus: 'VALIDATED',
+				gangId: {
+					not: null
+				},
+				updatedAt: {
+					gte: thirtyDaysAgo
+				}
+			},
+			include: {
+				gang: {
+					select: {
+						id: true,
+						name: true,
+						status: true
+					}
+				}
+			},
+			orderBy: {
+				updatedAt: 'desc'
+			},
+			take: 50
+		}),
+		prisma.user.count(),
+		prisma.user.count({
 			where: { membershipGangStatus: 'VALIDATED' }
 		}),
-		refusedMembers: await prisma.user.count({
+		prisma.user.count({
 			where: { membershipGangStatus: 'REFUSED' }
 		}),
-		usersWithoutGang: await prisma.user.count({
+		prisma.user.count({
 			where: { gangId: null }
 		})
+	]);
+
+	const stats = {
+		totalUsers,
+		pendingMembers: pendingMembersTotal,
+		validatedMembers,
+		refusedMembers,
+		usersWithoutGang
 	};
 
+	// El email de los miembros ya validados de la peña solo se usa para resolver el
+	// nombre a mostrar si no tienen `name`; no debe llegar como tal al cliente.
+	const pendingMembersWithResolvedGangMembers = pendingMembers.map((member) => ({
+		...member,
+		gang: member.gang && {
+			...member.gang,
+			members: member.gang.members.map((gangMember) => ({
+				id: gangMember.id,
+				displayName: memberDisplayName(gangMember)
+			}))
+		}
+	}));
+
 	return {
-		pendingMembers,
+		pendingMembers: pendingMembersWithResolvedGangMembers,
+		pendingMembersTruncated: pendingMembers.length < pendingMembersTotal,
 		recentlyValidatedMembers,
 		stats
 	};

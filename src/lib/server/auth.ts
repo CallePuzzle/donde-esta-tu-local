@@ -1,5 +1,6 @@
 import prisma from '$lib/server/db';
 import { logger } from '$lib/logger';
+import { m } from '$lib/paraglide/messages.js';
 import sender from './sender';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { emailOTP, admin } from 'better-auth/plugins';
@@ -19,8 +20,22 @@ const additionalOptions: BetterAuthOptions = {
 	database: database
 };
 
-function getBetterAuth(additionalOptions: BetterAuthOptions): ReturnType<typeof betterAuth> {
-	const defaultOptions: BetterAuthOptions = {
+function getBetterAuth(additionalOptions: BetterAuthOptions) {
+	const defaultOptions = {
+		rateLimit: {
+			// Límite estricto en las rutas de OTP por email: 3 peticiones por minuto por IP
+			// (por defecto better-auth solo aplica rate limit en producción)
+			customRules: {
+				'/email-otp/send-verification-otp': {
+					window: 60,
+					max: 3
+				},
+				'/sign-in/email-otp': {
+					window: 60,
+					max: 3
+				}
+			}
+		},
 		plugins: [
 			sveltekitCookies(getRequestEvent),
 			emailOTP({
@@ -29,7 +44,9 @@ function getBetterAuth(additionalOptions: BetterAuthOptions): ReturnType<typeof 
 						logger.info('Sending OTP to: ' + email);
 
 						try {
-							logger.debug('email: ' + email + ' -- otp: ' + otp);
+							if (dev) {
+								logger.debug('email: ' + email + ' -- otp: ' + otp);
+							}
 
 							// Send email when not in development
 							if (!dev) {
@@ -43,17 +60,12 @@ function getBetterAuth(additionalOptions: BetterAuthOptions): ReturnType<typeof 
 									}
 								};
 
-								const subject = 'Tu código de acceso para peñas.montemayordepililla.cc';
-								const text = `Este es tu código para acceder: ${otp}`;
+								const subject = m.email_otp_subject();
+								const text = m.email_otp_body({ otp });
 
 								await sender(transporterOptions, SMPT_SENDER, email, subject, text);
 								logger.info(`OTP email sent to ${email}`);
 							}
-							await prisma.emailSent.create({
-								data: {
-									email
-								}
-							});
 						} catch (error) {
 							logger.error(error);
 							throw error;

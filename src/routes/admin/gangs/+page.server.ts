@@ -1,94 +1,124 @@
-import { redirect, error } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import prisma from '$lib/server/db';
+import { requireAdmin } from '$lib/server/membership';
+import { logger } from '$lib/logger';
+import { m } from '$lib/paraglide/messages.js';
+import { memberDisplayName } from '$lib/utils/member-display';
 
-export const load: PageServerLoad = async ({ locals }) => {
-	// Verificar que el usuario esté autenticado
-	if (!locals.user) {
-		throw redirect(303, '/');
-	}
+type GangMember = {
+	id: string;
+	name: string | null;
+	email: string | null;
+	membershipGangStatus: string;
+};
 
-	// Verificar que el usuario tenga rol de admin
-	if (locals.user.role !== 'admin' && locals.user.role !== 'system') {
-		throw error(403, 'No tienes permisos para acceder a esta página');
-	}
+// El email de los miembros solo se usa para resolver el nombre a mostrar si no
+// tienen `name`; no debe llegar como tal al cliente (a diferencia del email de
+// validatedBy, que sí se muestra).
+function toDisplayMembers(members: GangMember[]) {
+	return members.map((member) => ({
+		id: member.id,
+		displayName: memberDisplayName(member),
+		membershipGangStatus: member.membershipGangStatus
+	}));
+}
 
-	// Obtener todas las gangs validadas con información del validador
-	const validatedGangs = await prisma.gang.findMany({
-		where: {
-			status: 'VALIDATED'
-		},
-		include: {
-			validatedBy: {
-				select: {
-					id: true,
-					name: true,
-					email: true
-				}
-			},
-			members: {
-				select: {
-					id: true,
-					name: true,
-					email: true,
-					membershipGangStatus: true
-				}
-			}
-		},
-		orderBy: {
-			name: 'asc'
-		}
-	});
+// D4: estas listas no tenían take; sin paginación real, al menos un límite
+// explícito y visible (el aviso de "solo se muestran los N primeros" en la UI).
+const ADMIN_GANGS_LIST_LIMIT = 100;
 
-	// Obtener todas las gangs pendientes de validación
-	const pendingGangs = await prisma.gang.findMany({
-		where: {
-			status: 'PENDING'
-		},
-		include: {
-			members: {
-				select: {
-					id: true,
-					name: true,
-					email: true,
-					membershipGangStatus: true
-				}
-			}
-		},
-		orderBy: {
-			id: 'desc'
-		}
-	});
+export const load: PageServerLoad = async () => {
+	// La comprobación de rol admin/system ya la hace admin/+layout.server.ts
 
-	// Obtener estadísticas
+	// Obtener gangs, estadísticas y contadores en paralelo (son consultas independientes)
+	const [validatedGangs, pendingGangs, validatedGangsTotal, pendingGangsTotal, refusedGangs] =
+		await Promise.all([
+			// Gangs validadas con información del validador (hasta ADMIN_GANGS_LIST_LIMIT)
+			prisma.gang.findMany({
+				where: {
+					status: 'VALIDATED'
+				},
+				include: {
+					validatedBy: {
+						select: {
+							id: true,
+							name: true,
+							email: true
+						}
+					},
+					members: {
+						select: {
+							id: true,
+							name: true,
+							email: true,
+							membershipGangStatus: true
+						}
+					}
+				},
+				orderBy: {
+					name: 'asc'
+				},
+				take: ADMIN_GANGS_LIST_LIMIT
+			}),
+			// Gangs pendientes de validación (hasta ADMIN_GANGS_LIST_LIMIT)
+			prisma.gang.findMany({
+				where: {
+					status: 'PENDING'
+				},
+				include: {
+					members: {
+						select: {
+							id: true,
+							name: true,
+							email: true,
+							membershipGangStatus: true
+						}
+					}
+				},
+				orderBy: {
+					id: 'desc'
+				},
+				take: ADMIN_GANGS_LIST_LIMIT
+			}),
+			prisma.gang.count({ where: { status: 'VALIDATED' } }),
+			prisma.gang.count({ where: { status: 'PENDING' } }),
+			prisma.gang.count({
+				where: { status: 'REFUSED' }
+			})
+		]);
+
 	const stats = {
-		totalGangs: await prisma.gang.count(),
-		validatedGangs: validatedGangs.length,
-		pendingGangs: pendingGangs.length,
-		refusedGangs: await prisma.gang.count({
-			where: { status: 'REFUSED' }
-		})
+		totalGangs: validatedGangsTotal + pendingGangsTotal + refusedGangs,
+		validatedGangs: validatedGangsTotal,
+		pendingGangs: pendingGangsTotal,
+		refusedGangs
 	};
 
 	return {
-		validatedGangs,
-		pendingGangs,
+		validatedGangs: validatedGangs.map((gang) => ({
+			...gang,
+			members: toDisplayMembers(gang.members)
+		})),
+		validatedGangsTruncated: validatedGangs.length < validatedGangsTotal,
+		pendingGangs: pendingGangs.map((gang) => ({
+			...gang,
+			members: toDisplayMembers(gang.members)
+		})),
+		pendingGangsTruncated: pendingGangs.length < pendingGangsTotal,
 		stats
 	};
 };
 
 export const actions = {
 	validate: async ({ request, locals }) => {
-		// Verificar permisos
-		if (!locals.user || (locals.user.role !== 'admin' && locals.user.role !== 'system')) {
-			throw error(403, 'No tienes permisos para realizar esta acción');
-		}
+		const user = requireAdmin(locals);
 
 		const formData = await request.formData();
 		const gangId = Number(formData.get('gangId'));
 
 		if (!gangId) {
-			throw error(400, 'ID de gang inválido');
+			return fail(400, { success: false, message: m.admin_gangs_invalid_id() });
 		}
 
 		try {
@@ -99,31 +129,28 @@ export const actions = {
 				},
 				data: {
 					status: 'VALIDATED',
-					validatedByUserId: locals.user.id
+					validatedByUserId: user.id
 				}
 			});
 
 			return {
 				success: true,
-				message: 'Gang validada correctamente'
+				message: m.admin_gangs_validate_success()
 			};
 		} catch (err) {
-			console.error('Error validating gang:', err);
-			throw error(500, 'Error al validar la gang');
+			logger.error(err, 'Error validating gang');
+			return fail(500, { success: false, message: m.admin_gangs_validate_error() });
 		}
 	},
 
 	refuse: async ({ request, locals }) => {
-		// Verificar permisos
-		if (!locals.user || (locals.user.role !== 'admin' && locals.user.role !== 'system')) {
-			throw error(403, 'No tienes permisos para realizar esta acción');
-		}
+		const user = requireAdmin(locals);
 
 		const formData = await request.formData();
 		const gangId = Number(formData.get('gangId'));
 
 		if (!gangId) {
-			throw error(400, 'ID de gang inválido');
+			return fail(400, { success: false, message: m.admin_gangs_invalid_id() });
 		}
 
 		try {
@@ -134,17 +161,17 @@ export const actions = {
 				},
 				data: {
 					status: 'REFUSED',
-					validatedByUserId: locals.user.id
+					validatedByUserId: user.id
 				}
 			});
 
 			return {
 				success: true,
-				message: 'Gang rechazada'
+				message: m.admin_gangs_refuse_success()
 			};
 		} catch (err) {
-			console.error('Error refusing gang:', err);
-			throw error(500, 'Error al rechazar la gang');
+			logger.error(err, 'Error refusing gang');
+			return fail(500, { success: false, message: m.admin_gangs_refuse_error() });
 		}
 	}
 } satisfies Actions;

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { onMount } from 'svelte';
 	import { m } from '../paraglide/messages.js';
 
 	export type Props = {
@@ -29,19 +28,15 @@
 		modal?.showModal();
 	}
 
-	onMount(() => {
-		modal = document.getElementById('modal-' + uid) as HTMLDialogElement;
-	});
-
 	export function close() {
 		modal?.close();
 	}
 </script>
 
 {#if showButton}
-	<button class={buttonClass} onclick={showModal}>{title}</button>
+	<button type="button" class={buttonClass} onclick={showModal}>{title}</button>
 {/if}
-<dialog id="modal-{uid}" class="modal">
+<dialog bind:this={modal} id="modal-{uid}" class="modal">
 	<div class="modal-box">
 		{#if type == 'X'}
 			<form method="dialog">

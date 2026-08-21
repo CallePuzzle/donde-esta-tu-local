@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Heart from '@lucide/svelte/icons/heart';
 	import MailQuestionMark from '@lucide/svelte/icons/mail-question-mark';
+	import { m } from '$lib/paraglide/messages.js';
 
 	export type Props = {
 		visibleOnlyOnMobile?: boolean;
@@ -15,16 +16,18 @@
 
 <footer class="bottom-0 container mx-auto justify-center {visibleOnMobileClass}">
 	<p class="mx-4 flex items-center justify-center md:flex-1">
-		<span class="mr-2">Made with</span><Heart size="16" color="red" strokeWidth="4" /><span
-			class="ml-2">by KPY</span
-		>
+		<span class="mr-2">{m.footer_made_with()}</span><Heart
+			size="16"
+			color="red"
+			strokeWidth="4"
+		/><span class="ml-2">{m.footer_by()}</span>
 	</p>
 	<p class="mx-4 flex items-center justify-center md:flex-1">
 		<a
 			href="https://github.com/CallePuzzle/donde-esta-tu-local"
 			target="_blank"
 			rel="noopener noreferrer"
-			aria-label="GitHub repository"
+			aria-label={m.footer_github_aria()}
 			><svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="32"
@@ -41,7 +44,7 @@
 				/></svg
 			></a
 		>
-		<a href="mailto:app@montemayordepililla.cc" aria-label="Contact via email"
+		<a href="mailto:app@montemayordepililla.cc" aria-label={m.footer_email_aria()}
 			><MailQuestionMark size="32" /></a
 		>
 	</p>

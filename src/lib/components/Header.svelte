@@ -3,6 +3,7 @@
 	import NavBarList from './NavBarList.svelte';
 	import NavBarEnd from './NavBarEnd.svelte';
 	import { resolve } from '$app/paths';
+	import { m } from '$lib/paraglide/messages.js';
 
 	import type { Snippet } from 'svelte';
 	import type { Routes } from '$lib/routes';
@@ -31,7 +32,7 @@
 		</nav>
 	</div>
 	<div class="flex lg:hidden">
-		<button class="" onclick={() => history.back()}>
+		<button type="button" aria-label={m.common_back()} onclick={() => history.back()}>
 			<ChevronLeft size={30} />
 		</button>
 		<div class="mx-2 px-2">

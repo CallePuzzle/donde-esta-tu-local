@@ -6,21 +6,21 @@
 	import Dock from '$lib/components/Dock.svelte';
 	import { routes } from '$lib/routes';
 	import Logo from '$lib/assets/logo.png?enhanced';
+	import { m } from '$lib/paraglide/messages.js';
 
 	import type { Snippet } from 'svelte';
 	import type { PageData } from './$types';
-	import type { User as UserPrisma } from '@prisma/client';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 
-	let user = $derived(data.user) as UserPrisma;
+	let user = $derived(data.user);
 </script>
 
 <div class="main-div h-screen min-w-[348px]">
 	<Header {routes} {user}>
 		{#snippet title()}
 			<div class="flex items-center">
-				<enhanced:img src={Logo} alt="Icono cabecera" class="w-6 lg:m-1 lg:w-14" />
+				<enhanced:img src={Logo} alt={m.layout_header_icon_alt()} class="w-6 lg:m-1 lg:w-14" />
 				<div class="m-1">
 					<span>Montemayor de Pililla</span>
 				</div>

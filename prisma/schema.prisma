@@ -4,8 +4,28 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+// D3 (T10 aplazada): antes String comparado con literales en ~12 sitios del
+// código; el código ya estaba unificado a estos valores exactos.
+enum MembershipGangStatus {
+  PENDING
+  VALIDATED
+  REFUSED
+}
+
+enum GangStatus {
+  PENDING
+  VALIDATED
+  REFUSED
+}
+
+enum GangChangeType {
+  CREATE
+  UPDATE
 }
 
 model User {
@@ -22,16 +42,17 @@ model User {
   banExpires    DateTime?
   sessions      Session[]
   accounts      Account[]
-  subscription  String?
 
   gangId               Int?
-  gang                 Gang?  @relation(fields: [gangId], references: [id])
-  membershipGangStatus String @default("PENDING")
+  gang                 Gang?                @relation(fields: [gangId], references: [id])
+  membershipGangStatus MembershipGangStatus @default(PENDING)
 
   validatedGangs Gang[]        @relation("ValidatedBy")
   modifiedGangs  GangHistory[] @relation("ModifiedBy")
 
   @@unique([email])
+  @@index([gangId])
+  @@index([membershipGangStatus])
   @@map("user")
 }
 
@@ -82,12 +103,15 @@ model Verification {
 }
 
 model Gang {
-  id        Int    @id @default(autoincrement())
-  name      String
-  latitude  Float
-  longitude Float
-  members   User[]
-  status    String @default("PENDING")
+  id             Int        @id @default(autoincrement())
+  name           String
+  // Nombre en minúsculas, mantenido a mano por la app en cada create/update,
+  // para poder exigir unicidad case-insensitive real (B2).
+  normalizedName String     @unique
+  latitude       Float
+  longitude      Float
+  members        User[]
+  status         GangStatus @default(PENDING)
 
   validatedByUserId String?
   validatedBy       User?   @relation("ValidatedBy", fields: [validatedByUserId], references: [id])
@@ -99,6 +123,7 @@ model Gang {
   // Histórico de cambios
   history GangHistory[]
 
+  @@index([status])
   @@map("gang")
 }
 
@@ -106,6 +131,8 @@ model Activity {
   id   Int    @id @default(autoincrement())
   name String
 
+  // D2: confirmado con el usuario que es intencionado — no debe haber dos
+  // actividades a la misma hora. No tocar sin repetir esa conversación.
   date     DateTime @unique
   dateDesc String?
 
@@ -136,19 +163,12 @@ model GangHistory {
 
   // Metadatos del cambio
   changedByUserId String
-  changedBy       User     @relation("ModifiedBy", fields: [changedByUserId], references: [id])
-  changeType      String // CREATE, UPDATE
-  createdAt       DateTime @default(now())
+  changedBy       User           @relation("ModifiedBy", fields: [changedByUserId], references: [id])
+  changeType      GangChangeType
+  createdAt       DateTime       @default(now())
 
   @@index([gangId])
   @@index([createdAt])
+  @@index([changedByUserId])
   @@map("gang_history")
-}
-
-model EmailSent {
-  id    Int      @id @default(autoincrement())
-  email String
-  date  DateTime @default(now())
-
-  @@map("email_sent")
 }
