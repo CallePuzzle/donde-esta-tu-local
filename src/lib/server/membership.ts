@@ -13,7 +13,8 @@ type SessionUser = NonNullable<App.Locals['user']>;
 // Esquema de validación de los parámetros de los endpoints de miembros
 export const memberRequestSchema = z.object({
 	userId: z.string().min(1),
-	gangId: z.coerce.number().int().positive()
+	gangId: z.coerce.number().int().positive(),
+	confirmed: z.boolean().optional()
 });
 
 // Comprueba si el usuario es admin o miembro validado de la peña indicada

@@ -8,6 +8,7 @@ type ParsedMemberRequest =
 			ok: true;
 			userId: string;
 			gangId: number;
+			confirmed: boolean;
 			userLogged: NonNullable<RequestEvent['locals']['user']>;
 	  }
 	| { ok: false; response: Response };
@@ -23,7 +24,8 @@ export async function parseMemberRequest(event: RequestEvent): Promise<ParsedMem
 	const body = await event.request.json().catch(() => null);
 	const parsed = memberRequestSchema.safeParse({
 		userId: body?.userId,
-		gangId: body?.gangId
+		gangId: body?.gangId,
+		confirmed: body?.confirmed
 	});
 
 	if (!parsed.success) {
@@ -41,5 +43,11 @@ export async function parseMemberRequest(event: RequestEvent): Promise<ParsedMem
 		};
 	}
 
-	return { ok: true, userId: parsed.data.userId, gangId: parsed.data.gangId, userLogged };
+	return {
+		ok: true,
+		userId: parsed.data.userId,
+		gangId: parsed.data.gangId,
+		confirmed: parsed.data.confirmed === true,
+		userLogged
+	};
 }
