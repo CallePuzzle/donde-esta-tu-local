@@ -11,6 +11,7 @@
 	import Locate from '@lucide/svelte/icons/locate';
 	import X from '@lucide/svelte/icons/x';
 	import { m } from '$lib/paraglide/messages.js';
+	import Modal from '$lib/components/Modal.svelte';
 	import ButtonRequest from '$lib/components/ButtonRequest.svelte';
 	import MemberDetail from '$lib/components/gangs/MemberDetail.svelte';
 	import { loginModalStore } from '$lib/stores/loginModal.svelte';
@@ -30,6 +31,12 @@
 	let members: Member[] = $derived(data.members);
 	let pendingMembers: Member[] = $derived(data.pendingMembers || []);
 	let isValidatedMember: boolean = $derived(data.isValidatedMember || false);
+	let currentGang = $derived(data.currentGang);
+
+	let joinLoading = $state(false);
+	let joinMessage = $state('');
+	let joinMessageClass = $state('');
+	let confirmModal: Modal | undefined = $state();
 
 	function handleMapReady(context: { L: Leaflet; map: Map }) {
 		({ L, map } = context);
@@ -58,6 +65,46 @@
 
 	function handleLogin() {
 		loginModalStore.value?.showModal();
+	}
+
+	function handleJoinClick() {
+		joinMessage = '';
+		if (currentGang) {
+			confirmModal?.showModal();
+		} else {
+			requestJoin();
+		}
+	}
+
+	function closeConfirmModal() {
+		confirmModal?.close();
+	}
+
+	async function requestJoin(confirmed = false) {
+		joinLoading = true;
+		joinMessage = '';
+		try {
+			const response = await fetch('/gang/addMember', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ userId: data.user?.id, gangId: gang.id, confirmed })
+			});
+			const responseData = await response.json();
+			if (response.ok) {
+				joinMessage = responseData.message;
+				joinMessageClass = 'alert-success';
+			} else {
+				closeConfirmModal();
+				joinMessage = responseData.message || m.request_new_member_error();
+				joinMessageClass = response.status === 404 ? 'alert-warning' : 'alert-error';
+			}
+		} catch (error) {
+			logger.error(error, 'Error joining gang');
+			joinMessage = m.request_new_member_error();
+			joinMessageClass = 'alert-error';
+		} finally {
+			joinLoading = false;
+		}
 	}
 
 	let stopWatchingPosition: (() => void) | undefined;
@@ -97,14 +144,52 @@
 			<div class="m-2 flex justify-between">
 				<h3 class="m-1 mr-5 text-2xl font-bold">{m.gang_members_title()}</h3>
 				{#if data.user && !isValidatedMember && !data.userHasPendingRequest}
-					{#snippet buttonText()}
-						<UserPlus />{m.request_new_member_title()}
-					{/snippet}
-					<ButtonRequest
-						{buttonText}
-						endpoint="/gang/addMember"
-						body={{ userId: data.user.id, gangId: gang.id }}
-					/>
+					{#if joinLoading}
+						<span class="loading loading-lg loading-dots"></span>
+					{:else if joinMessage}
+						<div class="alert {joinMessageClass} text-sm">
+							{joinMessage}
+						</div>
+					{:else}
+						<button type="button" class="btn w-fit btn-accent" onclick={handleJoinClick}>
+							<UserPlus />{m.request_new_member_title()}
+						</button>
+					{/if}
+
+					{#if currentGang}
+						<Modal
+							title={m.request_new_member_confirm_title()}
+							showButton={false}
+							type="X"
+							bind:this={confirmModal}
+						>
+							<p class="py-4">
+								{m.request_new_member_confirm_message({
+									name: currentGang.name,
+									newName: gang.name
+								})}
+							</p>
+							<div class="modal-action">
+								<button type="button" class="btn" onclick={closeConfirmModal}>
+									{m.request_new_member_cancel_button()}
+								</button>
+								<button
+									type="button"
+									class="btn btn-warning"
+									onclick={() => {
+										closeConfirmModal();
+										requestJoin(true);
+									}}
+									disabled={joinLoading}
+								>
+									{#if joinLoading}
+										<span class="loading loading-sm loading-spinner"></span>
+									{/if}
+									{m.request_new_member_confirm_button()}
+								</button>
+							</div>
+						</Modal>
+					{/if}
 				{:else if data.userHasPendingRequest}
 					<p class="m-1 self-center text-sm italic">{m.gang_request_pending()}</p>
 				{:else if !data.user}

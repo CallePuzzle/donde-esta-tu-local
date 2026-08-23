@@ -8,9 +8,9 @@ import type { RequestHandler, RequestEvent } from './$types';
 export const POST: RequestHandler = async (event: RequestEvent) => {
 	const parsed = await parseMemberRequest(event);
 	if (!parsed.ok) return parsed.response;
-	const { userId, gangId, userLogged } = parsed;
+	const { userId, gangId, userLogged, confirmed } = parsed;
 
-	logger.info({ userId, gangId }, 'New member request received');
+	logger.info({ userId, gangId, confirmed }, 'New member request received');
 
 	if (userLogged.id !== userId) {
 		return json(
@@ -71,17 +71,28 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 			);
 		}
 
-		// Un miembro ya validado de otra peña no puede unirse a esta en
-		// silencio: antes sobreescribía gangId sin dejar rastro en GangHistory
-		// ni avisar a nadie.
+		// Un miembro ya validado de otra peña solo puede unirse a una nueva si
+		// confirma explícitamente que abandona la peña actual.
 		if (user.membershipGangStatus === 'VALIDATED' && user.gangId !== gangId) {
-			return json(
-				{
-					success: false,
-					message: m.request_new_member_already_in_gang()
-				},
-				{ status: 409 }
-			);
+			if (!confirmed) {
+				const currentGang = user.gangId
+					? await prisma.gang.findUnique({
+							where: { id: user.gangId },
+							select: { id: true, name: true }
+						})
+					: null;
+
+				return json(
+					{
+						success: false,
+						message: m.request_new_member_already_in_gang({
+							name: currentGang?.name ?? ''
+						}),
+						currentGang: currentGang ?? undefined
+					},
+					{ status: 409 }
+				);
+			}
 		}
 
 		const userNewMember = await prisma.user.update({

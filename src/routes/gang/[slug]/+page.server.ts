@@ -6,7 +6,7 @@ import { memberDisplayName } from '$lib/utils/member-display';
 import { m } from '$lib/paraglide/messages.js';
 
 import type { PageServerLoad, PageServerLoadEvent } from './$types';
-import type { GangData, Member } from './type';
+import type { GangData, Member, CurrentGang } from './type';
 
 type RawMember = { id: string; name: string; email: string; image: string | null };
 
@@ -70,6 +70,28 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 		userHasPendingRequest = pendingMembers.some((member) => member.id === currentUser.id);
 	}
 
+	// Si el usuario ya pertenece a otra peña validada, se le avisa para que confirme
+	// el cambio antes de abandonar la peña actual.
+	let currentGang: CurrentGang | null = null;
+	if (currentUser && !isValidatedMember && !userHasPendingRequest) {
+		const userWithGang = await prisma.user.findUnique({
+			where: { id: currentUser.id },
+			select: {
+				gangId: true,
+				membershipGangStatus: true,
+				gang: { select: { id: true, name: true } }
+			}
+		});
+		if (
+			userWithGang &&
+			userWithGang.membershipGangStatus === 'VALIDATED' &&
+			userWithGang.gangId !== gangId &&
+			userWithGang.gang
+		) {
+			currentGang = userWithGang.gang;
+		}
+	}
+
 	// Las solicitudes pendientes solo se exponen a miembros validados o admin/system
 	const canSeePendingMembers = isValidatedMember || isAdmin(currentUser);
 
@@ -84,6 +106,7 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 		members: validatedMembers.map(toMember),
 		pendingMembers: canSeePendingMembers ? pendingMembers.map(toMember) : [],
 		isValidatedMember: isValidatedMember,
-		userHasPendingRequest: userHasPendingRequest
+		userHasPendingRequest: userHasPendingRequest,
+		currentGang
 	};
 };
