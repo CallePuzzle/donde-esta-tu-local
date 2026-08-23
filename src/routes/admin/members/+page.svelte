@@ -17,9 +17,12 @@
 	let { data }: { data: PageData } = $props();
 
 	let activeTab: 'pending' | 'validated' = $state('pending');
+	let processingMemberId = $state<string | null>(null);
+	let resolvedMemberId = $state<string | null>(null);
 
 	// Función para manejar la actualización después de validar/rechazar
-	async function handleActionComplete() {
+	async function handleActionComplete(memberId: string) {
+		resolvedMemberId = memberId;
 		await invalidateAll();
 	}
 </script>
@@ -199,7 +202,11 @@
 															endpoint="/gang/validateMember"
 															body={{ userId: member.id, gangId: member.gang.id }}
 															buttonClass="btn btn-sm btn-success"
-															onSuccess={handleActionComplete}
+															disabled={processingMemberId === member.id ||
+																resolvedMemberId === member.id}
+															onStart={() => (processingMemberId = member.id)}
+															onComplete={() => (processingMemberId = null)}
+															onSuccess={() => handleActionComplete(member.id)}
 														/>
 
 														{#snippet rejectButtonText()}
@@ -210,7 +217,11 @@
 															endpoint="/gang/refuseMember"
 															body={{ userId: member.id, gangId: member.gang.id }}
 															buttonClass="btn btn-sm btn-error"
-															onSuccess={handleActionComplete}
+															disabled={processingMemberId === member.id ||
+																resolvedMemberId === member.id}
+															onStart={() => (processingMemberId = member.id)}
+															onComplete={() => (processingMemberId = null)}
+															onSuccess={() => handleActionComplete(member.id)}
 														/>
 													</div>
 												{:else}

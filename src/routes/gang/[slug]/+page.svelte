@@ -16,6 +16,7 @@
 	import MemberDetail from '$lib/components/gangs/MemberDetail.svelte';
 	import { loginModalStore } from '$lib/stores/loginModal.svelte';
 	import { resolve } from '$app/paths';
+	import { invalidateAll } from '$app/navigation';
 	import { logger } from '$lib/logger';
 
 	import type { PageData } from './$types';
@@ -37,6 +38,13 @@
 	let joinMessage = $state('');
 	let joinMessageClass = $state('');
 	let confirmModal: Modal | undefined = $state();
+	let processingMemberId = $state<string | null>(null);
+	let resolvedMemberId = $state<string | null>(null);
+
+	async function handleActionComplete(memberId: string) {
+		resolvedMemberId = memberId;
+		await invalidateAll();
+	}
 
 	function handleMapReady(context: { L: Leaflet; map: Map }) {
 		({ L, map } = context);
@@ -230,6 +238,11 @@
 										endpoint="/gang/validateMember"
 										body={{ userId: pendingMember.id, gangId: gang.id }}
 										buttonClass="btn btn-sm btn-accent"
+										disabled={processingMemberId === pendingMember.id ||
+											resolvedMemberId === pendingMember.id}
+										onStart={() => (processingMemberId = pendingMember.id)}
+										onComplete={() => (processingMemberId = null)}
+										onSuccess={() => handleActionComplete(pendingMember.id)}
 									/>
 
 									{#snippet rejectButtonText()}
@@ -240,6 +253,11 @@
 										endpoint="/gang/refuseMember"
 										body={{ userId: pendingMember.id, gangId: gang.id }}
 										buttonClass="btn btn-sm btn-error"
+										disabled={processingMemberId === pendingMember.id ||
+											resolvedMemberId === pendingMember.id}
+										onStart={() => (processingMemberId = pendingMember.id)}
+										onComplete={() => (processingMemberId = null)}
+										onSuccess={() => handleActionComplete(pendingMember.id)}
 									/>
 								</div>
 							{/if}

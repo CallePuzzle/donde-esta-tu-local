@@ -9,7 +9,10 @@
 		body: Record<string, string | number>;
 		buttonText: Snippet;
 		buttonClass?: string;
+		disabled?: boolean;
 		onSuccess?: () => void | Promise<void>;
+		onStart?: () => void;
+		onComplete?: () => void;
 	};
 
 	let {
@@ -17,7 +20,10 @@
 		body,
 		buttonText,
 		buttonClass = 'btn w-fit btn-accent',
-		onSuccess
+		disabled = false,
+		onSuccess,
+		onStart,
+		onComplete
 	}: Props = $props();
 
 	let loading = $state(false);
@@ -27,6 +33,7 @@
 	async function request() {
 		loading = true;
 		message = '';
+		onStart?.();
 		try {
 			const response = await fetch(endpoint, {
 				method: 'POST',
@@ -52,6 +59,7 @@
 			messageClass = 'alert-error';
 		} finally {
 			loading = false;
+			onComplete?.();
 		}
 	}
 </script>
@@ -64,12 +72,12 @@
 			{message}
 		</div>
 		{#if messageClass !== 'alert-success'}
-			<button type="button" class="btn mt-1 btn-ghost btn-sm" onclick={request}>
+			<button type="button" class="btn mt-1 btn-ghost btn-sm" onclick={request} {disabled}>
 				{m.common_retry()}
 			</button>
 		{/if}
 	{:else}
-		<button class={buttonClass} onclick={request}>
+		<button class={buttonClass} onclick={request} {disabled}>
 			{@render buttonText()}
 		</button>
 	{/if}
