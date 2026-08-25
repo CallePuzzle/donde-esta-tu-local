@@ -6,19 +6,10 @@ import prisma from '$lib/server/db';
 import { requireUser } from '$lib/server/membership';
 import { m } from '$lib/paraglide/messages';
 import { logger } from '$lib/logger';
-import { del, put } from '@vercel/blob';
-import { isVercelBlobUrl } from '$lib/config/vercel-hosts.js';
+import { uploadImage, deleteImage } from '$lib/server/blob-image';
 
 import type { PageServerLoad, PageServerLoadEvent, Actions } from './$types';
 import type { UserGangDetail } from './type';
-
-// Extensión del fichero según el tipo MIME permitido por updateUserSchema
-const EXTENSION_BY_MIME: Record<string, string> = {
-	'image/jpeg': 'jpg',
-	'image/jpg': 'jpg',
-	'image/png': 'png',
-	'image/webp': 'webp'
-};
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 	// El +layout.server.ts de esta ruta ya exige sesión (requireUser); aquí solo
@@ -69,28 +60,12 @@ export const actions: Actions = {
 			const imageFile = form.data.imageFile;
 			if (imageFile && imageFile.size > 0) {
 				try {
-					// Derivar la extensión del tipo MIME validado, no del nombre del fichero
-					const fileExtension = EXTENSION_BY_MIME[imageFile.type] ?? 'jpg';
-					// Create a unique filename with user ID and timestamp
-					const timestamp = Date.now();
-					const filename = `avatars/${user.id}-${timestamp}.${fileExtension}`;
+					imageUrl = await uploadImage(imageFile, `avatars/${user.id}`);
 
-					// Convert File to ArrayBuffer then to Buffer for Vercel Blob
-					const arrayBuffer = await imageFile.arrayBuffer();
-					const buffer = Buffer.from(arrayBuffer);
-
-					// Upload to Vercel Blob
-					const { url } = await put(filename, buffer, {
-						access: 'public',
-						contentType: imageFile.type
-					});
-
-					imageUrl = url;
-
-					logger.info(`Avatar uploaded successfully for user ${user.email}: ${url}`);
+					logger.info(`Avatar uploaded successfully for user ${user.email}: ${imageUrl}`);
 				} catch (uploadError) {
 					logger.error(uploadError, 'Error uploading image to Vercel Blob');
-					return message(form, m.schema_user_image_upload_error(), {
+					return message(form, m.schema_image_upload_error(), {
 						status: 500
 					});
 				}
@@ -119,12 +94,8 @@ export const actions: Actions = {
 
 			// Borrar el avatar anterior de Vercel Blob ahora que el nuevo ya está
 			// guardado; si fallara, no rompemos la actualización del perfil por eso.
-			if (imageUrl && previousImageUrl && isVercelBlobUrl(previousImageUrl)) {
-				try {
-					await del(previousImageUrl);
-				} catch (deleteError) {
-					logger.error(deleteError, 'Error deleting previous avatar from Vercel Blob');
-				}
+			if (imageUrl) {
+				await deleteImage(previousImageUrl);
 			}
 
 			logger.info(`User ${user.email} updated profile successfully`);

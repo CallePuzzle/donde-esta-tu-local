@@ -1,26 +1,22 @@
 <script lang="ts">
 	import { superForm, fileProxy } from 'sveltekit-superforms/client';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
-	import { updateUserSchema } from '$lib/schemas/user.js';
+	import { gangImageSchema } from '$lib/schemas/gang.js';
 	import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from '$lib/schemas/image.js';
-	import SuperDebug from 'sveltekit-superforms';
 	import { m } from '$lib/paraglide/messages.js';
-	import UserCheck from '@lucide/svelte/icons/user-check';
 	import Upload from '@lucide/svelte/icons/upload';
 	import Image from '@lucide/svelte/icons/image';
-	import FormFields from './FormFields.svelte';
-	import { zodToFieldsJsonSchema } from '$lib/schemas/utils.js';
 
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import type { UpdateUserSchema } from '$lib/schemas/user.js';
+	import type { GangImageSchema } from '$lib/schemas/gang.js';
 
 	export type Props = {
-		dataForm: SuperValidated<UpdateUserSchema>;
+		dataForm: SuperValidated<GangImageSchema>;
 		pageStatus: number;
-		debug?: boolean;
+		onUploaded?: () => void;
 	};
 
-	let { dataForm, pageStatus, debug = false }: Props = $props();
+	let { dataForm, pageStatus, onUploaded }: Props = $props();
 
 	const uid = $props.id();
 
@@ -31,14 +27,18 @@
 	// svelte-ignore state_referenced_locally
 	const form = superForm(dataForm, {
 		id: uid,
-		validators: zod4Client(updateUserSchema),
+		validators: zod4Client(gangImageSchema),
 		dataType: 'json',
-		resetForm: false
+		resetForm: false,
+		onUpdated({ form: result }) {
+			if (result.valid && result.message && pageStatus === 200) {
+				clearFileSelection();
+				onUploaded?.();
+			}
+		}
 	});
 
-	const { form: formData, enhance, delayed, message } = form;
-
-	const fields = zodToFieldsJsonSchema(updateUserSchema);
+	const { enhance, delayed, message } = form;
 
 	// Los mensajes de validación del fichero se generan en cliente, sin respuesta del servidor
 	let clientError = $state(false);
@@ -77,7 +77,6 @@
 			clientError = false;
 			selectedFileName = file.name;
 
-			// Create preview URL
 			const reader = new FileReader();
 			reader.onload = (e) => {
 				previewUrl = e.target?.result as string;
@@ -97,29 +96,23 @@
 		selectedFileName = null;
 		previewUrl = null;
 	}
-
-	const filteredFields = fields.filter((field) => field.name !== 'imageFile');
 </script>
 
 <form
 	use:enhance
 	class="mx-auto flex max-w-xs flex-col"
 	method="POST"
+	action="?/uploadImage"
 	enctype="multipart/form-data"
 >
-	<FormFields {form} {formData} fields={filteredFields} />
-
-	<!-- File Upload Section -->
 	<div class="form-control my-4 w-full">
 		<label class="label" for="imageFile">
 			<span class="label-text flex items-center gap-2">
 				<Image class="h-4 w-4" />
-				{m.schema_user_image_file_label()}
+				{m.schema_gang_image_file_label()}
 			</span>
-			<span class="label-text-alt">{m.form_optional()}</span>
 		</label>
 
-		<!-- File Input -->
 		<input
 			bind:files={$fileInput}
 			type="file"
@@ -135,14 +128,13 @@
 			<span class="label-text-alt">{m.schema_image_file_max_size()}</span>
 		</div>
 
-		<!-- Preview Section -->
 		{#if previewUrl}
 			<div class="card mt-4 bg-base-200">
 				<div class="card-body p-4">
 					<h4 class="mb-2 text-sm font-semibold">{m.schema_image_file_preview()}</h4>
 					<div class="flex items-center gap-4">
 						<div class="avatar">
-							<div class="w-20 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
+							<div class="w-20 rounded-lg ring ring-primary ring-offset-2 ring-offset-base-100">
 								<img src={previewUrl} alt={m.schema_image_file_preview()} />
 							</div>
 						</div>
@@ -163,12 +155,8 @@
 			<span class="loading loading-lg loading-dots"></span>
 		{:else}
 			<button class="btn w-45 btn-accent">
-				{#if selectedFileName}
-					<Upload />
-				{:else}
-					<UserCheck />
-				{/if}
-				{m.form_user_update_submit()}
+				<Upload />
+				{m.form_gang_image_submit()}
 			</button>
 		{/if}
 		{#if $message}
@@ -178,6 +166,3 @@
 		{/if}
 	</div>
 </form>
-{#if debug}
-	<SuperDebug data={$formData} />
-{/if}

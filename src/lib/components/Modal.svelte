@@ -9,6 +9,7 @@
 		showButton?: boolean;
 		buttonClass?: string;
 		buttonCloseClass?: string;
+		boxClass?: string;
 	};
 
 	let {
@@ -17,7 +18,8 @@
 		type = 'outside',
 		showButton = true,
 		buttonClass = 'btn',
-		buttonCloseClass = 'btn'
+		buttonCloseClass = 'btn',
+		boxClass = 'modal-box'
 	}: Props = $props();
 
 	let modal: HTMLDialogElement | undefined = $state();
@@ -37,7 +39,7 @@
 	<button type="button" class={buttonClass} onclick={showModal}>{title}</button>
 {/if}
 <dialog bind:this={modal} id="modal-{uid}" class="modal">
-	<div class="modal-box">
+	<div class={boxClass}>
 		{#if type == 'X'}
 			<form method="dialog">
 				<button class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm">✕</button>

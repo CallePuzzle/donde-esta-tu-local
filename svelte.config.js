@@ -46,7 +46,9 @@ const config = {
 							'data:',
 							'blob:',
 							'https://*.tile.openstreetmap.org',
-							VERCEL_BLOB_HOST_PATTERN
+							VERCEL_BLOB_HOST_PATTERN,
+							// Avatares de usuarios migrados del antiguo OAuth de Google (B-avatar-google)
+							'https://*.googleusercontent.com'
 						],
 						'connect-src': ['self'],
 						'font-src': ['self', 'data:'],

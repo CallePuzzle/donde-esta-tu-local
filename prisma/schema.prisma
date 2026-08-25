@@ -110,6 +110,10 @@ model Gang {
   normalizedName String     @unique
   latitude       Float
   longitude      Float
+  // URL pública de la foto de la peña en Vercel Blob (null si aún no tiene).
+  // Solo se muestra en el detalle /gang/[slug]; la sube cualquier miembro
+  // validado y al reemplazarla se borra la anterior del blob (B17).
+  image          String?
   members        User[]
   status         GangStatus @default(PENDING)
 
