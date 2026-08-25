@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { page } from '$app/state';
 	import { onDestroy } from 'svelte';
 	import { coordsMonte } from '$lib/utils/coords-monte';
 	import { showMyPosition } from '$lib/utils/show-my-position';
 	import GangMap from '$lib/components/gangs/GangMap.svelte';
+	import GangImage from '$lib/components/gangs/GangImage.svelte';
 	import Share2 from '@lucide/svelte/icons/share-2';
 	import UserPlus from '@lucide/svelte/icons/user-plus';
 	import Check from '@lucide/svelte/icons/check';
@@ -22,13 +24,13 @@
 
 	import type { PageData } from './$types';
 	import type { Map } from 'leaflet';
-	import type { GangData, Member } from './type';
+	import type { GangDetailData, Member } from './type';
 	import type { Leaflet } from '$lib/utils/types';
 
 	let { data }: { data: PageData } = $props();
 	let L: Leaflet;
 	let map: Map;
-	let gang: GangData = $derived(data.gang);
+	let gang: GangDetailData = $derived(data.gang);
 	let showImHere = $state(false);
 	let members: Member[] = $derived(data.members);
 	let pendingMembers: Member[] = $derived(data.pendingMembers || []);
@@ -142,7 +144,14 @@
 
 <div class="hero">
 	<div class="hero-content text-center">
-		<div class="flex max-w-md">
+		<div class="flex max-w-md items-center gap-3">
+			<GangImage
+				name={gang.name}
+				image={gang.image}
+				canUpload={data.canUploadImage}
+				dataForm={data.imageForm}
+				pageStatus={page.status}
+			/>
 			<h1 class="text-3xl font-bold md:text-5xl">
 				{m.gang_detail_title({ name: gang.name })}
 			</h1>

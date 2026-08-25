@@ -1,10 +1,6 @@
 import { z } from 'zod/v4';
 import { m } from '../paraglide/messages.js';
-
-// Exportadas para que FormUser.svelte valide el fichero en cliente (feedback
-// inmediato, antes de enviar el formulario) sin repetir estos valores (Q7).
-export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from './image.js';
 
 export const updateUserSchema = z.object({
 	name: z.string().min(1, m.schema_user_name_error()).max(100).meta({
