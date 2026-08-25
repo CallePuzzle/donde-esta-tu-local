@@ -1,12 +1,17 @@
 import { logger } from '$lib/logger';
 import prisma from '$lib/server/db';
-import { error } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
+import { superValidate, message } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { isAdmin } from '$lib/utils/roles';
 import { memberDisplayName } from '$lib/utils/member-display';
+import { requireValidatedMember } from '$lib/server/membership';
+import { gangImageSchema } from '$lib/schemas/gang';
+import { uploadImage, deleteImage } from '$lib/server/blob-image';
 import { m } from '$lib/paraglide/messages.js';
 
-import type { PageServerLoad, PageServerLoadEvent } from './$types';
-import type { GangData, Member, CurrentGang } from './type';
+import type { PageServerLoad, PageServerLoadEvent, Actions } from './$types';
+import type { GangDetailData, Member, CurrentGang } from './type';
 
 type RawMember = { id: string; name: string; email: string; image: string | null };
 
@@ -94,6 +99,8 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 
 	// Las solicitudes pendientes solo se exponen a miembros validados o admin/system
 	const canSeePendingMembers = isValidatedMember || isAdmin(currentUser);
+	// Mismo criterio que el botón "Actualizar peña" de esta página
+	const canUploadImage = isValidatedMember || isAdmin(currentUser);
 
 	return {
 		gang: {
@@ -101,12 +108,75 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 			name: gang.name,
 			latitude: gang.latitude,
 			longitude: gang.longitude,
-			status: gang.status
-		} satisfies GangData,
+			status: gang.status,
+			image: gang.image
+		} satisfies GangDetailData,
 		members: validatedMembers.map(toMember),
 		pendingMembers: canSeePendingMembers ? pendingMembers.map(toMember) : [],
 		isValidatedMember: isValidatedMember,
 		userHasPendingRequest: userHasPendingRequest,
-		currentGang
+		currentGang,
+		canUploadImage,
+		imageForm: canUploadImage ? await superValidate(zod4(gangImageSchema)) : null
 	};
+};
+
+export const actions: Actions = {
+	uploadImage: async (event) => {
+		const gangId = parseInt(event.params.slug);
+		if (Number.isNaN(gangId)) {
+			return error(404, m.error_gang_not_found());
+		}
+
+		// El load de esta página es público: la barrera de autorización real es esta.
+		const user = await requireValidatedMember(event.locals, gangId);
+
+		const form = await superValidate(await event.request.formData(), zod4(gangImageSchema));
+
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		const imageFile = form.data.imageFile;
+		if (!imageFile || imageFile.size === 0) {
+			return message(form, m.schema_gang_image_required_error(), { status: 400 });
+		}
+
+		const gang = await prisma.gang.findUnique({
+			where: { id: gangId, status: { not: 'REFUSED' } },
+			select: { image: true }
+		});
+
+		if (!gang) {
+			return error(404, m.error_gang_not_found());
+		}
+
+		let imageUrl: string;
+		try {
+			imageUrl = await uploadImage(imageFile, `gangs/${gangId}`);
+		} catch (uploadError) {
+			logger.error(uploadError, 'Error uploading gang image to Vercel Blob');
+			return message(form, m.schema_image_upload_error(), { status: 500 });
+		}
+
+		try {
+			// No se toca normalizedName ni se escribe GangHistory: el nombre no
+			// cambia, y GangHistory solo modela cambios de nombre/ubicación (sus
+			// columnas son NOT NULL y una fila con los tres campos idénticos
+			// ensuciaría /admin/history).
+			await prisma.gang.update({
+				where: { id: gangId },
+				data: { image: imageUrl }
+			});
+		} catch (updateError) {
+			logger.error(updateError, 'Error saving gang image');
+			await deleteImage(imageUrl);
+			return message(form, m.form_gang_image_error(), { status: 500 });
+		}
+
+		await deleteImage(gang.image);
+
+		logger.info({ gangId, userId: user.id }, 'Gang image updated');
+		return message(form, m.form_gang_image_successfully());
+	}
 };

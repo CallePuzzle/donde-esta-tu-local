@@ -42,6 +42,7 @@ export async function createGang(options: {
 	status?: GangStatus;
 	lat?: number;
 	lng?: number;
+	image?: string;
 }): Promise<Gang> {
 	const name = options.name ?? `Peña E2E ${randomUUID().slice(0, 8)}`;
 	return prisma.gang.create({
@@ -50,7 +51,8 @@ export async function createGang(options: {
 			normalizedName: name.toLowerCase(),
 			latitude: options.lat ?? TEST_COORDS.lat,
 			longitude: options.lng ?? TEST_COORDS.lng,
-			status: options.status ?? 'VALIDATED'
+			status: options.status ?? 'VALIDATED',
+			image: options.image ?? null
 		}
 	});
 }

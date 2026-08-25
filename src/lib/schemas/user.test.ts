@@ -15,8 +15,8 @@ describe('updateUserSchema', () => {
 		expect(result.success).toBe(false);
 	});
 
-	it('rejects an image file over 5MB', () => {
-		const oversized = new File([new Uint8Array(5 * 1024 * 1024 + 1)], 'avatar.png', {
+	it('rejects an image file over 4MB', () => {
+		const oversized = new File([new Uint8Array(4 * 1024 * 1024 + 1)], 'avatar.png', {
 			type: 'image/png'
 		});
 		const result = updateUserSchema.safeParse({ name: 'Pepe', imageFile: oversized });

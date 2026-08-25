@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { page } from '$app/state';
 	import { onDestroy } from 'svelte';
 	import { coordsMonte } from '$lib/utils/coords-monte';
 	import { showMyPosition } from '$lib/utils/show-my-position';
 	import GangMap from '$lib/components/gangs/GangMap.svelte';
+	import GangImage from '$lib/components/gangs/GangImage.svelte';
 	import Share2 from '@lucide/svelte/icons/share-2';
 	import UserPlus from '@lucide/svelte/icons/user-plus';
 	import Check from '@lucide/svelte/icons/check';
@@ -16,18 +18,19 @@
 	import MemberDetail from '$lib/components/gangs/MemberDetail.svelte';
 	import { loginModalStore } from '$lib/stores/loginModal.svelte';
 	import { resolve } from '$app/paths';
-	import { invalidateAll } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { logger } from '$lib/logger';
+	import { isAdmin } from '$lib/utils/roles';
 
 	import type { PageData } from './$types';
 	import type { Map } from 'leaflet';
-	import type { GangData, Member } from './type';
+	import type { GangDetailData, Member } from './type';
 	import type { Leaflet } from '$lib/utils/types';
 
 	let { data }: { data: PageData } = $props();
 	let L: Leaflet;
 	let map: Map;
-	let gang: GangData = $derived(data.gang);
+	let gang: GangDetailData = $derived(data.gang);
 	let showImHere = $state(false);
 	let members: Member[] = $derived(data.members);
 	let pendingMembers: Member[] = $derived(data.pendingMembers || []);
@@ -38,6 +41,8 @@
 	let joinMessage = $state('');
 	let joinMessageClass = $state('');
 	let confirmModal: Modal | undefined = $state();
+	let loginRequiredModal: Modal | undefined = $state();
+	let notMemberModal: Modal | undefined = $state();
 	let processingMemberId = $state<string | null>(null);
 	let resolvedMemberId = $state<string | null>(null);
 
@@ -73,6 +78,18 @@
 
 	function handleLogin() {
 		loginModalStore.value?.showModal();
+	}
+
+	function handleUpdateClick() {
+		if (!data.user) {
+			loginRequiredModal?.showModal();
+			return;
+		}
+		if (!isValidatedMember && !isAdmin(data.user)) {
+			notMemberModal?.showModal();
+			return;
+		}
+		goto(resolve('/gang/[slug]/update', { slug: gang.id.toString() }));
 	}
 
 	function handleJoinClick() {
@@ -127,7 +144,14 @@
 
 <div class="hero">
 	<div class="hero-content text-center">
-		<div class="flex max-w-md">
+		<div class="flex max-w-md items-center gap-3">
+			<GangImage
+				name={gang.name}
+				image={gang.image}
+				canUpload={data.canUploadImage}
+				dataForm={data.imageForm}
+				pageStatus={page.status}
+			/>
 			<h1 class="text-3xl font-bold md:text-5xl">
 				{m.gang_detail_title({ name: gang.name })}
 			</h1>
@@ -268,17 +292,44 @@
 		</div>
 		<div class="order-first rounded-lg bg-neutral p-4 shadow md:order-last">
 			<div class="m-2 flex justify-between">
-				<a
-					class="btn btn-soft text-accent"
-					href={resolve('/gang/[slug]/update', { slug: gang.id.toString() })}
-					><CircleFadingArrowUp /> {m.gang_update()}</a
-				>
+				<button type="button" class="btn btn-soft text-accent" onclick={handleUpdateClick}>
+					<CircleFadingArrowUp />
+					{m.gang_update()}
+				</button>
 				{#if webShareAPISupported}
 					<button type="button" class="btn btn-soft text-[#ee3616]" onclick={handleWebShare}
 						><Share2 size="1.2rem" /> {m.gang_share()}</button
 					>
 				{/if}
 			</div>
+
+			<Modal
+				title={m.gang_update_login_required_title()}
+				showButton={false}
+				type="X"
+				bind:this={loginRequiredModal}
+			>
+				<p class="py-4">{m.gang_update_login_required_message()}</p>
+				<button
+					type="button"
+					class="btn w-full text-neutral btn-secondary"
+					onclick={() => {
+						loginRequiredModal?.close();
+						handleLogin();
+					}}
+				>
+					{m.form_login_sign_in()}
+				</button>
+			</Modal>
+
+			<Modal title={m.gang_update_not_member_title()} showButton={false} bind:this={notMemberModal}>
+				<p class="py-4">
+					{m.gang_update_not_member_message()}
+				</p>
+				<p class="py-4">
+					{m.gang_update_not_member_message_2({ name: gang.name })}
+				</p>
+			</Modal>
 		</div>
 	</div>
 </div>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addGangSchema } from './gang';
+import { addGangSchema, gangImageSchema } from './gang';
 import { coordsMonte } from '../utils/coords-monte';
 
 const [MONTE_LAT, MONTE_LNG] = coordsMonte;
@@ -52,6 +52,32 @@ describe('addGangSchema', () => {
 			lat: MONTE_LAT + 0.1,
 			lng: MONTE_LNG - 0.1
 		});
+		expect(result.success).toBe(true);
+	});
+});
+
+describe('gangImageSchema', () => {
+	it('rejects a missing file', () => {
+		expect(gangImageSchema.safeParse({}).success).toBe(false);
+	});
+
+	it('rejects a file over 4MB', () => {
+		const oversized = new File([new Uint8Array(4 * 1024 * 1024 + 1)], 'gang.png', {
+			type: 'image/png'
+		});
+		const result = gangImageSchema.safeParse({ imageFile: oversized });
+		expect(result.success).toBe(false);
+	});
+
+	it('rejects an unsupported image mime type', () => {
+		const svg = new File([new Uint8Array(10)], 'gang.svg', { type: 'image/svg+xml' });
+		const result = gangImageSchema.safeParse({ imageFile: svg });
+		expect(result.success).toBe(false);
+	});
+
+	it.each(['image/png', 'image/jpeg', 'image/webp'])('accepts a small %s file', (mime) => {
+		const file = new File([new Uint8Array(10)], 'gang', { type: mime });
+		const result = gangImageSchema.safeParse({ imageFile: file });
 		expect(result.success).toBe(true);
 	});
 });
