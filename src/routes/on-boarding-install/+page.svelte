@@ -41,9 +41,15 @@
 				</div>
 			{:else if os === 'ios' && browserKind === 'safari'}
 				<ul class="steps steps-vertical mt-6">
-					<li class="step step-primary">{m.on_boarding_install_ios_step_1()}</li>
-					<li class="step step-primary">{m.on_boarding_install_ios_step_2()}</li>
-					<li class="step step-primary">{m.on_boarding_install_ios_step_3()}</li>
+					<li class="step step-primary">
+						<span class="py-2 pe-2 text-left">{m.on_boarding_install_ios_step_1()}</span>
+					</li>
+					<li class="step step-primary">
+						<span class="py-2 pe-2 text-left">{m.on_boarding_install_ios_step_2()}</span>
+					</li>
+					<li class="step step-primary">
+						<span class="py-2 pe-2 text-left">{m.on_boarding_install_ios_step_3()}</span>
+					</li>
 				</ul>
 			{:else if os === 'ios'}
 				<div class="mt-4 alert alert-warning">
@@ -51,9 +57,15 @@
 				</div>
 			{:else if os === 'android' && isChromiumLike}
 				<ul class="steps steps-vertical mt-6">
-					<li class="step step-primary">{m.on_boarding_install_android_step_1()}</li>
-					<li class="step step-primary">{m.on_boarding_install_android_step_2()}</li>
-					<li class="step step-primary">{m.on_boarding_install_android_step_3()}</li>
+					<li class="step step-primary">
+						<span class="py-2 pe-2 text-left">{m.on_boarding_install_android_step_1()}</span>
+					</li>
+					<li class="step step-primary">
+						<span class="py-2 pe-2 text-left">{m.on_boarding_install_android_step_2()}</span>
+					</li>
+					<li class="step step-primary">
+						<span class="py-2 pe-2 text-left">{m.on_boarding_install_android_step_3()}</span>
+					</li>
 				</ul>
 			{:else if os === 'android'}
 				<div class="mt-4 alert alert-info">
