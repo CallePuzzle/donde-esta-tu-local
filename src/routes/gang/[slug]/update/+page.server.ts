@@ -20,6 +20,9 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 		return error(404, m.error_gang_not_found());
 	}
 
+	// Solo miembros validados de la peña o admin/system pueden acceder a la edición
+	await requireValidatedMember(event.locals, gangId);
+
 	const gang = await prisma.gang.findUnique({
 		where: {
 			status: {
