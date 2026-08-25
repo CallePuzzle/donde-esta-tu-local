@@ -16,8 +16,9 @@
 	import MemberDetail from '$lib/components/gangs/MemberDetail.svelte';
 	import { loginModalStore } from '$lib/stores/loginModal.svelte';
 	import { resolve } from '$app/paths';
-	import { invalidateAll } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { logger } from '$lib/logger';
+	import { isAdmin } from '$lib/utils/roles';
 
 	import type { PageData } from './$types';
 	import type { Map } from 'leaflet';
@@ -38,6 +39,8 @@
 	let joinMessage = $state('');
 	let joinMessageClass = $state('');
 	let confirmModal: Modal | undefined = $state();
+	let loginRequiredModal: Modal | undefined = $state();
+	let notMemberModal: Modal | undefined = $state();
 	let processingMemberId = $state<string | null>(null);
 	let resolvedMemberId = $state<string | null>(null);
 
@@ -73,6 +76,18 @@
 
 	function handleLogin() {
 		loginModalStore.value?.showModal();
+	}
+
+	function handleUpdateClick() {
+		if (!data.user) {
+			loginRequiredModal?.showModal();
+			return;
+		}
+		if (!isValidatedMember && !isAdmin(data.user)) {
+			notMemberModal?.showModal();
+			return;
+		}
+		goto(resolve('/gang/[slug]/update', { slug: gang.id.toString() }));
 	}
 
 	function handleJoinClick() {
@@ -268,17 +283,44 @@
 		</div>
 		<div class="order-first rounded-lg bg-neutral p-4 shadow md:order-last">
 			<div class="m-2 flex justify-between">
-				<a
-					class="btn btn-soft text-accent"
-					href={resolve('/gang/[slug]/update', { slug: gang.id.toString() })}
-					><CircleFadingArrowUp /> {m.gang_update()}</a
-				>
+				<button type="button" class="btn btn-soft text-accent" onclick={handleUpdateClick}>
+					<CircleFadingArrowUp />
+					{m.gang_update()}
+				</button>
 				{#if webShareAPISupported}
 					<button type="button" class="btn btn-soft text-[#ee3616]" onclick={handleWebShare}
 						><Share2 size="1.2rem" /> {m.gang_share()}</button
 					>
 				{/if}
 			</div>
+
+			<Modal
+				title={m.gang_update_login_required_title()}
+				showButton={false}
+				type="X"
+				bind:this={loginRequiredModal}
+			>
+				<p class="py-4">{m.gang_update_login_required_message()}</p>
+				<button
+					type="button"
+					class="btn w-full text-neutral btn-secondary"
+					onclick={() => {
+						loginRequiredModal?.close();
+						handleLogin();
+					}}
+				>
+					{m.form_login_sign_in()}
+				</button>
+			</Modal>
+
+			<Modal title={m.gang_update_not_member_title()} showButton={false} bind:this={notMemberModal}>
+				<p class="py-4">
+					{m.gang_update_not_member_message()}
+				</p>
+				<p class="py-4">
+					{m.gang_update_not_member_message_2({ name: gang.name })}
+				</p>
+			</Modal>
 		</div>
 	</div>
 </div>
