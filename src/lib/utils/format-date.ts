@@ -34,3 +34,17 @@ export function formatWeekdayDayTime(date: Date | string): string {
 		minute: '2-digit'
 	}).format(new Date(date));
 }
+
+/**
+ * Combina el instante real de una actividad con su descripción festiva.
+ * Opción A para actividades de madrugada: `date` es el instante físico real y
+ * `dateDesc` lleva el encuadre social (p. ej. "Noche del jueves 10").
+ */
+export function formatActivityDateTime(
+	date: Date | string,
+	dateDesc: string | null | undefined
+): string {
+	const base = formatWeekdayDayTime(date);
+	if (!dateDesc) return base;
+	return `${base} · ${dateDesc}`;
+}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Cartel from '$lib/assets/actividades/actividades2025.jpg?enhanced';
+	// import Cartel from '$lib/assets/actividades/actividades2025.jpg?enhanced';
 	import ActivityCard from '$lib/components/ActivityCard.svelte';
 	import { Tabs, TabItem } from 'flowbite-svelte';
 	import { m } from '$lib/paraglide/messages.js';
@@ -30,9 +30,9 @@
 
 <div class="container mx-auto my-2 pb-20 lg:pb-0">
 	<Tabs tabStyle="underline">
-		<TabItem open title={m.activities_tab_poster()} class="flex w-full justify-center">
+		<!-- <TabItem open title={m.activities_tab_poster()} class="flex w-full justify-center">
 			<enhanced:img src={Cartel} alt={m.activities_poster_alt()} />
-		</TabItem>
+		</TabItem> -->
 		<TabItem title={m.activities_tab_upcoming()} class="flex w-full justify-center">
 			{#if data.upcomingActivitiesTruncated}
 				<div class="mb-4 alert alert-warning">
