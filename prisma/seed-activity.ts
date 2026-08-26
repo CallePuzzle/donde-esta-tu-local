@@ -13,6 +13,23 @@ export type SeedActivityType = {
 	bannerPath?: string;
 };
 
+async function findGangByName(prisma: PrismaClient, name: string) {
+	const normalized = name.toLowerCase();
+
+	return (
+		(await prisma.gang.findFirst({ where: { name } })) ??
+		(await prisma.gang.findFirst({
+			where: {
+				name: {
+					mode: 'insensitive',
+					equals: name
+				}
+			}
+		})) ??
+		(await prisma.gang.findFirst({ where: { normalizedName: normalized } }))
+	);
+}
+
 export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityType) {
 	type CollaboratingGang = {
 		id: number;
@@ -35,13 +52,10 @@ export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityT
 
 	if (collaboratingGangNames) {
 		for (let i = 0; i < collaboratingGangNames.length; i++) {
-			const gang = await prisma.gang.findFirst({
-				where: {
-					name: collaboratingGangNames[i]
-				}
-			});
+			const gangName = collaboratingGangNames[i];
+			const gang = await findGangByName(prisma, gangName);
 			if (!gang) {
-				console.log('⚠️  No se encontró la peña ' + collaboratingGangNames[i]);
+				console.log('⚠️  No se encontró la peña ' + gangName);
 				return;
 			}
 			collaboratingGangs.push({ id: gang.id });
@@ -64,11 +78,7 @@ export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityT
 	};
 
 	if (placeGangName) {
-		const placeGang = await prisma.gang.findFirst({
-			where: {
-				name: placeGangName
-			}
-		});
+		const placeGang = await findGangByName(prisma, placeGangName);
 		if (!placeGang) {
 			console.log('⚠️  No se encontró la peña ' + placeGangName);
 			return;

@@ -7,7 +7,7 @@
 	import { resolve } from '$app/paths';
 	import Modal from '$lib/components/Modal.svelte';
 	import { m } from '$lib/paraglide/messages.js';
-	import { formatWeekdayDay, formatWeekdayDayTime } from '$lib/utils/format-date';
+	import { formatActivityDateTime } from '$lib/utils/format-date';
 
 	type ActivityCard = Activity & {
 		placeGang: Pick<Gang, 'id' | 'name'> | null;
@@ -28,11 +28,7 @@
 	});
 
 	function formatActivityDate(activity: Activity) {
-		if (activity.dateDesc) {
-			return formatWeekdayDay(activity.date) + ', ' + activity.dateDesc;
-		}
-
-		return formatWeekdayDayTime(activity.date);
+		return formatActivityDateTime(activity.date, activity.dateDesc);
 	}
 
 	function getActivityLocation(activity: ActivityCard) {

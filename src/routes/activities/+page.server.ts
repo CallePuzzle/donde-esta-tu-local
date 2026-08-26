@@ -31,64 +31,39 @@ export const load: PageServerLoad = async () => {
 		}
 	};
 
-	const [
-		upcomingActivities,
-		upcomingActivitiesTotal,
-		pastActivitiesDesc,
-		pastActivitiesTotal,
-		previousYearsActivitiesDesc,
-		previousYearsActivitiesTotal
-	] = await Promise.all([
-		prisma.activity.findMany({
-			where: { date: { gte: now, lt: startOfNextYear } },
-			include,
-			orderBy: { date: 'asc' },
-			take: ACTIVITIES_LIST_LIMIT
-		}),
-		prisma.activity.count({ where: { date: { gte: now, lt: startOfNextYear } } }),
-		// Las más recientes primero para no perderlas al truncar; se
-		// reordenan a cronológico ascendente antes de devolverlas.
-		prisma.activity.findMany({
-			where: { date: { gte: startOfYear, lt: now } },
-			include,
-			orderBy: { date: 'desc' },
-			take: ACTIVITIES_LIST_LIMIT
-		}),
-		prisma.activity.count({ where: { date: { gte: startOfYear, lt: now } } }),
-		// Años anteriores: descendente para priorizar los más recientes al truncar;
-		// se agrupan por año y se reordenan a cronológico ascendente dentro de cada uno.
-		prisma.activity.findMany({
-			where: { date: { lt: startOfYear } },
-			include,
-			orderBy: { date: 'desc' },
-			take: ACTIVITIES_LIST_LIMIT * 5
-		}),
-		prisma.activity.count({ where: { date: { lt: startOfYear } } })
-	]);
-
-	const previousYearsMap = new Map<number, typeof previousYearsActivitiesDesc>();
-	for (const activity of previousYearsActivitiesDesc) {
-		const year = activity.date.getUTCFullYear();
-		if (!previousYearsMap.has(year)) {
-			previousYearsMap.set(year, []);
-		}
-		previousYearsMap.get(year)!.push(activity);
-	}
-
-	const previousYearsActivities = Array.from(previousYearsMap.entries())
-		.sort(([yearA], [yearB]) => yearB - yearA)
-		.map(([year, activities]) => ({
-			year,
-			activities: activities.slice().reverse()
-		}));
+	const [upcomingActivities, upcomingActivitiesTotal, pastActivitiesDesc, pastActivitiesTotal] =
+		await Promise.all([
+			prisma.activity.findMany({
+				where: { date: { gte: now, lt: startOfNextYear } },
+				include,
+				orderBy: { date: 'asc' },
+				take: ACTIVITIES_LIST_LIMIT
+			}),
+			prisma.activity.count({ where: { date: { gte: now, lt: startOfNextYear } } }),
+			// Las más recientes primero para no perderlas al truncar; se
+			// reordenan a cronológico ascendente antes de devolverlas.
+			prisma.activity.findMany({
+				where: { date: { gte: startOfYear, lt: now } },
+				include,
+				orderBy: { date: 'desc' },
+				take: ACTIVITIES_LIST_LIMIT
+			}),
+			prisma.activity.count({ where: { date: { gte: startOfYear, lt: now } } }),
+			// Años anteriores: descendente para priorizar los más recientes al truncar;
+			// se agrupan por año y se reordenan a cronológico ascendente dentro de cada uno.
+			prisma.activity.findMany({
+				where: { date: { lt: startOfYear } },
+				include,
+				orderBy: { date: 'desc' },
+				take: ACTIVITIES_LIST_LIMIT * 5
+			}),
+			prisma.activity.count({ where: { date: { lt: startOfYear } } })
+		]);
 
 	return {
 		upcomingActivities,
 		upcomingActivitiesTruncated: upcomingActivities.length < upcomingActivitiesTotal,
 		pastActivities: pastActivitiesDesc.slice().reverse(),
-		pastActivitiesTruncated: pastActivitiesDesc.length < pastActivitiesTotal,
-		previousYearsActivities,
-		previousYearsActivitiesTruncated:
-			previousYearsActivitiesDesc.length < previousYearsActivitiesTotal
+		pastActivitiesTruncated: pastActivitiesDesc.length < pastActivitiesTotal
 	};
 };

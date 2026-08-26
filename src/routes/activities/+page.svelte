@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Cartel from '$lib/assets/actividades/actividades2025.jpg?enhanced';
+	// import Cartel from '$lib/assets/actividades/actividades2025.jpg?enhanced';
 	import ActivityCard from '$lib/components/ActivityCard.svelte';
 	import { Tabs, TabItem } from 'flowbite-svelte';
 	import { m } from '$lib/paraglide/messages.js';
@@ -30,9 +30,9 @@
 
 <div class="container mx-auto my-2 pb-20 lg:pb-0">
 	<Tabs tabStyle="underline">
-		<TabItem open title={m.activities_tab_poster()} class="flex w-full justify-center">
+		<!-- <TabItem open title={m.activities_tab_poster()} class="flex w-full justify-center">
 			<enhanced:img src={Cartel} alt={m.activities_poster_alt()} />
-		</TabItem>
+		</TabItem> -->
 		<TabItem title={m.activities_tab_upcoming()} class="flex w-full justify-center">
 			{#if data.upcomingActivitiesTruncated}
 				<div class="mb-4 alert alert-warning">
@@ -92,42 +92,6 @@
 						/>
 					</svg>
 					<span>{m.activities_empty_past()}</span>
-				</div>
-			{/if}
-		</TabItem>
-		<TabItem title={m.activities_tab_previous_years()} class="flex w-full justify-center">
-			{#if data.previousYearsActivitiesTruncated}
-				<div class="mb-4 alert alert-warning">
-					<span>{m.activities_list_truncated({ count: data.previousYearsActivities.length })}</span>
-				</div>
-			{/if}
-			{#if data.previousYearsActivities.length > 0}
-				{#each data.previousYearsActivities as { year, activities } (year)}
-					<div class="mb-6">
-						<h2 class="mb-2 text-xl font-bold">{m.activities_previous_years_year({ year })}</h2>
-						<div class="grid grid-cols-1 justify-center opacity-75 md:grid-cols-2 lg:grid-cols-3">
-							{#each activities as activity (activity.id)}
-								<ActivityCard {activity} {activityBannerLoaders} />
-							{/each}
-						</div>
-					</div>
-				{/each}
-			{:else}
-				<div role="alert" class="alert alert-warning">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-6 w-6 shrink-0 stroke-current"
-						fill="none"
-						viewBox="0 0 24 24"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-						/>
-					</svg>
-					<span>{m.activities_empty_previous_years()}</span>
 				</div>
 			{/if}
 		</TabItem>
