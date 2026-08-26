@@ -3,6 +3,7 @@
 	import Clock from '@lucide/svelte/icons/clock';
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import Users from '@lucide/svelte/icons/users';
+	import FileText from '@lucide/svelte/icons/file-text';
 	import Image from '@lucide/svelte/icons/image';
 	import { resolve } from '$app/paths';
 	import Modal from '$lib/components/Modal.svelte';
@@ -81,6 +82,15 @@
 				<p class="flex text-sm text-gray-600">
 					<Users /><span class="mx-1">{m.activity_organisers_label()}</span><span
 						class="font-medium text-base-content">{organisers}</span
+					>
+				</p>
+			</div>
+		{/if}
+		{#if activity.notes}
+			<div class="mb-3">
+				<p class="flex text-sm text-gray-600">
+					<FileText /><span class="mx-1">{m.activity_notes_label()}</span><span
+						class="font-medium text-base-content">{activity.notes}</span
 					>
 				</p>
 			</div>

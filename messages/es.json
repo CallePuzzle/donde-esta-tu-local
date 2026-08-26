@@ -141,6 +141,7 @@
 	"activity_date_label": "Fecha y hora:",
 	"activity_place_label": "Lugar:",
 	"activity_organisers_label": "Colaboran:",
+	"activity_notes_label": "Notas:",
 	"activity_poster_label": "Cartel:",
 	"activity_poster_modal_title": "Ver cartel",
 	"activity_poster_alt": "Cartel de {name}",

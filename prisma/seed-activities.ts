@@ -32,7 +32,7 @@ async function SeedActivities(prisma: PrismaClient) {
 		{
 			name: 'Pascual Race - Carrera de motos para niños de 0 a 4 años',
 			date: new Date('2026-09-11T11:00:00.000Z'),
-			placeDesc: 'Confirmar asistencia a (+34 617 14 84 19)'
+			notes: 'Confirmar asistencia a (+34 617 14 84 19)'
 		},
 		{
 			name: 'XX Aniversario Contentongo',
@@ -61,14 +61,13 @@ async function SeedActivities(prisma: PrismaClient) {
 		},
 		{
 			name: 'III Fiesta del Corzo',
-			date: new Date('2026-09-12T21:59:00.000Z'),
+			date: new Date('2026-09-13T01:00:00.000Z'),
 			dateDesc: 'De encierro a encierro',
 			placeGangName: 'La movida'
 		},
 		{
 			name: 'Concierto Flamenco Pop-Rock con Aarón Miguel',
 			date: new Date('2026-09-13T13:30:00.000Z'),
-			dateDesc: '15:30',
 			placeGangName: 'Las druidas',
 			collaboratingGangNames: ['La Gres-k']
 		},
@@ -80,7 +79,7 @@ async function SeedActivities(prisma: PrismaClient) {
 		},
 		{
 			name: 'Juego del Pañuelo',
-			date: new Date('2026-09-13T21:59:01.000Z'),
+			date: new Date('2026-09-13T23:30:00.000Z'),
 			dateDesc: 'Descanso del baile',
 			placeGangName: '13 la víspera'
 		},

@@ -8,6 +8,7 @@ export type SeedActivityType = {
 	date: Date;
 	dateDesc?: string;
 	placeDesc?: string;
+	notes?: string;
 	collaboratingGangNames?: string[];
 	placeGangName?: string;
 	bannerPath?: string;
@@ -42,10 +43,12 @@ export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityT
 		collaboratingGangNames,
 		placeGangName,
 		placeDesc: placeDescIn,
+		notes: notesIn,
 		bannerPath: bannerPathIn
 	} = activity;
 	const dateDesc = dateDescIn ?? null;
 	const placeDesc = placeDescIn ?? null;
+	const notes = notesIn ?? null;
 	const bannerPath = bannerPathIn ?? null;
 
 	const collaboratingGangs: CollaboratingGang[] = [];
@@ -66,6 +69,7 @@ export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityT
 		name,
 		dateDesc,
 		placeDesc,
+		notes,
 		bannerPath
 	};
 
@@ -74,6 +78,7 @@ export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityT
 		date,
 		dateDesc,
 		placeDesc,
+		notes,
 		bannerPath
 	};
 
