@@ -149,6 +149,9 @@ model Activity {
 
   bannerPath String?
 
+  // Notas libres sobre la actividad (p. ej. teléfono de confirmación de asistencia).
+  notes String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

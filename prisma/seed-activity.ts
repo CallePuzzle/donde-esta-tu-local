@@ -8,10 +8,28 @@ export type SeedActivityType = {
 	date: Date;
 	dateDesc?: string;
 	placeDesc?: string;
+	notes?: string;
 	collaboratingGangNames?: string[];
 	placeGangName?: string;
 	bannerPath?: string;
 };
+
+async function findGangByName(prisma: PrismaClient, name: string) {
+	const normalized = name.toLowerCase();
+
+	return (
+		(await prisma.gang.findFirst({ where: { name } })) ??
+		(await prisma.gang.findFirst({
+			where: {
+				name: {
+					mode: 'insensitive',
+					equals: name
+				}
+			}
+		})) ??
+		(await prisma.gang.findFirst({ where: { normalizedName: normalized } }))
+	);
+}
 
 export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityType) {
 	type CollaboratingGang = {
@@ -25,23 +43,22 @@ export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityT
 		collaboratingGangNames,
 		placeGangName,
 		placeDesc: placeDescIn,
+		notes: notesIn,
 		bannerPath: bannerPathIn
 	} = activity;
 	const dateDesc = dateDescIn ?? null;
 	const placeDesc = placeDescIn ?? null;
+	const notes = notesIn ?? null;
 	const bannerPath = bannerPathIn ?? null;
 
 	const collaboratingGangs: CollaboratingGang[] = [];
 
 	if (collaboratingGangNames) {
 		for (let i = 0; i < collaboratingGangNames.length; i++) {
-			const gang = await prisma.gang.findFirst({
-				where: {
-					name: collaboratingGangNames[i]
-				}
-			});
+			const gangName = collaboratingGangNames[i];
+			const gang = await findGangByName(prisma, gangName);
 			if (!gang) {
-				console.log('⚠️  No se encontró la peña ' + collaboratingGangNames[i]);
+				console.log('⚠️  No se encontró la peña ' + gangName);
 				return;
 			}
 			collaboratingGangs.push({ id: gang.id });
@@ -52,6 +69,7 @@ export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityT
 		name,
 		dateDesc,
 		placeDesc,
+		notes,
 		bannerPath
 	};
 
@@ -60,15 +78,12 @@ export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityT
 		date,
 		dateDesc,
 		placeDesc,
+		notes,
 		bannerPath
 	};
 
 	if (placeGangName) {
-		const placeGang = await prisma.gang.findFirst({
-			where: {
-				name: placeGangName
-			}
-		});
+		const placeGang = await findGangByName(prisma, placeGangName);
 		if (!placeGang) {
 			console.log('⚠️  No se encontró la peña ' + placeGangName);
 			return;

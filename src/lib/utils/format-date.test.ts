@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+	formatActivityDateTime,
 	formatDateLong,
 	formatDateTimeShort,
 	formatWeekdayDay,
@@ -29,5 +30,12 @@ describe('format-date', () => {
 
 	it('formatWeekdayDayTime: incluye hora y minuto', () => {
 		expect(formatWeekdayDayTime(date)).toMatch(/jueves/i);
+	});
+
+	it('formatActivityDateTime: combina fecha/hora real con la descripción festiva', () => {
+		expect(formatActivityDateTime(date, 'Después del pregón')).toBe(
+			'jueves 5, 13:34 · Después del pregón'
+		);
+		expect(formatActivityDateTime(date, null)).toBe(formatWeekdayDayTime(date));
 	});
 });

@@ -36,16 +36,16 @@
 	{/if}
 
 	{#if canUpload}
-	<div class="tooltip" data-tip={m.gang_image_add()}>
-		<button
-			type="button"
-			class="btn btn-circle btn-ghost btn-sm"
-			aria-label={image ? m.gang_image_change() : m.gang_image_add()}
-			onclick={() => uploadModal?.showModal()}
-		>
-			<Camera />
-		</button>
-	</div>
+		<div class="tooltip" data-tip={m.gang_image_add()}>
+			<button
+				type="button"
+				class="btn btn-circle btn-ghost btn-sm"
+				aria-label={image ? m.gang_image_change() : m.gang_image_add()}
+				onclick={() => uploadModal?.showModal()}
+			>
+				<Camera />
+			</button>
+		</div>
 	{/if}
 </div>
 

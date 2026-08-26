@@ -9,13 +9,13 @@
 set -u
 
 for attempt in 1 2 3 4 5; do
-	if docker compose up -d postgres-test; then
+	if podman compose up -d postgres-test; then
 		exit 0
 	fi
-	echo "docker compose up falló (intento $attempt/5); limpiando y reintentando…" >&2
-	# `docker compose rm` no borra el contenedor a medio crear bajo
+	echo "podman compose up falló (intento $attempt/5); limpiando y reintentando…" >&2
+	# `podman compose rm` no borra el contenedor a medio crear bajo
 	# podman-compose (falla silenciosamente); se borra por nombre fijo
-	docker rm -f donde-esta-tu-local-e2e-db 2>/dev/null || true
+	podman rm -f donde-esta-tu-local-e2e-db 2>/dev/null || true
 	podman network rm donde-esta-tu-local_default >/dev/null 2>&1 || true
 	sleep 5
 done
