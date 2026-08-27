@@ -28,6 +28,7 @@
 		"paraglide-js": "paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide",
 		"db:seed-activities": "tsx prisma/seed-activities.ts",
 		"db:seed-clear-activities": "tsx prisma/seed-clear-activities.ts",
+		"db:seed-test-notifications": "tsx prisma/seed-test-notifications.ts",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:e2e": "bun run db:test:up && playwright test",
