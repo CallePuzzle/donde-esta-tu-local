@@ -29,6 +29,18 @@ export async function deletePushSubscription(endpoint: string): Promise<void> {
 	});
 }
 
+// Variante para el endpoint de baja del propio usuario: sin el filtro por
+// userId, cualquier usuario autenticado que conociera un endpoint ajeno
+// podría desuscribirlo.
+export async function deletePushSubscriptionForUser(
+	endpoint: string,
+	userId: string
+): Promise<void> {
+	await prisma.pushSubscription.deleteMany({
+		where: { endpoint, userId }
+	});
+}
+
 export async function deletePushSubscriptionsByUser(userId: string): Promise<void> {
 	await prisma.pushSubscription.deleteMany({
 		where: { userId }

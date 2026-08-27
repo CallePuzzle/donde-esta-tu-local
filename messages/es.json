@@ -265,5 +265,6 @@
 	"push_notifications_subscribe_error": "No se ha podido activar el aviso. Inténtalo de nuevo.",
 	"push_notifications_unsubscribe_error": "No se ha podido desactivar el aviso. Inténtalo de nuevo.",
 	"push_notification_activity_title": "¡Actividad próxima!",
-	"push_notification_activity_body": "La actividad \"{activity}\" comenzará a las {time} en {place}."
+	"push_notification_activity_body": "La actividad \"{activity}\" comenzará a las {time} en {place}.",
+	"push_notification_activity_body_no_place": "La actividad \"{activity}\" comenzará a las {time}."
 }

@@ -1,5 +1,6 @@
 import { webpush, type PushSubscription } from '$lib/server/web-push';
 import prisma from '$lib/server/db';
+import { Prisma } from '@prisma/client';
 import {
 	deletePushSubscription,
 	getActivePushSubscriptions,
@@ -7,34 +8,42 @@ import {
 } from '$lib/server/push-subscription';
 import { logger } from '$lib/logger';
 import { m } from '$lib/paraglide/messages.js';
-import { formatWeekdayDayTime } from '$lib/utils/format-date';
+import { formatTimeShort } from '$lib/utils/format-date';
 import { WebPushError } from 'web-push';
 import type { Activity, Gang } from '@prisma/client';
 
 type ActivityWithPlace = Activity & { placeGang: Gang | null };
+type SendResult = 'sent' | 'expired' | 'failed';
+
+const UNIQUE_CONSTRAINT_VIOLATION = 'P2002';
 
 export async function sendPushNotification(
 	subscription: PushSubscriptionJSON,
 	payload: object
-): Promise<void> {
+): Promise<SendResult> {
 	try {
 		await webpush.sendNotification(subscription as PushSubscription, JSON.stringify(payload));
+		return 'sent';
 	} catch (error) {
 		if (error instanceof WebPushError && (error.statusCode === 410 || error.statusCode === 404)) {
-			logger.info({ endpoint: subscription.endpoint }, 'Suscripción push caducada, eliminando');
+			logger.debug('Suscripción push caducada, eliminando');
 			await deletePushSubscription(subscription.endpoint);
-			return;
+			return 'expired';
 		}
-		throw error;
+		logger.error(error, 'Error enviando notificación push');
+		return 'failed';
 	}
 }
 
 export function buildActivityPayload(activity: ActivityWithPlace) {
 	const place = activity.placeGang?.name ?? activity.placeDesc ?? '';
-	const time = formatWeekdayDayTime(activity.date);
+	const time = formatTimeShort(activity.date);
+	const body = place
+		? m.push_notification_activity_body({ activity: activity.name, time, place })
+		: m.push_notification_activity_body_no_place({ activity: activity.name, time });
 	return {
 		title: m.push_notification_activity_title(),
-		body: m.push_notification_activity_body({ activity: activity.name, time, place }),
+		body,
 		icon: '/icon192.png',
 		badge: '/icon192.png',
 		tag: `activity-${activity.id}`,
@@ -42,6 +51,15 @@ export function buildActivityPayload(activity: ActivityWithPlace) {
 	};
 }
 
+// Se notifica a todos los suscriptores de todas las actividades: no hay
+// segmentación por peña ni por interés (decisión de producto, no un olvido).
+// Si crecen las actividades esto se vuelve spam y habrá que filtrar por
+// placeGangId / membresía.
+//
+// Idempotencia por actividad, no por edición: si se cambia la fecha de una
+// actividad ya notificada, no se vuelve a avisar. Tampoco hay retención sobre
+// activity_notification_log (crece sin límite). Aceptable mientras el volumen
+// de actividades sea bajo.
 export async function sendActivityNotifications(
 	windowMinutes = 60
 ): Promise<{ sent: number; failed: number; activities: number }> {
@@ -61,24 +79,47 @@ export async function sendActivityNotifications(
 	}
 
 	const subscriptions = await getActivePushSubscriptions();
+	// Suscripciones que han caducado (410/404) durante esta pasada: se evita
+	// reintentarlas en las actividades siguientes del mismo bucle.
+	const expiredEndpoints = new Set<string>();
 	let sent = 0;
 	let failed = 0;
+	let notifiedActivities = 0;
 
 	for (const activity of activities) {
-		const payload = buildActivityPayload(activity as ActivityWithPlace);
+		// El log actúa de cerrojo: se crea antes de enviar para que una segunda
+		// ejecución del cron solapada con esta (p. ej. una pasada lenta) vea el
+		// índice único de activityId y descarte la actividad en vez de
+		// duplicar el envío o abortar el resto del bucle con un 500.
+		try {
+			await prisma.activityNotificationLog.create({ data: { activityId: activity.id } });
+		} catch (error) {
+			if (
+				error instanceof Prisma.PrismaClientKnownRequestError &&
+				error.code === UNIQUE_CONSTRAINT_VIOLATION
+			) {
+				continue;
+			}
+			throw error;
+		}
+
+		notifiedActivities++;
+		const payload = buildActivityPayload(activity);
+		// Envío secuencial: aceptable para el volumen actual de suscriptores.
+		// Si crece, pasar a Promise.allSettled por lotes antes de acercarse al
+		// timeout de la función serverless.
 		for (const { subscription } of subscriptions) {
-			try {
-				await sendPushNotification(subscription, payload);
+			if (expiredEndpoints.has(subscription.endpoint)) continue;
+			const result = await sendPushNotification(subscription, payload);
+			if (result === 'sent') {
 				sent++;
-			} catch (error) {
+			} else if (result === 'expired') {
+				expiredEndpoints.add(subscription.endpoint);
+			} else {
 				failed++;
-				logger.error(error, 'Error enviando notificación push');
 			}
 		}
-		await prisma.activityNotificationLog.create({
-			data: { activityId: activity.id }
-		});
 	}
 
-	return { sent, failed, activities: activities.length };
+	return { sent, failed, activities: notifiedActivities };
 }

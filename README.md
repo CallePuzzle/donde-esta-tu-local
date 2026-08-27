@@ -32,12 +32,17 @@ En desarrollo el código OTP de login no se envía por email: aparece en el log 
 
 Ver [`.env.example`](./.env.example) para la lista completa. Resumen:
 
-| Variable                                                       | Para qué                         |
-| -------------------------------------------------------------- | -------------------------------- |
-| `DATABASE_URL`                                                 | PostgreSQL o Prisma Accelerate   |
-| `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`                        | Sesión/login (better-auth)       |
-| `SMTP_HOST`, `SMPT_AUTH_USER`, `SMPT_AUTH_PASS`, `SMPT_SENDER` | Envío del código OTP por email   |
-| `BLOB_READ_WRITE_TOKEN`                                        | Subida de avatares (Vercel Blob) |
+| Variable                                                       | Para qué                                              |
+| -------------------------------------------------------------- | ----------------------------------------------------- |
+| `DATABASE_URL`                                                 | PostgreSQL o Prisma Accelerate                        |
+| `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`                        | Sesión/login (better-auth)                            |
+| `SMTP_HOST`, `SMPT_AUTH_USER`, `SMPT_AUTH_PASS`, `SMPT_SENDER` | Envío del código OTP por email                        |
+| `BLOB_READ_WRITE_TOKEN`                                        | Subida de avatares (Vercel Blob)                      |
+| `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`       | Notificaciones push (Web Push / VAPID)                |
+| `CRON_SECRET`                                                  | Protege `POST /api/notifications/send` (cron externo) |
+
+Las cuatro variables de notificaciones push se leen con `$env/static/private`, que se resuelve **en
+tiempo de build**: si no están dadas de alta en Vercel antes de desplegar, el build falla.
 
 ## Comandos
 
@@ -55,6 +60,8 @@ Ver [`.env.example`](./.env.example) para la lista completa. Resumen:
   de `DATABASE_URL` (`prisma migrate deploy`). **No lo ejecutes en local** salvo que sepas contra qué
   base de datos estás apuntando.
 - `bun run db:seed-activities` — puebla actividades de ejemplo.
+- `bun run db:seed-test-notifications` — puebla actividades pensadas para probar las notificaciones
+  push (dentro de la ventana de envío).
 
 ## Despliegue
 
@@ -62,6 +69,20 @@ Vercel, mediante `@sveltejs/adapter-vercel`. El pipeline de CI/CD ejecuta `bun r
 las migraciones de `prisma/migrations/` contra `DATABASE_URL` antes de compilar. Revisa siempre el
 SQL de una migración nueva antes de fusionarla, y aplícala primero contra una base de datos de
 staging si toca datos existentes.
+
+### Notificaciones push (cron externo)
+
+El envío de notificaciones (`POST /api/notifications/send`) no se dispara solo: hace falta un
+scheduler externo (no vive en Vercel) que lo invoque periódicamente:
+
+- **Frecuencia**: cada 5 minutos.
+- **Método**: `POST` (no `GET`, para evitar que un crawler o un log lo dispare por accidente).
+- **Cabecera**: `Authorization: Bearer <CRON_SECRET>`.
+- **Ventana**: cada llamada busca actividades que empiecen en la próxima hora; con un cron de 5
+  minutos, `ActivityNotificationLog` garantiza que cada actividad se notifica una sola vez.
+
+Sirve cualquier scheduler que sepa hacer una petición HTTP (GitHub Actions, cron en un VPS,
+UptimeRobot...).
 
 ## Más documentación
 

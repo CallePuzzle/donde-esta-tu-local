@@ -16,10 +16,6 @@ const subscriptionSchema = z.object({
 });
 
 export async function POST(event: RequestEvent) {
-	logger.debug(
-		{ origin: event.request.headers.get('origin'), url: event.url.origin },
-		'Petición de suscripción push recibida'
-	);
 	requireSameOrigin(event.request, event.url);
 	const user = requireUser(event.locals);
 
@@ -39,7 +35,7 @@ export async function POST(event: RequestEvent) {
 
 	try {
 		await savePushSubscription(user.id, parsed.data);
-		logger.debug({ userId: user.id, endpoint: parsed.data.endpoint }, 'Suscripción push guardada');
+		logger.debug({ userId: user.id }, 'Suscripción push guardada');
 		return json({ success: true });
 	} catch (error) {
 		logger.error(error, 'Error guardando suscripción push');
