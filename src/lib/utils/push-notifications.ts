@@ -1,3 +1,5 @@
+import { logger } from '$lib/logger';
+
 export function isPushSupported(): boolean {
 	return typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window;
 }
@@ -8,12 +10,25 @@ export async function getExistingSubscription(): Promise<PushSubscription | null
 	return registration.pushManager.getSubscription();
 }
 
+export function isVapidKeyValid(publicKey: string): boolean {
+	return /^[A-Za-z0-9_-]{87}$/.test(publicKey);
+}
+
 export async function subscribeToPush(publicKey: string): Promise<PushSubscription> {
+	logger.debug({ publicKey, valid: isVapidKeyValid(publicKey) }, 'Suscribiendo a push');
 	const registration = await navigator.serviceWorker.ready;
-	return registration.pushManager.subscribe({
-		userVisibleOnly: true,
-		applicationServerKey: urlBase64ToUint8Array(publicKey)
-	});
+	logger.debug({ scope: registration.scope }, 'Service worker listo');
+	try {
+		const subscription = await registration.pushManager.subscribe({
+			userVisibleOnly: true,
+			applicationServerKey: publicKey
+		});
+		logger.debug({ endpoint: subscription.endpoint }, 'Suscripción push obtenida');
+		return subscription;
+	} catch (error) {
+		logger.error(error, 'Error en pushManager.subscribe');
+		throw error;
+	}
 }
 
 export async function unsubscribeFromPush(): Promise<void> {
