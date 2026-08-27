@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { prisma } from './db';
 import { coordsMonte } from '../../src/lib/utils/coords-monte';
 
-import type { Gang, GangStatus, MembershipGangStatus, User } from '@prisma/client';
+import type { Activity, Gang, GangStatus, MembershipGangStatus, User } from '@prisma/client';
 
 // Coordenadas dentro del bounding box que valida addGangSchema: las de
 // coords-monte.ts (Montemayor de Pililla), fuente única de verdad
@@ -11,7 +11,7 @@ export const TEST_COORDS = { lat: coordsMonte[0], lng: coordsMonte[1] };
 // Deja la BD de test vacía entre tests. TRUNCATE ... CASCADE resuelve las
 // referencias cruzadas user.gangId / gang.validatedByUserId.
 export async function resetDb(): Promise<void> {
-	await prisma.$executeRaw`TRUNCATE TABLE "gang_history", "session", "account", "verification", "user", "gang" RESTART IDENTITY CASCADE`;
+	await prisma.$executeRaw`TRUNCATE TABLE "activity_notification_log", "activity", "push_subscription", "gang_history", "session", "account", "verification", "user", "gang" RESTART IDENTITY CASCADE`;
 }
 
 export async function createUser(options: {
@@ -53,6 +53,24 @@ export async function createGang(options: {
 			longitude: options.lng ?? TEST_COORDS.lng,
 			status: options.status ?? 'VALIDATED',
 			image: options.image ?? null
+		}
+	});
+}
+
+export async function createActivity(options: {
+	name?: string;
+	date?: Date;
+	placeGangId?: number;
+	placeDesc?: string;
+}): Promise<Activity> {
+	const date = options.date ?? new Date(Date.now() + 30 * 60 * 1000);
+	const name = options.name ?? `Actividad E2E ${randomUUID().slice(0, 8)}`;
+	return prisma.activity.create({
+		data: {
+			name,
+			date,
+			placeGangId: options.placeGangId ?? null,
+			placeDesc: options.placeDesc ?? null
 		}
 	});
 }
