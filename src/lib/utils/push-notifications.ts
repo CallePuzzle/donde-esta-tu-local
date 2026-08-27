@@ -33,7 +33,8 @@ export async function sendSubscriptionToServer(
 		body: JSON.stringify(subscription.toJSON())
 	});
 	if (!response.ok) {
-		throw new Error('Failed to save subscription');
+		const text = await response.text().catch(() => 'unknown error');
+		throw new Error(`Failed to save subscription: ${response.status} ${text}`);
 	}
 }
 
@@ -47,7 +48,8 @@ export async function deleteSubscriptionFromServer(
 		body: JSON.stringify({ endpoint })
 	});
 	if (!response.ok) {
-		throw new Error('Failed to delete subscription');
+		const text = await response.text().catch(() => 'unknown error');
+		throw new Error(`Failed to delete subscription: ${response.status} ${text}`);
 	}
 }
 
