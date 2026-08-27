@@ -112,6 +112,8 @@
 	"gang_detail_title": "Peña {name}",
 	"gang_image_alt": "Foto de la peña {name}",
 	"gang_image_view": "Ver la foto de la peña {name}",
+	"member_image_alt": "Foto de perfil de {name}",
+	"member_image_view": "Ver la foto de perfil de {name}",
 	"gang_image_add": "Añadir la foto de la peña",
 	"gang_image_change": "Cambiar la foto de la peña",
 	"gang_image_upload_title": "Foto de la peña",
