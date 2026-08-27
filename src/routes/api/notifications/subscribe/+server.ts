@@ -16,6 +16,10 @@ const subscriptionSchema = z.object({
 });
 
 export async function POST(event: RequestEvent) {
+	logger.debug(
+		{ origin: event.request.headers.get('origin'), url: event.url.origin },
+		'Petición de suscripción push recibida'
+	);
 	requireSameOrigin(event.request, event.url);
 	const user = requireUser(event.locals);
 
@@ -23,16 +27,19 @@ export async function POST(event: RequestEvent) {
 	try {
 		body = await event.request.json();
 	} catch {
+		logger.warn('Cuerpo JSON inválido en suscripción push');
 		return json({ success: false, error: 'Invalid JSON' }, { status: 400 });
 	}
 
 	const parsed = subscriptionSchema.safeParse(body);
 	if (!parsed.success) {
+		logger.warn({ issues: parsed.error.issues }, 'Suscripción push inválida');
 		return json({ success: false, error: 'Invalid subscription' }, { status: 400 });
 	}
 
 	try {
 		await savePushSubscription(user.id, parsed.data);
+		logger.debug({ userId: user.id, endpoint: parsed.data.endpoint }, 'Suscripción push guardada');
 		return json({ success: true });
 	} catch (error) {
 		logger.error(error, 'Error guardando suscripción push');
