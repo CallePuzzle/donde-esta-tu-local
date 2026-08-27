@@ -21,7 +21,7 @@ export async function subscribeToPush(publicKey: string): Promise<PushSubscripti
 	try {
 		const subscription = await registration.pushManager.subscribe({
 			userVisibleOnly: true,
-			applicationServerKey: publicKey
+			applicationServerKey: urlBase64ToUint8Array(publicKey)
 		});
 		logger.debug({ endpoint: subscription.endpoint }, 'Suscripción push obtenida');
 		return subscription;
