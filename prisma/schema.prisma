@@ -49,6 +49,7 @@ model User {
 
   validatedGangs Gang[]        @relation("ValidatedBy")
   modifiedGangs  GangHistory[] @relation("ModifiedBy")
+  pushSubscriptions PushSubscription[]
 
   @@unique([email])
   @@index([gangId])
@@ -102,6 +103,20 @@ model Verification {
   @@map("verification")
 }
 
+model PushSubscription {
+  id        Int      @id @default(autoincrement())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_subscription")
+}
+
 model Gang {
   id             Int        @id @default(autoincrement())
   name           String
@@ -152,10 +167,21 @@ model Activity {
   // Notas libres sobre la actividad (p. ej. teléfono de confirmación de asistencia).
   notes String?
 
+  notificationLog ActivityNotificationLog?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("activity")
+}
+
+model ActivityNotificationLog {
+  id         Int      @id @default(autoincrement())
+  activityId Int      @unique
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  notifiedAt DateTime @default(now())
+
+  @@map("activity_notification_log")
 }
 
 model GangHistory {
