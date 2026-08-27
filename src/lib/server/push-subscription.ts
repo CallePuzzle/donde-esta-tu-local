@@ -62,3 +62,25 @@ export async function getActivePushSubscriptions(): Promise<
 		}
 	}));
 }
+
+export async function getAdminPushSubscriptions(): Promise<
+	{ userId: string; subscription: PushSubscriptionJSON }[]
+> {
+	const rows = await prisma.pushSubscription.findMany({
+		where: {
+			user: {
+				role: { in: ['admin', 'system'] }
+			}
+		}
+	});
+	return rows.map((row) => ({
+		userId: row.userId,
+		subscription: {
+			endpoint: row.endpoint,
+			keys: {
+				p256dh: row.p256dh,
+				auth: row.auth
+			}
+		}
+	}));
+}

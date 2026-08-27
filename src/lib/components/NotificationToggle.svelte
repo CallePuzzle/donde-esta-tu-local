@@ -4,6 +4,7 @@
 	import { logger } from '$lib/logger';
 	import {
 		isPushSupported,
+		isPushServiceUnavailableError,
 		getExistingSubscription,
 		subscribeToPush,
 		unsubscribeFromPush,
@@ -66,9 +67,13 @@
 		} catch (error) {
 			logger.error(error, 'Error cambiando suscripción push');
 			enabled = !targetEnabled;
-			errorMessage = targetEnabled
-				? m.push_notifications_subscribe_error()
-				: m.push_notifications_unsubscribe_error();
+			if (targetEnabled && isPushServiceUnavailableError(error)) {
+				errorMessage = m.push_notifications_service_unavailable();
+			} else {
+				errorMessage = targetEnabled
+					? m.push_notifications_subscribe_error()
+					: m.push_notifications_unsubscribe_error();
+			}
 		} finally {
 			loading = false;
 		}

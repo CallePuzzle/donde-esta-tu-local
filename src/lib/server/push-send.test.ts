@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { Prisma } from '@prisma/client';
+import type { Gang, User } from '@prisma/client';
 
 const sendNotification = vi.fn();
 
@@ -29,14 +30,23 @@ vi.mock('$lib/server/db', () => ({
 
 const deletePushSubscription = vi.fn();
 const getActivePushSubscriptions = vi.fn();
+const getAdminPushSubscriptions = vi.fn();
 
 vi.mock('$lib/server/push-subscription', () => ({
 	deletePushSubscription,
-	getActivePushSubscriptions
+	getActivePushSubscriptions,
+	getAdminPushSubscriptions
 }));
 
 const { WebPushError } = await import('web-push');
-const { sendPushNotification, sendActivityNotifications } = await import('./push-send');
+const {
+	sendPushNotification,
+	sendActivityNotifications,
+	buildPendingGangPayload,
+	buildPendingMemberPayload,
+	notifyAdminsPendingGang,
+	notifyAdminsPendingMember
+} = await import('./push-send');
 
 function makeWebPushError(statusCode: number, message = 'error') {
 	return new WebPushError(message, statusCode, {}, '', '');
@@ -62,6 +72,7 @@ beforeEach(() => {
 	create.mockReset();
 	deletePushSubscription.mockReset();
 	getActivePushSubscriptions.mockReset();
+	getAdminPushSubscriptions.mockReset();
 });
 
 describe('sendPushNotification', () => {
@@ -178,5 +189,71 @@ describe('sendActivityNotifications', () => {
 		expect(result).toEqual({ sent: 0, failed: 0, activities: 2 });
 		expect(sendNotification).toHaveBeenCalledTimes(1);
 		expect(deletePushSubscription).toHaveBeenCalledTimes(1);
+	});
+});
+
+describe('buildPendingGangPayload', () => {
+	it('incluye el nombre de la peña y apunta a /admin/gangs', () => {
+		const payload = buildPendingGangPayload({ id: 1, name: 'Peña Test' } as Gang);
+		expect(payload.title).toBe('Nueva peña pendiente');
+		expect(payload.body).toContain('Peña Test');
+		expect(payload.data.url).toBe('/admin/gangs');
+	});
+});
+
+describe('buildPendingMemberPayload', () => {
+	it('usa el nombre del usuario y apunta a /admin/members', () => {
+		const payload = buildPendingMemberPayload(
+			{ id: 'u1', name: 'Ana', email: 'ana@test.com' } as User,
+			{ id: 1, name: 'Peña Test' } as Gang
+		);
+		expect(payload.title).toBe('Nueva solicitud de miembro');
+		expect(payload.body).toContain('Ana');
+		expect(payload.body).toContain('Peña Test');
+		expect(payload.data.url).toBe('/admin/members');
+	});
+
+	it('falla al email si el usuario no tiene nombre', () => {
+		const payload = buildPendingMemberPayload(
+			{ id: 'u1', name: null, email: 'ana@test.com' } as unknown as User,
+			{ id: 1, name: 'Peña Test' } as Gang
+		);
+		expect(payload.body).toContain('ana@test.com');
+	});
+});
+
+describe('notifyAdminsPendingGang', () => {
+	it('no consulta suscripciones si no hay admins suscritos', async () => {
+		getAdminPushSubscriptions.mockResolvedValue([]);
+		await notifyAdminsPendingGang({ id: 1, name: 'Peña Test' } as Gang);
+		expect(sendNotification).not.toHaveBeenCalled();
+	});
+
+	it('envía a todas las suscripciones de admin', async () => {
+		getAdminPushSubscriptions.mockResolvedValue([
+			{ userId: 'admin1', subscription: makeSubscription('https://push.test/admin1') },
+			{ userId: 'admin2', subscription: makeSubscription('https://push.test/admin2') }
+		]);
+		sendNotification.mockResolvedValue(undefined);
+
+		await notifyAdminsPendingGang({ id: 1, name: 'Peña Test' } as Gang);
+
+		expect(sendNotification).toHaveBeenCalledTimes(2);
+	});
+});
+
+describe('notifyAdminsPendingMember', () => {
+	it('envía a todas las suscripciones de admin', async () => {
+		getAdminPushSubscriptions.mockResolvedValue([
+			{ userId: 'admin1', subscription: makeSubscription('https://push.test/admin1') }
+		]);
+		sendNotification.mockResolvedValue(undefined);
+
+		await notifyAdminsPendingMember(
+			{ id: 'u1', name: 'Ana', email: 'ana@test.com' } as User,
+			{ id: 1, name: 'Peña Test' } as Gang
+		);
+
+		expect(sendNotification).toHaveBeenCalledTimes(1);
 	});
 });

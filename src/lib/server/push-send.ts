@@ -4,13 +4,15 @@ import { Prisma } from '@prisma/client';
 import {
 	deletePushSubscription,
 	getActivePushSubscriptions,
+	getAdminPushSubscriptions,
 	type PushSubscriptionJSON
 } from '$lib/server/push-subscription';
 import { logger } from '$lib/logger';
 import { m } from '$lib/paraglide/messages.js';
 import { formatTimeShort } from '$lib/utils/format-date';
+import { memberDisplayName } from '$lib/utils/member-display';
 import { WebPushError } from 'web-push';
-import type { Activity, Gang } from '@prisma/client';
+import type { Activity, Gang, User } from '@prisma/client';
 
 type ActivityWithPlace = Activity & { placeGang: Gang | null };
 type SendResult = 'sent' | 'expired' | 'failed';
@@ -25,6 +27,7 @@ export async function sendPushNotification(
 		await webpush.sendNotification(subscription as PushSubscription, JSON.stringify(payload));
 		return 'sent';
 	} catch (error) {
+		console.log('PUSH SEND ERROR:', error);
 		if (error instanceof WebPushError && (error.statusCode === 410 || error.statusCode === 404)) {
 			logger.debug('Suscripción push caducada, eliminando');
 			await deletePushSubscription(subscription.endpoint);
@@ -122,4 +125,58 @@ export async function sendActivityNotifications(
 	}
 
 	return { sent, failed, activities: notifiedActivities };
+}
+
+export function buildPendingGangPayload(gang: Gang) {
+	return {
+		title: m.push_notification_admin_pending_gang_title(),
+		body: m.push_notification_admin_pending_gang_body({ name: gang.name }),
+		icon: '/icon192.png',
+		badge: '/icon192.png',
+		tag: `admin-pending-gang-${gang.id}`,
+		data: { url: '/admin/gangs' }
+	};
+}
+
+export function buildPendingMemberPayload(user: Pick<User, 'id' | 'name' | 'email'>, gang: Gang) {
+	return {
+		title: m.push_notification_admin_pending_member_title(),
+		body: m.push_notification_admin_pending_member_body({
+			name: memberDisplayName(user),
+			gang: gang.name
+		}),
+		icon: '/icon192.png',
+		badge: '/icon192.png',
+		tag: `admin-pending-member-${user.id}`,
+		data: { url: '/admin/members' }
+	};
+}
+
+export async function notifyAdminsPendingGang(gang: Gang): Promise<void> {
+	const subscriptions = await getAdminPushSubscriptions();
+	if (subscriptions.length === 0) return;
+
+	const payload = buildPendingGangPayload(gang);
+	// Envío en paralelo: no bloquea la acción del usuario; los errores se
+	// registran pero no abortan la operación principal.
+	await Promise.allSettled(
+		subscriptions.map(async ({ subscription }) => {
+			await sendPushNotification(subscription, payload);
+		})
+	);
+}
+
+export async function notifyAdminsPendingMember(
+	user: Pick<User, 'id' | 'name' | 'email'>,
+	gang: Gang
+): Promise<void> {
+	const subscriptions = await getAdminPushSubscriptions();
+	if (subscriptions.length === 0) return;
+
+	const payload = buildPendingMemberPayload(user, gang);
+	await Promise.allSettled(
+		subscriptions.map(async ({ subscription }) => {
+			await sendPushNotification(subscription, payload);
+		})
+	);
 }

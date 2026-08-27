@@ -47,8 +47,15 @@ test('un miembro validado valida una solicitud pendiente', async ({ page }) => {
 	await expect(pendingRow).toBeVisible();
 	await pendingRow.getByRole('button', { name: 'Validar' }).click();
 
-	// exact: el nombre del miembro ("Miembro Validado") también casa con el texto
-	await expect(page.getByText('Validado', { exact: true })).toBeVisible();
+	// La validación dispara invalidateAll(), que refresca members/pendingMembers
+	// en el mismo ciclo: el mensaje "Validado" del botón nunca llega a pintarse
+	// porque la fila (con el propio mensaje dentro) se desmonta al momento. El
+	// resultado observable es que el solicitante pasa a la lista de miembros y
+	// la sección de solicitudes pendientes (única) desaparece.
+	await expect(page.getByText('Solicitudes pendientes', { exact: true })).not.toBeVisible();
+	await expect(
+		page.locator('li').filter({ hasText: applicant.name }).getByRole('button')
+	).toHaveCount(0);
 
 	const applicantInDb = await prisma.user.findUnique({ where: { id: applicant.id } });
 	expect(applicantInDb?.membershipGangStatus).toBe('VALIDATED');
@@ -75,8 +82,12 @@ test('un miembro validado rechaza una solicitud pendiente', async ({ page }) => 
 	await expect(pendingRow).toBeVisible();
 	await pendingRow.getByRole('button', { name: 'Rechazar' }).click();
 
-	// exact: el nombre del solicitante ("Solicitante Rechazado") también casa
-	await expect(page.getByText('Rechazado', { exact: true })).toBeVisible();
+	// Igual que al validar: invalidateAll() refresca la lista en el mismo
+	// ciclo, así que el mensaje "Rechazado" del botón nunca llega a pintarse.
+	// El rechazo limpia gangId, así que el solicitante desaparece de la
+	// página (ni miembros ni pendientes) y la sección de pendientes se cierra.
+	await expect(page.getByText('Solicitudes pendientes', { exact: true })).not.toBeVisible();
+	await expect(page.getByText(applicant.name)).not.toBeVisible();
 
 	const applicantInDb = await prisma.user.findUnique({ where: { id: applicant.id } });
 	expect(applicantInDb?.membershipGangStatus).toBe('REFUSED');

@@ -41,6 +41,14 @@ export function isVapidKeyValid(publicKey: string): boolean {
 	return /^[A-Za-z0-9_-]{87}$/.test(publicKey);
 }
 
+// En Chromium para Android, pushManager.subscribe() delega el registro en
+// Firebase Cloud Messaging y lanza este AbortError cuando el sistema no
+// tiene Google Play Services (p. ej. GrapheneOS sin gapps): no es un fallo
+// puntual, reintentar no lo arregla.
+export function isPushServiceUnavailableError(error: unknown): boolean {
+	return error instanceof DOMException && error.name === 'AbortError';
+}
+
 export async function subscribeToPush(publicKey: string): Promise<PushSubscription> {
 	if (!isVapidKeyValid(publicKey)) {
 		throw new Error('Clave pública VAPID inválida');
