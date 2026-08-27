@@ -8,7 +8,7 @@
 
 	import type { PageData } from './$types';
 	import type { Map, Marker } from 'leaflet';
-	import type { Gang } from '@prisma/client';
+	import type { Gang } from '$lib/generated/prisma/client';
 	import type { Leaflet } from '$lib/utils/types';
 
 	interface GangInMap {

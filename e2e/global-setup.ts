@@ -6,12 +6,6 @@ import { loadTestEnv } from './helpers/env';
 export default async function globalSetup() {
 	const env = { ...process.env, ...loadTestEnv() };
 
-	// El build de producción genera el cliente Prisma con `--no-engine`, y ese
-	// cliente solo habla con URLs de Accelerate (prisma://). Para los E2E hace
-	// falta el motor de queries local: se regenera aquí para que el flujo
-	// funcione independientemente del estado previo de node_modules.
-	execSync('bunx prisma generate', { stdio: 'inherit' });
-
 	const maxAttempts = 15;
 	let lastError: unknown;
 	for (let attempt = 1; attempt <= maxAttempts; attempt++) {

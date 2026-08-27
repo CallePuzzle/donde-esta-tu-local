@@ -1,6 +1,6 @@
 import { logger } from '$lib/logger';
 import prisma from '$lib/server/db';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '$lib/generated/prisma/client';
 import { requireUser } from '$lib/server/membership';
 import { superValidate, message, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';

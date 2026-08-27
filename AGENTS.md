@@ -13,7 +13,7 @@ El proyecto es la quinta iteración de una serie que empezó en Cloudflare Worke
 - **Framework**: SvelteKit 2 con **Svelte 5** (runes: `$state`, `$props`, etc.; `compilerOptions.experimental.async: true`).
 - **Lenguaje**: TypeScript estricto (`strict: true` en `tsconfig.json`).
 - **Despliegue**: Vercel (`@sveltejs/adapter-vercel` con optimización de imágenes).
-- **Base de datos**: PostgreSQL vía **Prisma 6** (`prisma-client-js` con `driverAdapters` en preview) + extensión **Prisma Accelerate** (`src/lib/server/db.ts`, con singleton en `globalThis` para dev/HMR; la extensión solo se aplica si `DATABASE_URL` empieza por `prisma://` — con una URL PostgreSQL normal, como en los tests E2E, el cliente va directo). `DATABASE_URL` debe estar definida en el entorno. Prisma 7 está deliberadamente aplazado: además de la pérdida de tipos original con `@prisma/extension-accelerate` 3.x ([prisma/prisma#28580](https://github.com/prisma/prisma/issues/28580)), Prisma 7 elimina `datasource.url` de `schema.prisma` por completo (exige `prisma.config.ts` + `adapter`/`accelerateUrl` en el `PrismaClient`), una migración real, no un simple bump. No subir hasta que se acometa esa migración. TypeScript se mantiene en 5.x por la misma razón de compatibilidad con `svelte-check`/`typescript-eslint`.
+- **Base de datos**: PostgreSQL vía **Prisma 7** (generador `prisma-client` con output en `src/lib/generated/prisma`, driver adapters GA) + extensión **Prisma Accelerate** en producción (`src/lib/server/db.ts`: usa `accelerateUrl` cuando `DATABASE_URL` empieza por `prisma://` o `prisma+postgres://`, y el adapter `@prisma/adapter-pg` para conexión directa en desarrollo/tests; singleton en `globalThis` para dev/HMR). La configuración de conexión para migraciones vive en `prisma.config.ts` (`DIRECT_DATABASE_URL` con fallback a `DATABASE_URL`). `DATABASE_URL` debe estar definida en el entorno. TypeScript se mantiene en 5.x por compatibilidad con `svelte-check`/`typescript-eslint`.
 - **Autenticación**: **better-auth** con adaptador Prisma, login sin contraseña mediante **OTP por email** (nodemailer vía SMTP) y plugin `admin` (roles `admin`/`system`). Configuración en `src/lib/server/auth.ts`; el handler vive en `src/lib/handles/better-auth-handle.ts` y se encadena en `src/hooks.server.ts`.
 - **Estilos**: Tailwind CSS 4 (plugin de Vite) + **daisyUI 5** (tema `dark` por defecto, definido en `src/app.css`) + Flowbite/flowbite-svelte + bits-ui. Iconos: `@lucide/svelte`.
 - **Mapas**: Leaflet, cargado dinámicamente en el cliente vía el helper `initMap()` de `$lib/utils/init-map.ts` (import dinámico + `leaflet/dist/leaflet.css` en el bundle + tile layer de OpenStreetMap); úsalo en vez de repetir la inicialización en cada página.
@@ -28,7 +28,7 @@ El proyecto es la quinta iteración de una serie que empezó en Cloudflare Worke
 Usa **bun** (hay `bun.lock`); todos los scripts son `bun run <script>`.
 
 - `bun run dev` — servidor de desarrollo (Vite).
-- `bun run build` — build de producción. Ojo: ejecuta `prisma generate --no-engine && prisma migrate deploy && vite build` (aplica migraciones contra la base de datos configurada).
+- `bun run build` — build de producción. Ojo: ejecuta `prisma generate && prisma migrate deploy && vite build` (aplica migraciones contra la base de datos configurada).
 - `bun run only-build` — build sin tocar la base de datos. **Usa siempre este para verificar, nunca `build`.**
 - `bun run check` — type-check con `svelte-check`.
 - `bun run lint` — `prettier --check` + ESLint. `bun run format` — formatea todo con Prettier.
@@ -83,7 +83,7 @@ Decisión consciente (code review 2026-08): un usuario con `membershipGangStatus
 Requeridas en producción/desarrollo (fichero `.env`, no commiteado; ver `.env.example`):
 
 - `DATABASE_URL` — PostgreSQL (o URL de Prisma Accelerate).
-- `DIRECT_DATABASE_URL` — conexión directa a PostgreSQL para el `directUrl` del esquema Prisma (migraciones/introspección); puede ser la misma que `DATABASE_URL` si no usas Accelerate.
+- `DIRECT_DATABASE_URL` — conexión directa a PostgreSQL usada por `prisma.config.ts` para migraciones. Puede ser la misma que `DATABASE_URL` si no usas Accelerate; si no está definida, `prisma.config.ts` usa `DATABASE_URL` como fallback.
 - `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` — better-auth (sesión/login).
 - `SMTP_HOST`, `SMPT_AUTH_USER`, `SMPT_AUTH_PASS`, `SMPT_SENDER` — envío del OTP de login (nótese el typo `SMPT_`, es intencionado/existente). En dev no se envía email; el OTP aparece en el log (`logger.debug`).
 - `BLOB_READ_WRITE_TOKEN` — Vercel Blob, para subir el avatar del perfil.

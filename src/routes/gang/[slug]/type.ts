@@ -1,4 +1,4 @@
-import type { Gang, User } from '@prisma/client';
+import type { Gang, User } from '$lib/generated/prisma/client';
 
 type GangData = Pick<Gang, 'id' | 'name' | 'latitude' | 'longitude' | 'status'>;
 // La foto solo la necesita el detalle; la página de edición no la muestra.

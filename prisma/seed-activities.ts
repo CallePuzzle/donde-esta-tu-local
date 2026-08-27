@@ -1,6 +1,12 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '$lib/generated/prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 import { SeedActivity, type SeedActivityType } from './seed-activity';
+
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+	throw new Error('DATABASE_URL no está definida');
+}
 
 async function SeedActivities(prisma: PrismaClient) {
 	console.log('🎉 Seeding activities...');
@@ -97,7 +103,7 @@ async function SeedActivities(prisma: PrismaClient) {
 	}
 }
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString }) });
 
 async function main() {
 	console.log('🌱 Starting seed...');

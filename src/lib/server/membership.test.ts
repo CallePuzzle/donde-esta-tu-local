@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import type { User } from '@prisma/client';
+import type { User } from '$lib/generated/prisma/client';
 
 const findUnique = vi.fn();
 
