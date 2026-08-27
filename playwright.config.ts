@@ -9,6 +9,13 @@ const baseURL = testEnv.BETTER_AUTH_URL ?? 'http://localhost:4174';
 // .env que cargan Vite/bun, así el dev server usa la BD de test y no la real.
 Object.assign(process.env, testEnv);
 
+// web-push siempre habla HTTPS (hardcoded en la librería), así que el
+// servidor de push falso de los tests (helpers/push-server.ts) usa un
+// certificado autofirmado. Hace falta confiar en él tanto aquí (la petición
+// de sanity-check de notifications.spec.ts corre en este proceso) como en el
+// del dev server, que es el que realmente llama a webpush.sendNotification.
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 export default defineConfig({
 	testDir: './e2e',
 	// BD compartida entre tests: sin paralelismo

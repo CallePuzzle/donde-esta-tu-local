@@ -258,5 +258,20 @@
 	"admin_history_empty_text": "El historial comenzará a registrarse cuando se realicen modificaciones en las peñas.",
 	"admin_history_change_type_create": "Creación",
 	"admin_history_change_type_update": "Actualización",
-	"admin_history_load_error": "Error al cargar el historial de cambios"
+	"admin_history_load_error": "Error al cargar el historial de cambios",
+	"push_notifications_title": "Avisos de actividades",
+	"push_notifications_description": "Recibe una notificación cuando una actividad esté a punto de comenzar.",
+	"push_notifications_enable": "Activar avisos",
+	"push_notifications_disable": "Desactivar avisos",
+	"push_notifications_permission_denied": "Has bloqueado las notificaciones. Actívalas en la configuración del navegador.",
+	"push_notifications_subscribe_error": "No se ha podido activar el aviso. Inténtalo de nuevo.",
+	"push_notifications_service_unavailable": "Este navegador no tiene soporte para notificaciones push en tu dispositivo. Prueba con otro navegador, como Firefox.",
+	"push_notifications_unsubscribe_error": "No se ha podido desactivar el aviso. Inténtalo de nuevo.",
+	"push_notification_activity_title": "¡Actividad próxima!",
+	"push_notification_activity_body": "La actividad \"{activity}\" comenzará a las {time} en {place}.",
+	"push_notification_activity_body_no_place": "La actividad \"{activity}\" comenzará a las {time}.",
+	"push_notification_admin_pending_gang_title": "Nueva peña pendiente",
+	"push_notification_admin_pending_gang_body": "La peña \"{name}\" está pendiente de validación.",
+	"push_notification_admin_pending_member_title": "Nueva solicitud de miembro",
+	"push_notification_admin_pending_member_body": "{name} ha solicitado unirse a la peña \"{gang}\"."
 }
