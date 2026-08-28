@@ -1,12 +1,11 @@
 import { PrismaClient } from '$lib/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) {
-	throw new Error('DATABASE_URL no está definida');
-}
+import { requireDirectDatabaseUrl } from '$lib/server/database-url';
 
-const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString }) });
+const prisma = new PrismaClient({
+	adapter: new PrismaPg({ connectionString: requireDirectDatabaseUrl() })
+});
 
 async function main() {
 	const now = new Date();
