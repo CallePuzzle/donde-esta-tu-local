@@ -43,6 +43,8 @@
 	"routes_add_gang_user_not_logged_in_or_not_member": "Para modificar una peña tienes que estar conectado y ser miembro de la peña",
 	"routes_activities": "Actividades de las peñas",
 	"routes_activities_short": "Actividades",
+	"activities_notifications_title": "Avisos de actividades",
+	"activities_notifications_description": "Si activas las notificaciones en tu perfil, recibirás un aviso antes de que empiecen las actividades.",
 	"routes_admin": "Admin",
 	"routes_admin_gangs": "Admin Gangs",
 	"routes_admin_members": "Admin Miembros",
