@@ -4,6 +4,7 @@
 	import { logger } from '$lib/logger';
 	import {
 		isPushSupported,
+		isPushServiceUnavailableError,
 		getExistingSubscription,
 		subscribeToPush,
 		unsubscribeFromPush,
@@ -28,6 +29,13 @@
 		try {
 			const existing = await getExistingSubscription();
 			enabled = !!existing;
+			if (existing) {
+				// savePushSubscription es un upsert idempotente: reenviar la
+				// suscripción existente resincroniza el servidor si la fila se
+				// hubiera perdido (410 desde otro dispositivo, reseteo de BD...),
+				// sin lo cual el toggle mostraría "activado" sin que llegue nada.
+				await sendSubscriptionToServer(existing);
+			}
 		} catch (error) {
 			logger.error(error, 'Error comprobando suscripción push existente');
 		}
@@ -41,22 +49,17 @@
 
 		try {
 			if (targetEnabled) {
-				logger.debug('Solicitando permiso de notificaciones');
 				const permission = await Notification.requestPermission();
-				logger.debug({ permission }, 'Respuesta del permiso de notificaciones');
 				if (permission !== 'granted') {
 					enabled = false;
 					errorMessage = m.push_notifications_permission_denied();
 					return;
 				}
 				const subscription = await subscribeToPush(vapidPublicKey);
-				logger.debug({ endpoint: subscription.endpoint }, 'Suscripción push obtenida');
 				await sendSubscriptionToServer(subscription);
-				logger.debug('Suscripción push enviada al servidor');
 			} else {
 				const existing = await getExistingSubscription();
 				if (existing) {
-					logger.debug({ endpoint: existing.endpoint }, 'Borrando suscripción push');
 					await deleteSubscriptionFromServer(existing.endpoint);
 					await unsubscribeFromPush();
 				}
@@ -64,9 +67,13 @@
 		} catch (error) {
 			logger.error(error, 'Error cambiando suscripción push');
 			enabled = !targetEnabled;
-			errorMessage = targetEnabled
-				? m.push_notifications_subscribe_error()
-				: m.push_notifications_unsubscribe_error();
+			if (targetEnabled && isPushServiceUnavailableError(error)) {
+				errorMessage = m.push_notifications_service_unavailable();
+			} else {
+				errorMessage = targetEnabled
+					? m.push_notifications_subscribe_error()
+					: m.push_notifications_unsubscribe_error();
+			}
 		} finally {
 			loading = false;
 		}

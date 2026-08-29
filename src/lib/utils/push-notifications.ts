@@ -1,12 +1,39 @@
 import { logger } from '$lib/logger';
 
 export function isPushSupported(): boolean {
-	return typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window;
+	return (
+		typeof window !== 'undefined' &&
+		'serviceWorker' in navigator &&
+		'PushManager' in window &&
+		'Notification' in window
+	);
+}
+
+// navigator.serviceWorker.ready no resuelve nunca si no hay un service worker
+// registrado, y SvelteKit solo lo registra automáticamente en builds de
+// producción (bun run dev no lo hace). Sin este timeout, pulsar el toggle en
+// dev deja `loading` colgado para siempre.
+async function waitForServiceWorkerReady(timeoutMs = 5000): Promise<ServiceWorkerRegistration> {
+	const existing = await navigator.serviceWorker.getRegistration();
+	if (existing) return existing;
+
+	const timeout = new Promise<never>((_, reject) => {
+		setTimeout(
+			() =>
+				reject(
+					new Error(
+						'No hay un service worker registrado. En desarrollo (bun run dev) no se registra automáticamente; prueba con bun run only-build.'
+					)
+				),
+			timeoutMs
+		);
+	});
+	return Promise.race([navigator.serviceWorker.ready, timeout]);
 }
 
 export async function getExistingSubscription(): Promise<PushSubscription | null> {
 	if (!isPushSupported()) return null;
-	const registration = await navigator.serviceWorker.ready;
+	const registration = await waitForServiceWorkerReady();
 	return registration.pushManager.getSubscription();
 }
 
@@ -14,21 +41,25 @@ export function isVapidKeyValid(publicKey: string): boolean {
 	return /^[A-Za-z0-9_-]{87}$/.test(publicKey);
 }
 
+// En Chromium para Android, pushManager.subscribe() delega el registro en
+// Firebase Cloud Messaging y lanza este AbortError cuando el sistema no
+// tiene Google Play Services (p. ej. GrapheneOS sin gapps): no es un fallo
+// puntual, reintentar no lo arregla.
+export function isPushServiceUnavailableError(error: unknown): boolean {
+	return error instanceof DOMException && error.name === 'AbortError';
+}
+
 export async function subscribeToPush(publicKey: string): Promise<PushSubscription> {
-	logger.debug({ publicKey, valid: isVapidKeyValid(publicKey) }, 'Suscribiendo a push');
-	const registration = await navigator.serviceWorker.ready;
-	logger.debug({ scope: registration.scope }, 'Service worker listo');
-	try {
-		const subscription = await registration.pushManager.subscribe({
-			userVisibleOnly: true,
-			applicationServerKey: publicKey
-		});
-		logger.debug({ endpoint: subscription.endpoint }, 'Suscripción push obtenida');
-		return subscription;
-	} catch (error) {
-		logger.error(error, 'Error en pushManager.subscribe');
-		throw error;
+	if (!isVapidKeyValid(publicKey)) {
+		throw new Error('Clave pública VAPID inválida');
 	}
+	const registration = await waitForServiceWorkerReady();
+	const subscription = await registration.pushManager.subscribe({
+		userVisibleOnly: true,
+		applicationServerKey: urlBase64ToUint8Array(publicKey)
+	});
+	logger.debug({ endpoint: subscription.endpoint }, 'Suscripción push obtenida');
+	return subscription;
 }
 
 export async function unsubscribeFromPush(): Promise<void> {

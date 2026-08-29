@@ -11,6 +11,7 @@ vi.mock('$lib/server/db', () => ({
 const {
 	savePushSubscription,
 	deletePushSubscription,
+	deletePushSubscriptionForUser,
 	deletePushSubscriptionsByUser,
 	getActivePushSubscriptions
 } = await import('./push-subscription');
@@ -57,6 +58,15 @@ describe('deletePushSubscription', () => {
 		await deletePushSubscription('https://push.test/sub/2');
 		expect(deleteMany).toHaveBeenCalledWith({
 			where: { endpoint: 'https://push.test/sub/2' }
+		});
+	});
+});
+
+describe('deletePushSubscriptionForUser', () => {
+	it('borra la suscripción solo si pertenece al usuario', async () => {
+		await deletePushSubscriptionForUser('https://push.test/sub/2', 'user-1');
+		expect(deleteMany).toHaveBeenCalledWith({
+			where: { endpoint: 'https://push.test/sub/2', userId: 'user-1' }
 		});
 	});
 });

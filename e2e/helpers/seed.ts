@@ -1,8 +1,15 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createECDH, randomBytes } from 'node:crypto';
 import { prisma } from './db';
 import { coordsMonte } from '../../src/lib/utils/coords-monte';
 
-import type { Activity, Gang, GangStatus, MembershipGangStatus, User } from '@prisma/client';
+import type {
+	Activity,
+	Gang,
+	GangStatus,
+	MembershipGangStatus,
+	PushSubscription,
+	User
+} from '@prisma/client';
 
 // Coordenadas dentro del bounding box que valida addGangSchema: las de
 // coords-monte.ts (Montemayor de Pililla), fuente única de verdad
@@ -71,6 +78,32 @@ export async function createActivity(options: {
 			date,
 			placeGangId: options.placeGangId ?? null,
 			placeDesc: options.placeDesc ?? null
+		}
+	});
+}
+
+// Claves de cifrado válidas para una suscripción push (mismo formato que
+// generaría el navegador): un punto EC P-256 sin comprimir (65 bytes) como
+// p256dh y un secreto de 16 bytes como auth. Sin esto, web-push rechaza la
+// suscripción antes de intentar la petición HTTP (ver encryption-helper.js).
+export function generatePushKeys(): { p256dh: string; auth: string } {
+	const ecdh = createECDH('prime256v1');
+	ecdh.generateKeys();
+	return {
+		p256dh: ecdh.getPublicKey('base64url'),
+		auth: randomBytes(16).toString('base64url')
+	};
+}
+
+export async function createPushSubscription(options: {
+	userId: string;
+	endpoint: string;
+}): Promise<PushSubscription> {
+	return prisma.pushSubscription.create({
+		data: {
+			endpoint: options.endpoint,
+			userId: options.userId,
+			...generatePushKeys()
 		}
 	});
 }

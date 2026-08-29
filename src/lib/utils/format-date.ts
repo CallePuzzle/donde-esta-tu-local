@@ -2,6 +2,19 @@
 // en cuatro componentes distintos, cada uno con sus propias opciones).
 const LOCALE = 'es-ES';
 
+// Necesaria en servidor (p. ej. al construir el texto de una notificación
+// push): el runtime de Vercel corre en UTC, así que sin fijarla explícitamente
+// una actividad de las 20:30 se anunciaría como las 18:30.
+export const TIME_ZONE = 'Europe/Madrid';
+
+export function formatTimeShort(date: Date | string): string {
+	return new Date(date).toLocaleTimeString(LOCALE, {
+		hour: '2-digit',
+		minute: '2-digit',
+		timeZone: TIME_ZONE
+	});
+}
+
 export function formatDateLong(date: Date | string): string {
 	return new Date(date).toLocaleDateString(LOCALE, {
 		year: 'numeric',

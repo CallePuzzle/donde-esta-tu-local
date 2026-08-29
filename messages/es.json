@@ -43,6 +43,8 @@
 	"routes_add_gang_user_not_logged_in_or_not_member": "Para modificar una peña tienes que estar conectado y ser miembro de la peña",
 	"routes_activities": "Actividades de las peñas",
 	"routes_activities_short": "Actividades",
+	"activities_notifications_title": "Avisos de actividades",
+	"activities_notifications_description": "Si activas las notificaciones en tu perfil, recibirás un aviso antes de que empiecen las actividades.",
 	"routes_admin": "Admin",
 	"routes_admin_gangs": "Admin Gangs",
 	"routes_admin_members": "Admin Miembros",
@@ -263,7 +265,13 @@
 	"push_notifications_disable": "Desactivar avisos",
 	"push_notifications_permission_denied": "Has bloqueado las notificaciones. Actívalas en la configuración del navegador.",
 	"push_notifications_subscribe_error": "No se ha podido activar el aviso. Inténtalo de nuevo.",
+	"push_notifications_service_unavailable": "Este navegador no tiene soporte para notificaciones push en tu dispositivo. Prueba con otro navegador, como Firefox.",
 	"push_notifications_unsubscribe_error": "No se ha podido desactivar el aviso. Inténtalo de nuevo.",
 	"push_notification_activity_title": "¡Actividad próxima!",
-	"push_notification_activity_body": "La actividad \"{activity}\" comenzará a las {time} en {place}."
+	"push_notification_activity_body": "La actividad \"{activity}\" comenzará a las {time} en {place}.",
+	"push_notification_activity_body_no_place": "La actividad \"{activity}\" comenzará a las {time}.",
+	"push_notification_admin_pending_gang_title": "Nueva peña pendiente",
+	"push_notification_admin_pending_gang_body": "La peña \"{name}\" está pendiente de validación.",
+	"push_notification_admin_pending_member_title": "Nueva solicitud de miembro",
+	"push_notification_admin_pending_member_body": "{name} ha solicitado unirse a la peña \"{gang}\"."
 }

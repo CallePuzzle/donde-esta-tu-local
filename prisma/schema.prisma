@@ -47,8 +47,8 @@ model User {
   gang                 Gang?                @relation(fields: [gangId], references: [id])
   membershipGangStatus MembershipGangStatus @default(PENDING)
 
-  validatedGangs Gang[]        @relation("ValidatedBy")
-  modifiedGangs  GangHistory[] @relation("ModifiedBy")
+  validatedGangs    Gang[]             @relation("ValidatedBy")
+  modifiedGangs     GangHistory[]      @relation("ModifiedBy")
   pushSubscriptions PushSubscription[]
 
   @@unique([email])

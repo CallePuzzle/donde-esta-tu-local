@@ -29,6 +29,18 @@ export async function deletePushSubscription(endpoint: string): Promise<void> {
 	});
 }
 
+// Variante para el endpoint de baja del propio usuario: sin el filtro por
+// userId, cualquier usuario autenticado que conociera un endpoint ajeno
+// podría desuscribirlo.
+export async function deletePushSubscriptionForUser(
+	endpoint: string,
+	userId: string
+): Promise<void> {
+	await prisma.pushSubscription.deleteMany({
+		where: { endpoint, userId }
+	});
+}
+
 export async function deletePushSubscriptionsByUser(userId: string): Promise<void> {
 	await prisma.pushSubscription.deleteMany({
 		where: { userId }
@@ -39,6 +51,28 @@ export async function getActivePushSubscriptions(): Promise<
 	{ userId: string; subscription: PushSubscriptionJSON }[]
 > {
 	const rows = await prisma.pushSubscription.findMany();
+	return rows.map((row) => ({
+		userId: row.userId,
+		subscription: {
+			endpoint: row.endpoint,
+			keys: {
+				p256dh: row.p256dh,
+				auth: row.auth
+			}
+		}
+	}));
+}
+
+export async function getAdminPushSubscriptions(): Promise<
+	{ userId: string; subscription: PushSubscriptionJSON }[]
+> {
+	const rows = await prisma.pushSubscription.findMany({
+		where: {
+			user: {
+				role: { in: ['admin', 'system'] }
+			}
+		}
+	});
 	return rows.map((row) => ({
 		userId: row.userId,
 		subscription: {

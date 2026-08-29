@@ -446,3 +446,183 @@ La rama añadió estos campos a `Activity` para decidir cuándo y si se había n
 3. Mantiene la idempotencia sin depender de un booleano que puede quedar en un estado inconsistente.
 
 Si se quiere una implementación más ligera, los campos de la rama funcionan, pero se desvía del diseño descrito aquí.
+
+---
+
+# Code review de la rama `106-notificaciones-de-las-actividades` vs `origin/main`
+
+_Revisión realizada el 2026-08-27 sobre `be963e0` (5 commits, 23 ficheros, +1297)._
+
+## Estado de las verificaciones
+
+| Comando                                  | Resultado                     |
+| ---------------------------------------- | ----------------------------- |
+| `bun run check`                          | ✅ 4129 ficheros, 0 errores   |
+| `bun run lint`                           | ✅ Prettier + ESLint limpios  |
+| `bun run test`                           | ✅ 76 tests, 12 ficheros      |
+| `bunx playwright test notifications`     | ✅ 3/3                        |
+| `bun run only-build`                     | ✅                            |
+| `prisma migrate deploy` sobre BD de test | ✅ la migración aplica limpia |
+
+## Lo que está bien
+
+- La limpieza de la implementación antigua es completa: no quedan `cf-webpush`, `User.subscription`, `src/lib/notification/`, `/notification/test` ni `GET /activities/send-notification`.
+- Dependencias en la sección correcta (`web-push` en `dependencies`, `@types/web-push` en `devDependencies`).
+- `subscribe` y `unsubscribe` llevan `requireSameOrigin` + `requireUser`, y validan el cuerpo con Zod.
+- `resetDb` de E2E actualizado con las tablas nuevas.
+- El endpoint de cron comprueba también `!CRON_SECRET`, así que un `.env` sin la variable no abre el endpoint.
+
+---
+
+## Bugs de corrección
+
+### 1. El texto de la notificación es agramatical — `src/lib/server/push-send.ts:34`
+
+`formatWeekdayDayTime` devuelve `"jueves 27, 20:30"`, y el mensaje es `"comenzará a las {time}"`:
+
+> La actividad "Cena" comenzará a las **jueves 27, 20:30** en Peña X.
+
+Hace falta un formateador de solo hora (`{ hour: '2-digit', minute: '2-digit' }`) para `{time}`, o reescribir el mensaje para que acepte fecha completa (`"comenzará el {time}"`).
+
+### 2. Zona horaria: la hora será incorrecta en producción — `src/lib/server/push-send.ts:34`
+
+Es el **primer uso en servidor** de `format-date.ts`. Los helpers no fijan `timeZone`, así que usan la del proceso; `src/lib/utils/format-date.test.ts:12` hace `process.env.TZ = 'Europe/Madrid'` precisamente por eso. En Vercel el runtime va en UTC, con lo que la notificación anunciará una actividad de las 20:30 como las 18:30. Hay que pasar `timeZone: 'Europe/Madrid'` en el formateo del payload (y probablemente extraerlo a una constante compartida en `format-date.ts`).
+
+### 3. Actividad sin lugar → `"... en ."` — `src/lib/server/push-send.ts:33`
+
+`const place = activity.placeGang?.name ?? activity.placeDesc ?? ''`. Si la actividad no tiene ni `placeGang` ni `placeDesc`, el cuerpo queda `La actividad "X" comenzará a las ... en .`. Hace falta una variante del mensaje sin lugar.
+
+### 4. `notificationclick` nunca reutiliza la pestaña abierta — `src/service-worker.js:77`
+
+`client.url === url` compara la URL absoluta del cliente (`https://dominio/activities`) con la relativa del payload (`/activities`): no coincide jamás, así que siempre se abre una ventana nueva aunque la app ya esté abierta. Resolver contra el origen (`new URL(url, self.location.origin).href`) y, si hay cliente en otra ruta, hacer `focus()` + `navigate()`.
+
+### 5. El contador `sent` miente — `src/lib/server/push-send.ts:71-72`
+
+`sendPushNotification` captura los 410/404, borra la suscripción y **retorna sin error**, así que el bucle hace `sent++` para suscripciones caducadas que no han recibido nada. `failed` se queda a 0 en el caso más habitual de fallo. Devolver un resultado (`'sent' | 'expired' | 'failed'`) en vez de `void`.
+
+### 6. Carrera entre ejecuciones del cron y 500 en cascada — `src/lib/server/push-send.ts:78-80`
+
+El log se crea **después** de enviar. Con un cron cada 5 minutos y una ejecución lenta, dos invocaciones solapadas ven ambas `notificationLog: null` → doble notificación; y el segundo `create` viola el índice único de `activityId` → excepción no capturada → el endpoint responde 500 **y las actividades restantes del bucle se quedan sin log**, con lo que se reenviarán en la siguiente pasada.
+
+Arreglo: usar el log como cerrojo, creándolo _antes_ de enviar y capturando el P2002 para saltar la actividad; o `createMany({ data: [...], skipDuplicates: true })`. En cualquier caso, envolver el `create` en try/catch para que un fallo no aborte el resto del bucle.
+
+### 7. Las suscripciones caducadas se reintentan dentro de la misma pasada — `src/lib/server/push-send.ts:63,69`
+
+`subscriptions` es una foto tomada una sola vez. Si en la actividad A una suscripción da 410 y se borra, en la actividad B se vuelve a intentar (otro 410, otro `deleteMany`). Mantener un `Set` de endpoints caídos y filtrarlo en las iteraciones siguientes.
+
+### 8. En `bun run dev` el toggle se queda colgado — `src/lib/utils/push-notifications.ts:9,19`
+
+`navigator.serviceWorker.ready` **no resuelve nunca** si no hay service worker registrado, y SvelteKit solo registra `src/service-worker.js` automáticamente en builds de producción (no hay registro manual en `+layout.svelte` ni `kit.serviceWorker.register` en `svelte.config.js`). En desarrollo, al pulsar el toggle `loading` se queda a `true` indefinidamente, sin error ni forma de recuperarse. Comprobar antes con `navigator.serviceWorker.getRegistration()` o poner un `Promise.race` con timeout y mostrar error.
+
+### 9. El estado del toggle no se sincroniza con el servidor — `src/lib/components/NotificationToggle.svelte:29-30`
+
+`enabled` sale solo de `getExistingSubscription()`, es decir del navegador. Si la fila de `push_subscription` desapareció (borrado por 410, reseteo de BD, usuario recreado), el toggle aparece activado pero no llega nada, y el usuario no tiene forma de resincronizar salvo apagar y encender. Como `savePushSubscription` es un upsert idempotente, lo barato es reenviar la suscripción existente al servidor en el `onMount`.
+
+### 10. `isPushSupported` no comprueba `Notification` — `src/lib/utils/push-notifications.ts:4`
+
+Comprueba `serviceWorker` y `PushManager` pero luego se llama a `Notification.requestPermission()`. En navegadores donde `Notification` no existe (Safari iOS en pestaña, sin instalar como PWA) esto lanza y se muestra el error genérico de suscripción en vez de un mensaje útil. Añadir `'Notification' in window` al check y, para iOS, considerar un texto que explique que hay que instalar la app en la pantalla de inicio.
+
+---
+
+## Seguridad
+
+### 11. `unsubscribe` no comprueba la propiedad — `src/routes/api/notifications/unsubscribe/+server.ts:16,31`
+
+`requireUser(event.locals)` se llama pero se descarta el retorno, y el borrado es por `endpoint` a secas: cualquier usuario autenticado que conozca un endpoint ajeno puede desuscribirlo. El plan lo aceptaba conscientemente, pero el arreglo es una línea y elimina la discusión:
+
+```ts
+const user = requireUser(event.locals);
+await prisma.pushSubscription.deleteMany({ where: { endpoint, userId: user.id } });
+```
+
+### 12. Comparación no constante del `CRON_SECRET` — `src/routes/api/notifications/send/+server.ts:12`
+
+`token !== CRON_SECRET` es vulnerable en teoría a timing. Riesgo real bajo (red de por medio, sin rate limit tampoco), pero `crypto.timingSafeEqual` sobre buffers de igual longitud es trivial.
+
+### 13. Se registra el endpoint de push completo en producción — `src/lib/server/push-send.ts:24`
+
+`logger.info({ endpoint }, ...)`. Un endpoint de push es una URL-capacidad: quien la tenga (más las claves) puede enviar notificaciones a ese dispositivo. `logger.debug` queda silenciado en prod, pero este es `info`. Registrar solo el id de la fila o un hash.
+
+### 14. `vapidPublicKey` viaja en el payload de todas las páginas — `src/routes/+layout.server.ts:12`
+
+No es una fuga (es la clave _pública_), pero se envía a todos los visitantes, incluidos los anónimos, en cada navegación, cuando solo lo usa `/profile`. Moverlo a `src/routes/profile/+page.server.ts`.
+
+---
+
+## Diseño y desviaciones del plan
+
+### 15. Falta el endpoint `DELETE /api/notifications/subscriptions` (plan §4.2.4)
+
+No está implementado. `deletePushSubscriptionsByUser` (`push-subscription.ts:32`) es código muerto: su único consumidor es su propio test.
+
+### 16. `isVapidKeyValid` es código muerto — `src/lib/utils/push-notifications.ts:13`
+
+Solo se usa dentro de un `logger.debug` en la línea 18. O se usa para validar de verdad antes de suscribir (con error claro si la clave está mal configurada) o se borra.
+
+### 17. Logging de depuración del commit 3585d81 sin limpiar
+
+`subscribe/+server.ts:19-22`, `push-notifications.ts:18,20,26`, `NotificationToggle.svelte:44,46,53,55,59`. Están a nivel `debug`, así que no salen en producción, pero son ruido y hay duplicados: `"Suscripción push obtenida"` se emite dos veces (`push-notifications.ts:26` y `NotificationToggle.svelte:53`) para el mismo evento. Dejar como mucho un `debug` por paso.
+
+### 18. Cast innecesario — `src/lib/server/push-send.ts:68`
+
+`activity as ActivityWithPlace`: el `findMany` con `include: { placeGang: true }` ya devuelve ese tipo. El cast no hace falta y, si el `include` cambia, oculta el error en vez de mostrarlo.
+
+### 19. Se notifica a todos los suscriptores de todas las actividades
+
+Es lo que decía el plan, pero conviene dejarlo escrito como decisión de producto: no hay segmentación por peña ni por interés. Si crecen las actividades, esto se convierte en spam y habrá que filtrar por `placeGangId` / membresía.
+
+### 20. Idempotencia demasiado rígida ante ediciones
+
+Si se edita la fecha de una actividad ya notificada, el log sigue ahí y no se vuelve a avisar. Además no hay política de retención para `activity_notification_log`, que crece sin límite. Ambas cosas son aceptables ahora; merecen una nota en el código.
+
+### 21. Envío secuencial dentro de una función serverless — `src/lib/server/push-send.ts:67-77`
+
+`await` anidado sobre actividades × suscripciones. Con el `nodejs22.x` de Vercel el techo es el timeout de la función. Ahora mismo no es problema; conviene pasar a `Promise.allSettled` por lotes antes de que crezca el número de suscriptores.
+
+### 22. `prisma/schema.prisma:52` sin formatear
+
+```prisma
+  validatedGangs Gang[]        @relation("ValidatedBy")
+  modifiedGangs  GangHistory[] @relation("ModifiedBy")
+  pushSubscriptions PushSubscription[]
+```
+
+La línea nueva no está alineada con el resto del bloque; `bunx prisma format` la reescribiría. (Prettier no cubre `.prisma`, por eso el lint pasa.)
+
+---
+
+## Tests
+
+### 23. `push-subscription.test.ts` es casi tautológico
+
+Los cuatro tests comprueban que Prisma se llama con los argumentos que la función está escrita para pasar. No detectan ningún fallo realista. La lógica que sí merece test unitario está en `push-send.ts`: la rama 410 → borrado, los contadores `sent`/`failed`, y los límites de la ventana (`gte: now` / `lte: windowEnd`). Se puede hacer mockeando `web-push`.
+
+### 24. Los E2E no llegan a enviar nada
+
+`e2e/notifications.spec.ts` cubre bien el 401, la ventana y la idempotencia, pero como la BD de test no tiene filas en `push_subscription`, `webpush.sendNotification` no se ejecuta jamás. Sembrar una suscripción falsa haría que el test cubriera el camino de envío y el borrado por 410.
+
+### 25. No hay test de que el toggle aparezca en `/profile`
+
+El plan §8.2 lo contemplaba y no está.
+
+---
+
+## Documentación
+
+### 26. Falta documentar variables y cron
+
+- La tabla de variables de `README.md:35-40` no incluye `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` ni `CRON_SECRET`.
+- No hay nada que explique el cron externo del plan §7 (URL, método `POST`, cabecera `Authorization: Bearer`, cada 5 minutos).
+- **Importante para el despliegue**: se usa `$env/static/private`, que se resuelve en tiempo de build. Si las cuatro variables no están dadas de alta en Vercel **antes** del deploy, el build falla. Conviene decirlo explícitamente en el README.
+
+### 27. `db:seed-test-notifications` sin documentar
+
+El script nuevo (`package.json:31`) no aparece en la lista de comandos del README (`README.md:44-48`), a diferencia de los otros seeds.
+
+---
+
+## Prioridad sugerida
+
+1. **Bloqueantes antes de producción**: 2 (zona horaria), 1 y 3 (textos), 6 (carrera del log del cron), 4 (`notificationclick`).
+2. **Importantes**: 11 (propiedad en unsubscribe), 8 (cuelgue en dev), 9 (desincronización del toggle), 5 (contadores), 26 (variables en Vercel).
+3. **Limpieza**: 15-18, 22, y los tests 23-25.

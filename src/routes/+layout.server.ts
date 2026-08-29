@@ -1,5 +1,4 @@
 import { logger } from '$lib/logger';
-import { VAPID_PUBLIC_KEY } from '$env/static/private';
 import type { LayoutServerLoad, LayoutServerLoadEvent } from './$types';
 
 export const load: LayoutServerLoad = async (event: LayoutServerLoadEvent) => {
@@ -9,5 +8,5 @@ export const load: LayoutServerLoad = async (event: LayoutServerLoadEvent) => {
 	const path = event.route.id;
 	const appUrl = event.url.origin;
 
-	return { user, path, appUrl, vapidPublicKey: VAPID_PUBLIC_KEY };
+	return { user, path, appUrl };
 };
