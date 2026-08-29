@@ -51,9 +51,18 @@
 
 <div class="container mx-auto my-2 pb-20 lg:pb-0">
 	<Tabs tabStyle="underline">
-		<!-- <TabItem open title={m.activities_tab_poster()} class="flex w-full justify-center">
-			<enhanced:img src={Cartel} alt={m.activities_poster_alt()} />
-		</TabItem> -->
+		<TabItem
+			open
+			title={m.activities_tab_poster()}
+			class="flex w-full content-center justify-center"
+		>
+			<div class="flex min-h-screen items-center justify-center">
+				<img
+					src="https://aflgjnvgc42iwomt.public.blob.vercel-storage.com/actividades-2026/actividades2026.jpg"
+					alt={m.activities_poster_alt()}
+				/>
+			</div>
+		</TabItem>
 		<TabItem title={m.activities_tab_upcoming()} class="flex w-full justify-center">
 			{#if data.upcomingActivitiesTruncated}
 				<div class="mb-4 alert alert-warning">
