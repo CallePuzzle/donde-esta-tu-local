@@ -23,7 +23,6 @@
 		"only-build": "vite build",
 		"preview": "bunx --bun vite preview",
 		"prepare": "svelte-kit sync || echo ''",
-		"postinstall": "prisma generate",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
