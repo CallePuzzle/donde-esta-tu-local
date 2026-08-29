@@ -20,6 +20,16 @@
 
 <ul class={getClass()}>
 	{#each getMenuRoutes(routes) as route (route.id)}
-		<li><Link {route} href={route.id} /></li>
+		<li>
+			<Link
+				{route}
+				href={route.id}
+				id={route.id === '/gang/add'
+					? 'tour-add-gang-desktop'
+					: route.id === '/activities'
+						? 'tour-activities-desktop'
+						: undefined}
+			/>
+		</li>
 	{/each}
 </ul>

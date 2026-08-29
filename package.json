@@ -92,6 +92,7 @@
 	"dependencies": {
 		"@prisma/client": "^6.19.3",
 		"@prisma/extension-accelerate": "^2.0.2",
+		"@sjmc11/tourguidejs": "^0.0.27",
 		"@vercel/analytics": "^2.0.1",
 		"@vercel/blob": "^2.6.1",
 		"better-auth": "^1.6.26",

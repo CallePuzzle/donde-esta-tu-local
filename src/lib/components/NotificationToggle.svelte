@@ -14,9 +14,10 @@
 
 	export type Props = {
 		vapidPublicKey: string;
+		id?: string;
 	};
 
-	let { vapidPublicKey }: Props = $props();
+	let { vapidPublicKey, id }: Props = $props();
 
 	let supported = $state(false);
 	let enabled = $state(false);
@@ -81,7 +82,7 @@
 </script>
 
 {#if supported}
-	<div class="rounded-lg bg-base-200 p-4">
+	<div class="rounded-lg bg-base-200 p-4" {id}>
 		<h2 class="mb-2 text-lg font-semibold">{m.push_notifications_title()}</h2>
 		<p class="mb-4 text-sm text-base-content/70">
 			{m.push_notifications_description()}
