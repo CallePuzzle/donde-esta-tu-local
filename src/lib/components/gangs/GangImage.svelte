@@ -13,15 +13,16 @@
 		canUpload: boolean;
 		dataForm: SuperValidated<GangImageSchema> | null;
 		pageStatus: number;
+		id?: string;
 	};
 
-	let { name, image, canUpload, dataForm, pageStatus }: Props = $props();
+	let { name, image, canUpload, dataForm, pageStatus, id }: Props = $props();
 
 	let photoModal: Modal | undefined = $state();
 	let uploadModal: Modal | undefined = $state();
 </script>
 
-<div class="flex items-center gap-1">
+<div class="flex items-center gap-1" {id}>
 	{#if image}
 		<button
 			type="button"

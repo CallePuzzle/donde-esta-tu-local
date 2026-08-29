@@ -32,10 +32,10 @@
 		<div class="flex h-1/2 w-full justify-center">
 			<span class="loading loading-xl loading-dots"></span>
 		</div>
-		<Footer visibleOnlyOnMobile={true} />
+		<Footer visibleOnlyOnMobile={true} {user} />
 	{:else}
 		{@render children()}
 	{/if}
-	<Footer />
+	<Footer {user} />
 	<Dock {routes} currentPath={page.url.pathname} />
 </div>

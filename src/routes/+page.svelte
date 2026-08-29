@@ -5,6 +5,9 @@
 	import GangMap from '$lib/components/gangs/GangMap.svelte';
 	import Locate from '@lucide/svelte/icons/locate';
 	import { m } from '$lib/paraglide/messages.js';
+	import { continueOnboardingTour } from '$lib/utils/tour';
+	import { page } from '$app/state';
+	import '@sjmc11/tourguidejs/src/scss/tour.scss';
 
 	import type { PageData } from './$types';
 	import type { Map, Marker } from 'leaflet';
@@ -59,6 +62,13 @@
 
 	onDestroy(() => stopWatchingPosition?.());
 
+	// $effect (no onMount): un login vía modal no navega ni remonta esta
+	// página, solo actualiza `data.user` con invalidateAll(). El tour de
+	// miembro debe poder arrancar justo después, sin esperar a una recarga.
+	$effect(() => {
+		continueOnboardingTour(page.url.pathname, data.user ?? null, data.gangs);
+	});
+
 	const FILTER_DEBOUNCE_MS = 200;
 	let filterDebounceTimeout: ReturnType<typeof setTimeout> | undefined;
 
@@ -96,6 +106,7 @@
 		<div class="max-w-md">
 			<label class="input-bordered input flex items-center">
 				<input
+					id="tour-filter"
 					type="text"
 					class="grow"
 					placeholder={m.home_filter_placeholder()}
