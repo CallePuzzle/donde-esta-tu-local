@@ -3,7 +3,7 @@ import { prisma } from './db';
 import { loadTestEnv } from './env';
 
 import type { Page } from '@playwright/test';
-import type { User } from '@prisma/client';
+import type { User } from '$lib/generated/prisma/client';
 
 // Nombre por defecto de la cookie de sesión de better-auth (cookiePrefix
 // "better-auth" + "session_token"); la app no lo personaliza.

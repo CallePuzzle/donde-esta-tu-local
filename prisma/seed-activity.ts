@@ -1,7 +1,7 @@
 // Helper importado por seed-activities.ts (el script real, enganchado a
 // `bun run db:seed-activities` en package.json). Este fichero no se ejecuta
 // solo; es una dependencia, no un script huérfano (Q14).
-import type { PrismaClient, Prisma } from '@prisma/client';
+import type { PrismaClient, Prisma } from '$lib/generated/prisma/client';
 
 export type SeedActivityType = {
 	name: string;

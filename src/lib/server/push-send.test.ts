@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { Prisma } from '@prisma/client';
-import type { Gang, User } from '@prisma/client';
+import { Prisma } from '$lib/generated/prisma/client';
+import type { Gang, User } from '$lib/generated/prisma/client';
 
 const sendNotification = vi.fn();
 

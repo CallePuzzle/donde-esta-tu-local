@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Activity, Gang } from '@prisma/client';
+	import type { Activity, Gang } from '$lib/generated/prisma/client';
 	import Clock from '@lucide/svelte/icons/clock';
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import Users from '@lucide/svelte/icons/users';

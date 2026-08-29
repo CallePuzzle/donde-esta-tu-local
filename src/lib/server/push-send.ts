@@ -1,6 +1,6 @@
 import { webpush, type PushSubscription } from '$lib/server/web-push';
 import prisma from '$lib/server/db';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '$lib/generated/prisma/client';
 import {
 	deletePushSubscription,
 	getActivePushSubscriptions,
@@ -12,7 +12,7 @@ import { m } from '$lib/paraglide/messages.js';
 import { formatTimeShort } from '$lib/utils/format-date';
 import { memberDisplayName } from '$lib/utils/member-display';
 import { WebPushError } from 'web-push';
-import type { Activity, Gang, User } from '@prisma/client';
+import type { Activity, Gang, User } from '$lib/generated/prisma/client';
 
 type ActivityWithPlace = Activity & { placeGang: Gang | null };
 type SendResult = 'sent' | 'expired' | 'failed';
