@@ -7,7 +7,7 @@ import { isAdmin } from '$lib/utils/roles';
 export { isAdmin };
 
 // El usuario de sesión es el que define better-auth (App.Locals, derivado de
-// auth.$Infer.Session), no el modelo crudo de @prisma/client
+// auth.$Infer.Session), no el modelo crudo del cliente Prisma
 type SessionUser = NonNullable<App.Locals['user']>;
 
 // Esquema de validación de los parámetros de los endpoints de miembros

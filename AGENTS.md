@@ -13,7 +13,7 @@ El proyecto es la quinta iteración de una serie que empezó en Cloudflare Worke
 - **Framework**: SvelteKit 2 con **Svelte 5** (runes: `$state`, `$props`, etc.; `compilerOptions.experimental.async: true`).
 - **Lenguaje**: TypeScript estricto (`strict: true` en `tsconfig.json`).
 - **Despliegue**: Vercel (`@sveltejs/adapter-vercel` con optimización de imágenes).
-- **Base de datos**: PostgreSQL vía **Prisma 6** (`prisma-client-js` con `driverAdapters` en preview) + extensión **Prisma Accelerate** (`src/lib/server/db.ts`, con singleton en `globalThis` para dev/HMR; la extensión solo se aplica si `DATABASE_URL` empieza por `prisma://` — con una URL PostgreSQL normal, como en los tests E2E, el cliente va directo). `DATABASE_URL` debe estar definida en el entorno. Prisma 7 está deliberadamente aplazado: además de la pérdida de tipos original con `@prisma/extension-accelerate` 3.x ([prisma/prisma#28580](https://github.com/prisma/prisma/issues/28580)), Prisma 7 elimina `datasource.url` de `schema.prisma` por completo (exige `prisma.config.ts` + `adapter`/`accelerateUrl` en el `PrismaClient`), una migración real, no un simple bump. No subir hasta que se acometa esa migración. TypeScript se mantiene en 5.x por la misma razón de compatibilidad con `svelte-check`/`typescript-eslint`.
+- **Base de datos**: PostgreSQL vía **Prisma 7** (generador `prisma-client` con output en `src/lib/generated/prisma`, driver adapters GA). El cliente vive en `src/lib/server/db.ts`: lee `DATABASE_URL` de `$env/dynamic/private` (no de `process.env`: en dev el `.env` lo carga SvelteKit/Vite; dinámico y no estático para que el build no exija la variable), y con una URL de **Prisma Accelerate** usa `accelerateUrl` (producción) o el adapter `@prisma/adapter-pg` con una URL PostgreSQL normal (desarrollo/tests). Se crea de forma perezosa (proxy sobre el primer acceso) porque `vite build` evalúa el módulo sin variables de entorno; singleton en `globalThis` para dev/HMR. No se usa `@prisma/extension-accelerate`: en v7 `accelerateUrl` ya enruta por Accelerate y la extensión solo aporta `cacheStrategy`/`$accelerate`, que el proyecto no usa. La resolución de URLs está centralizada en `src/lib/server/database-url.ts` (`isAccelerateUrl`, `resolveDirectDatabaseUrl`, `requireDirectDatabaseUrl`), que comparten `prisma.config.ts` (migraciones) y los seeds: todo lo que necesita conexión directa usa `DIRECT_DATABASE_URL`, con `DATABASE_URL` de fallback solo si no es una URL de Accelerate. `DATABASE_URL` debe estar definida en el entorno. TypeScript se mantiene en 5.x por compatibilidad con `svelte-check`/`typescript-eslint`.
 - **Autenticación**: **better-auth** con adaptador Prisma, login sin contraseña mediante **OTP por email** (nodemailer vía SMTP) y plugin `admin` (roles `admin`/`system`). Configuración en `src/lib/server/auth.ts`; el handler vive en `src/lib/handles/better-auth-handle.ts` y se encadena en `src/hooks.server.ts`.
 - **Estilos**: Tailwind CSS 4 (plugin de Vite) + **daisyUI 5** (tema `dark` por defecto, definido en `src/app.css`) + Flowbite/flowbite-svelte + bits-ui. Iconos: `@lucide/svelte`.
 - **Mapas**: Leaflet, cargado dinámicamente en el cliente vía el helper `initMap()` de `$lib/utils/init-map.ts` (import dinámico + `leaflet/dist/leaflet.css` en el bundle + tile layer de OpenStreetMap); úsalo en vez de repetir la inicialización en cada página.
@@ -21,22 +21,24 @@ El proyecto es la quinta iteración de una serie que empezó en Cloudflare Worke
 - **Formularios**: sveltekit-superforms + formsnap con esquemas **zod v4** (`import { z } from 'zod/v4'`) definidos en `src/lib/schemas/`.
 - **Logging**: pino (`src/lib/logger.ts`, exporta `logger`; pretty en desarrollo).
 - **Observabilidad**: `@vercel/otel` en `src/instrumentation.server.ts` y `@vercel/analytics` en `src/routes/+layout.ts`.
-- **Gestor de paquetes**: bun (hay `bun.lock`; el README usa `bun run`). También funciona npm/pnpm. `.npmrc` tiene `engine-strict=true`. `package.json` tiene un bloque `overrides` para fijar versiones parcheadas de dependencias transitivas con vulnerabilidades conocidas (tar, postcss, defu, sharp, validator, rollup, flatted, picomatch, cookie, yaml); no lo borres sin volver a correr `bun audit`.
+- **Gestor de paquetes**: bun (hay `bun.lock`; el README usa `bun run`). También funciona npm/pnpm. `.npmrc` tiene `engine-strict=true`. `package.json` tiene un bloque `overrides` para fijar versiones parcheadas de dependencias transitivas con vulnerabilidades conocidas (tar, postcss, defu, sharp, validator, rollup, flatted, picomatch, cookie, yaml, deepmerge-ts, nanoid); no lo borres sin volver a correr `bun audit`. Ojo con `deepmerge-ts`: `@prisma/config` lo fija en la versión exacta `7.1.5` (vulnerable, GHSA-ggr8-5vv4-36mx) y el override lo sube a 8.x, así que revísalo en cada subida de Prisma.
 
 ## Comandos
 
 Usa **bun** (hay `bun.lock`); todos los scripts son `bun run <script>`.
 
 - `bun run dev` — servidor de desarrollo (Vite).
-- `bun run build` — build de producción. Ojo: ejecuta `prisma generate --no-engine && prisma migrate deploy && vite build` (aplica migraciones contra la base de datos configurada).
+- `bun run build` — build de producción. Ojo: ejecuta `prisma generate && prisma migrate deploy && vite build` (aplica migraciones contra la base de datos configurada).
 - `bun run only-build` — build sin tocar la base de datos. **Usa siempre este para verificar, nunca `build`.**
+- `bun run preview` — sirve el build (`bunx --bun vite preview`; el `--bun` es necesario para que el proceso vea el `.env`, ver más abajo).
+- `postinstall` — `prisma generate`, automático tras `bun install`. El cliente generado (`src/lib/generated/prisma`) está gitignorado, así que sin este paso ni `dev`, ni `check`, ni `test`, ni los E2E resuelven `$lib/generated/prisma/client` en un clon limpio.
 - `bun run check` — type-check con `svelte-check`.
 - `bun run lint` — `prettier --check` + ESLint. `bun run format` — formatea todo con Prettier.
 - `bun run test` — tests unitarios (Vitest): `membership.ts`, esquemas zod, `member-display.ts`, `schemas/utils.ts`, `roles.ts`, `format-date.ts`, `vercel-hosts.ts`. Los E2E van aparte (ver abajo).
-- `bun run test:e2e` — tests E2E (Playwright, Chromium): levanta el PostgreSQL de test con `docker compose` y ejecuta los specs de `e2e/` contra un dev server en el puerto 4174 que usa las variables de `.env.test`. `bun run test:e2e:ui` — modo UI de Playwright. `bun run db:test:up` / `db:test:down` — levantar/parar solo la BD de test (`db:test:down` es `stop`, no `down`, para no desmontar la red). La primera vez hace falta `bunx playwright install chromium`. Nota podman: con podman/netavark, recrear la red (un `down` seguido de `up`) puede fallar de forma intermitente con `netavark: nftables error` (las reglas de la red del proyecto quedan corruptas); por eso `db:test:up` es un script (`e2e/scripts/db-test-up.sh`) que reintenta hasta 5 veces borrando el contenedor a medio crear y la red del proyecto (compose la recrea limpia).
+- `bun run test:e2e` — tests E2E (Playwright, Chromium): ejecuta los specs de `e2e/` contra un dev server en el puerto 4174 que usa las variables de `.env.test`. Para levantar la base de datos de test, usa directamente `podman compose up -d` y para pararla `podman compose stop`. Hacerlo a través de scripts de node/bun no funciona correctamente. `bun run test:e2e:ui` — modo UI de Playwright. La primera vez hace falta `bunx playwright install chromium`.
 - `bun run paraglide-js` — recompila los mensajes de i18n tras editar `messages/es.json` (el plugin de Vite también lo hace en dev/build; tras un `check`/build, los ficheros generados en `src/lib/paraglide/` pueden quedar sin formatear — pasa `bun run format` si `lint` se queja de ellos).
-- `bun run db:seed-activities` — puebla actividades (`tsx prisma/seed-activities.ts`).
-- `bun audit` — auditoría de vulnerabilidades; objetivo 0. `bun outdated` — dependencias desactualizadas (a fecha de este documento solo aparecen Prisma 7 y TypeScript 7, aplazados a conciencia, ver más abajo).
+- `bun run db:seed-activities` — puebla actividades (`bun prisma/seed-activities.ts`). Los seeds abren conexión directa con el adapter de node-pg, así que necesitan `DIRECT_DATABASE_URL` (o una `DATABASE_URL` que no sea de Accelerate). Corren con el runtime de **bun**, no con `tsx`: `bun run` no propaga el `.env` a procesos hijo de node (`tsx`, `vite`), solo el runtime de bun lo carga.
+- `bun audit` — auditoría de vulnerabilidades; objetivo 0. `bun outdated` — dependencias desactualizadas (a fecha de este documento el único _major_ pendiente es TypeScript 7, aplazado a conciencia, ver más abajo).
 
 ## Estructura del código
 
@@ -53,9 +55,9 @@ Usa **bun** (hay `bun.lock`); todos los scripts son `bun run <script>`.
   - `schemas/` — esquemas zod de formularios (usados con superforms).
   - `stores/` — solo `loginModal.svelte.ts` (runes, `$state` module-level con getter/setter `.value`).
   - `paraglide/` — generado por i18n, **no editar**.
-- `src/app.d.ts` — tipos globales: `App.Locals.session`/`user` se derivan de `auth.$Infer.Session` (better-auth), no de los modelos crudos de `@prisma/client` — así incluyen exactamente lo que better-auth pone en la sesión (con `role` del plugin `admin`), y no lo que Prisma expondría por su cuenta.
+- `src/app.d.ts` — tipos globales: `App.Locals.session`/`user` se derivan de `auth.$Infer.Session` (better-auth), no de los modelos crudos del cliente Prisma — así incluyen exactamente lo que better-auth pone en la sesión (con `role` del plugin `admin`), y no lo que Prisma expondría por su cuenta.
 - `prisma/` — `schema.prisma` (modelos: `User`, `Session`, `Account`, `Verification`, `Gang`, `Activity`, `GangHistory`; `membershipGangStatus`, `Gang.status` y `GangHistory.changeType` son enums), migraciones SQL en `migrations/`, y scripts de seed/migración.
-- `e2e/` — tests E2E de Playwright: specs (`auth`, `gang-create`, `membership`, `admin-gangs`, `gang-update`), `global-setup.ts` (regenera el cliente Prisma **con** motor —el build lo genera con `--no-engine`, que solo vale para URLs de Accelerate— y aplica `prisma migrate deploy` contra la BD de test) y `helpers/` (`env.ts` carga `.env.test` sin dotenv, `db.ts` PrismaClient propio sin Accelerate, `seed.ts` con `resetDb`/`createUser`/`createGang`, `auth.ts` con `loginViaUi` —OTP leído de la tabla `verification`— y `seedSession` —sesión insertada en BD + cookie firmada de better-auth, `better-auth.session_token` = `token.base64(HMAC-SHA256(secret, token))`—). Config en `playwright.config.ts` (workers 1, BD compartida) y BD en `docker-compose.yml` (postgres:16-alpine, puerto 55433).
+- `e2e/` — tests E2E de Playwright: specs (`auth`, `gang-create`, `membership`, `admin-gangs`, `gang-update`), `global-setup.ts` (espera a que la BD de test acepte conexiones y aplica `prisma migrate deploy` contra ella; el cliente Prisma lo genera el `postinstall`) y `helpers/` (`env.ts` carga `.env.test` sin dotenv, `db.ts` PrismaClient propio con el adapter `@prisma/adapter-pg`, `seed.ts` con `resetDb`/`createUser`/`createGang`, `auth.ts` con `loginViaUi` —OTP leído de la tabla `verification`— y `seedSession` —sesión insertada en BD + cookie firmada de better-auth, `better-auth.session_token` = `token.base64(HMAC-SHA256(secret, token))`—). Config en `playwright.config.ts` (workers 1, BD compartida) y BD en `docker-compose.yml` (postgres:16-alpine, puerto 55433).
 - `messages/es.json` — todos los textos de la UI (español).
 
 ### Modelo de dominio
@@ -71,7 +73,7 @@ Decisión consciente (code review 2026-08): un usuario con `membershipGangStatus
 - **Lint**: ESLint flat config (`eslint.config.js`) + oxlint en pre-commit (lint-staged, `.oxlintrc.json`). `@typescript-eslint/no-explicit-any` es error.
 - **Estilo Svelte 5**: runes (`$state`, `$derived`, `$props`); nada de la API legacy de Svelte 4. Tipos de rutas con `./$types` generados por SvelteKit. Componentes genéricos (p.ej. sobre el tipo de datos de un `SuperForm`) usan `<script lang="ts" generics="T extends ...">` (ver `FormFields.svelte`/`FormString.svelte`).
 - **Formularios**: patrón superforms — `superValidate(request, zod4(schema))` en la acción, `fail(400, { form })` si no valida, `message(form, m.alguna_clave())` para responder. Los esquemas zod usan mensajes de Paraglide y `.meta()` con `placeholder`/`description` para renderizar campos.
-- **Acceso a datos**: siempre a través de `import prisma from '$lib/server/db'` (cliente único con Accelerate). Nunca importes `$lib/server/*` desde código de cliente.
+- **Acceso a datos**: siempre a través de `import prisma from '$lib/server/db'` (cliente único; Accelerate o adapter directo según la URL). Nunca importes `$lib/server/*` desde código de cliente.
 - **Autorización**: en acciones/loads de servidor usa los helpers de `$lib/server/membership.ts` (`requireUser`, `requireAdmin`, `requireValidatedMember`, `canManageGangMembers`) en vez de repetir `event.locals.user.role === 'admin' | 'system'` a mano.
 - **i18n**: no escribas texto de usuario hardcodeado (tampoco en utils de servidor/cliente que no sean `.svelte`); añade la clave a `messages/es.json` y usa `m.clave()`. Recompila con `bun run paraglide-js` si es necesario. Registro: tú (informal), no usted.
 - **Logging**: usa `logger` de `$lib/logger` en vez de `console.log` — funciona tanto en servidor como en cliente (`browserOptions` en `logger.ts`).
@@ -83,10 +85,21 @@ Decisión consciente (code review 2026-08): un usuario con `membershipGangStatus
 Requeridas en producción/desarrollo (fichero `.env`, no commiteado; ver `.env.example`):
 
 - `DATABASE_URL` — PostgreSQL (o URL de Prisma Accelerate).
-- `DIRECT_DATABASE_URL` — conexión directa a PostgreSQL para el `directUrl` del esquema Prisma (migraciones/introspección); puede ser la misma que `DATABASE_URL` si no usas Accelerate.
+- `DIRECT_DATABASE_URL` — conexión directa a PostgreSQL, usada por `prisma.config.ts` (migraciones) y por los seeds. Puede ser la misma que `DATABASE_URL` si no usas Accelerate; si no está definida se usa `DATABASE_URL` como fallback, pero **solo si no es una URL de Accelerate** (ver `src/lib/server/database-url.ts`).
 - `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` — better-auth (sesión/login).
 - `SMTP_HOST`, `SMPT_AUTH_USER`, `SMPT_AUTH_PASS`, `SMPT_SENDER` — envío del OTP de login (nótese el typo `SMPT_`, es intencionado/existente). En dev no se envía email; el OTP aparece en el log (`logger.debug`).
 - `BLOB_READ_WRITE_TOKEN` — Vercel Blob, para subir el avatar del perfil.
+
+**Ojo con `.env` y bun**: solo el runtime de bun carga el `.env` automáticamente;
+`bun run <script>` **no** lo propaga a los procesos hijo de node (`prisma`,
+`vite`, `tsx`). En `dev` no se nota porque el servidor de SvelteKit carga el
+`.env` él mismo, pero fuera de ahí sí: las migraciones locales se lanzan con
+`bunx prisma migrate dev|deploy` (runtime de bun, ve el `.env`), los seeds con
+`bun prisma/seed-*.ts`, `preview` fuerza el runtime de bun
+(`bunx --bun vite preview`) porque el servidor construido lee `process.env`
+directamente —si no, better-auth arranca sin `BETTER_AUTH_SECRET`—, y
+`bun run build` solo funciona donde las variables están exportadas de verdad en
+el entorno (Vercel): en local usa `only-build`.
 
 ## Herramientas del entorno
 

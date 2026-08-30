@@ -1,11 +1,13 @@
+import { waitUntil } from '@vercel/functions';
 import { logger } from '$lib/logger';
 import prisma from '$lib/server/db';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '$lib/generated/prisma/client';
 import { requireUser } from '$lib/server/membership';
 import { superValidate, message, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { addGangSchema } from '$lib/schemas/gang';
 import { m } from '$lib/paraglide/messages.js';
+import { notifyAdminsPendingGang } from '$lib/server/push-send';
 
 import type { PageServerLoad } from './$types';
 
@@ -83,6 +85,13 @@ export const actions = {
 
 			logger.info({ gangId: newGang.id, name: newGang.name }, 'New gang added');
 			logger.info({ historyId: historyGang.id }, 'New history entry created');
+
+			// Notificar a los admins sin bloquear la respuesta al usuario.
+			waitUntil(
+				notifyAdminsPendingGang(newGang).catch((error) => {
+					logger.error(error, 'Error notifying admins about new pending gang');
+				})
+			);
 
 			return message(form, m.form_gang_add_successfully());
 		} catch (error) {

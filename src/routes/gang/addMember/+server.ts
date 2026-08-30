@@ -1,7 +1,9 @@
 import { json } from '@sveltejs/kit';
+import { waitUntil } from '@vercel/functions';
 import { logger } from '$lib/logger';
 import prisma from '$lib/server/db';
 import { parseMemberRequest } from '$lib/server/member-request';
+import { notifyAdminsPendingMember } from '$lib/server/push-send';
 import { m } from '$lib/paraglide/messages.js';
 import type { RequestHandler, RequestEvent } from './$types';
 
@@ -45,6 +47,9 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 				id: userId
 			},
 			select: {
+				id: true,
+				name: true,
+				email: true,
 				gangId: true,
 				membershipGangStatus: true
 			}
@@ -110,6 +115,13 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 		});
 
 		logger.info({ userId: userNewMember.id, gangId: userNewMember.gangId }, 'New member added');
+
+		// Notificar a los admins sin bloquear la respuesta al usuario.
+		waitUntil(
+			notifyAdminsPendingMember(user, gang).catch((error) => {
+				logger.error(error, 'Error notifying admins about new pending member');
+			})
+		);
 
 		return json({
 			success: true,

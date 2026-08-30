@@ -7,7 +7,7 @@
 	import { memberDisplayName, memberInitial } from '$lib/utils/member-display';
 	import { m } from '$lib/paraglide/messages.js';
 
-	// El tipo de sesión inferido de better-auth, no el User de @prisma/client
+	// El tipo de sesión inferido de better-auth, no el User del cliente Prisma
 	// (que no es lo que viaja en locals.user/data.user).
 	export type Props = {
 		user: App.Locals['user'];
@@ -28,7 +28,7 @@
 	});
 </script>
 
-<div class="navbar-end w-auto md:w-[50%]">
+<div class="navbar-end w-auto md:w-[50%]" id="tour-login">
 	<div class="dropdown dropdown-end">
 		{#if userIsLogged && user}
 			<div class="btn avatar btn-circle btn-ghost">

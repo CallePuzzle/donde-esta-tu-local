@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { type Routes, getMenuRoutes } from '$lib/routes';
+	import { tourDesktopElementIds } from '$lib/utils/tour';
 	import Link from './Link.svelte';
 
 	export type Props = {
@@ -20,6 +21,8 @@
 
 <ul class={getClass()}>
 	{#each getMenuRoutes(routes) as route (route.id)}
-		<li><Link {route} href={route.id} /></li>
+		<li>
+			<Link {route} href={route.id} id={tourDesktopElementIds[route.id]} />
+		</li>
 	{/each}
 </ul>

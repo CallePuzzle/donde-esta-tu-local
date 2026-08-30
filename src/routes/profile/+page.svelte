@@ -2,6 +2,9 @@
 	import FormUser from '$lib/components/FormUser.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { authClient } from '$lib/auth-client';
+	import { continueOnboardingTour } from '$lib/utils/tour';
+	import { onMount } from 'svelte';
+	import '@sjmc11/tourguidejs/src/scss/tour.scss';
 	import User from '@lucide/svelte/icons/user';
 	import Mail from '@lucide/svelte/icons/mail';
 	import Camera from '@lucide/svelte/icons/camera';
@@ -9,6 +12,7 @@
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import UserRound from '@lucide/svelte/icons/user-round';
 	import ButtonSignOut from '$lib/components/ButtonSignOut.svelte';
+	import NotificationToggle from '$lib/components/NotificationToggle.svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { isAdmin } from '$lib/utils/roles';
@@ -27,6 +31,10 @@
 	let user = $derived(data.user)!;
 	let form = $derived(data.form)!;
 	let userGangDetail = $derived(data.userGangDetail)!;
+
+	onMount(() => {
+		continueOnboardingTour(page.url.pathname, data.user ?? null, []);
+	});
 </script>
 
 <div class="container mx-auto max-w-2xl p-4 pb-20 lg:pb-0">
@@ -47,7 +55,7 @@
 						<Camera class="h-5 w-5 text-base-content/60" />
 						<div>
 							<span class="text-sm text-base-content/60">{m.profile_image_label()}</span>
-							<div class="avatar px-4">
+							<div class="avatar px-4" id="tour-profile-image">
 								<div class="flex w-10 content-center justify-center rounded-full">
 									{#if user.image}
 										<img alt={m.common_avatar_alt({ name: user.name })} src={user.image} />
@@ -117,6 +125,10 @@
 			<!-- Update Form -->
 			<div class="divider">{m.profile_update_info_divider()}</div>
 			<FormUser dataForm={form} pageStatus={page.status} />
+
+			<div class="divider">{m.push_notifications_title()}</div>
+			<NotificationToggle vapidPublicKey={data.vapidPublicKey} id="tour-notifications" />
+
 			<div class="flex justify-center">
 				<ButtonSignOut {authClient} classNames="btn w-45 btn-error" />
 			</div>
