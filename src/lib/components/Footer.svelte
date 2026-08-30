@@ -1,13 +1,20 @@
 <script lang="ts">
 	import Heart from '@lucide/svelte/icons/heart';
 	import MailQuestionMark from '@lucide/svelte/icons/mail-question-mark';
+	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
 	import { m } from '$lib/paraglide/messages.js';
+	import { startOnboardingTour } from '$lib/utils/tour';
 
 	export type Props = {
 		visibleOnlyOnMobile?: boolean;
+		user?: App.Locals['user'] | null;
 	};
 
-	let { visibleOnlyOnMobile = false }: Props = $props();
+	let { visibleOnlyOnMobile = false, user = null }: Props = $props();
+
+	function restartTour() {
+		startOnboardingTour(!!user);
+	}
 
 	let visibleOnMobileClass = $derived.by(() => {
 		return visibleOnlyOnMobile ? 'flex lg:hidden' : 'hidden lg:flex';
@@ -46,6 +53,12 @@
 		>
 		<a href="mailto:app@montemayordepililla.cc" aria-label={m.footer_email_aria()}
 			><MailQuestionMark size="32" /></a
+		>
+		<button
+			type="button"
+			class="btn btn-ghost btn-sm"
+			onclick={restartTour}
+			aria-label={m.tour_restart_label()}><RotateCcw size="20" /></button
 		>
 	</p>
 </footer>
