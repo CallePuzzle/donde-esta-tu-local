@@ -1,4 +1,5 @@
 import prisma from '$lib/server/db';
+import { getValidatedGangId } from '$lib/server/membership';
 import type { PageServerLoad, PageServerLoadEvent } from './$types';
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
@@ -13,17 +14,8 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 	// Peña de la que el usuario ya es miembro validado, si alguna: el tour de
 	// onboarding la necesita para no ofrecer como ejemplo una peña a la que ya
 	// pertenece (ver buildMemberTourSteps en $lib/utils/tour).
-	let currentUserGangId: number | null = null;
 	const currentUser = event.locals.user;
-	if (currentUser) {
-		const userWithGang = await prisma.user.findUnique({
-			where: { id: currentUser.id },
-			select: { gangId: true, membershipGangStatus: true }
-		});
-		if (userWithGang?.membershipGangStatus === 'VALIDATED') {
-			currentUserGangId = userWithGang.gangId;
-		}
-	}
+	const currentUserGangId = currentUser ? await getValidatedGangId(currentUser.id) : null;
 
 	return {
 		gangs: gangs,

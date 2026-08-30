@@ -33,7 +33,12 @@
 	let userGangDetail = $derived(data.userGangDetail)!;
 
 	onMount(() => {
-		continueOnboardingTour(page.url.pathname, data.user ?? null, []);
+		continueOnboardingTour(
+			page.url.pathname,
+			data.user ?? null,
+			data.gangs,
+			data.currentUserGangId ?? undefined
+		);
 	});
 </script>
 

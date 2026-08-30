@@ -3,7 +3,7 @@ import { superValidate, message } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { updateUserSchema } from '$lib/schemas/user';
 import prisma from '$lib/server/db';
-import { requireUser } from '$lib/server/membership';
+import { requireUser, getValidatedGangId } from '$lib/server/membership';
 import { m } from '$lib/paraglide/messages';
 import { logger } from '$lib/logger';
 import { uploadImage, deleteImage } from '$lib/server/blob-image';
@@ -35,6 +35,19 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 		zod4(updateUserSchema)
 	);
 
+	// Mismos `gangs` y `currentUserGangId` que el resto de páginas con tour de
+	// onboarding: `buildMemberTourSteps` necesita el mismo conjunto de peñas en
+	// todas ellas para no desincronizar el índice de paso persistido (ver
+	// `continueOnboardingTour` en $lib/utils/tour).
+	const gangs = await prisma.gang.findMany({
+		where: {
+			status: {
+				not: 'REFUSED'
+			}
+		}
+	});
+	const currentUserGangId = await getValidatedGangId(user.id);
+
 	return {
 		form,
 		user,
@@ -42,7 +55,9 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 			id: userGangDetail?.gang?.id || null,
 			name: userGangDetail?.gang?.name || m.profile_no_gang()
 		} satisfies UserGangDetail,
-		vapidPublicKey: env.VAPID_PUBLIC_KEY
+		vapidPublicKey: env.VAPID_PUBLIC_KEY,
+		gangs,
+		currentUserGangId
 	};
 };
 

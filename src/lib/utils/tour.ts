@@ -272,13 +272,8 @@ async function handleBeforeStepChange(
 	steps: AppTourStep[],
 	currentPath: string,
 	gangs: MinimalGang[],
-	currentStepIndex: number,
 	nextStepIndex: number
 ) {
-	// Solo interceptamos avances hacia delante; los pasos hacia atrás ya están
-	// en una página que los contiene.
-	if (nextStepIndex <= currentStepIndex) return;
-
 	const nextBaseStep = steps[nextStepIndex];
 	if (!nextBaseStep) return;
 	if (stepRouteMatches(nextBaseStep.route, currentPath)) return;
@@ -352,16 +347,8 @@ async function runTour(
 
 	await client.setOptions({ steps });
 
-	client.onBeforeStepChange(async (currentStepIndex, nextStepIndex) => {
-		await handleBeforeStepChange(
-			client,
-			storageKey,
-			steps,
-			currentPath,
-			gangs,
-			currentStepIndex,
-			nextStepIndex
-		);
+	client.onBeforeStepChange(async (_currentStepIndex, nextStepIndex) => {
+		await handleBeforeStepChange(client, storageKey, steps, currentPath, gangs, nextStepIndex);
 		setState(storageKey, { activeStep: nextStepIndex, finished: false });
 	});
 

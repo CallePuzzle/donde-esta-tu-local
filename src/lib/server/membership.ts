@@ -38,6 +38,18 @@ export async function canManageGangMembers(
 	return !!member && member.gangId === gangId && member.membershipGangStatus === 'VALIDATED';
 }
 
+// Peña de la que el usuario ya es miembro validado, si alguna (null si no).
+// Usado por las páginas que arrancan el tour de onboarding: `buildMemberTourSteps`
+// necesita el mismo valor en todas ellas para no desincronizar el índice de
+// paso persistido (ver `continueOnboardingTour` en $lib/utils/tour).
+export async function getValidatedGangId(userId: string): Promise<number | null> {
+	const user = await prisma.user.findUnique({
+		where: { id: userId },
+		select: { gangId: true, membershipGangStatus: true }
+	});
+	return user?.membershipGangStatus === 'VALIDATED' ? user.gangId : null;
+}
+
 // Exige que haya un usuario autenticado; devuelve 401 en caso contrario
 export function requireUser(locals: App.Locals): SessionUser {
 	if (!locals.user) {
