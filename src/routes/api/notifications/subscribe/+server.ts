@@ -2,13 +2,14 @@ import { json } from '@sveltejs/kit';
 import { z } from 'zod/v4';
 import { requireUser } from '$lib/server/membership';
 import { requireSameOrigin } from '$lib/server/csrf';
-import { savePushSubscription } from '$lib/server/push-subscription';
+import { pushEndpointSchema } from '$lib/server/push-endpoint';
+import { PushSubscriptionLimitError, savePushSubscription } from '$lib/server/push-subscription';
 import { logger } from '$lib/logger';
 
 import type { RequestEvent } from './$types';
 
 const subscriptionSchema = z.object({
-	endpoint: z.string().url(),
+	endpoint: pushEndpointSchema,
 	keys: z.object({
 		p256dh: z.string().min(1),
 		auth: z.string().min(1)
@@ -38,6 +39,10 @@ export async function POST(event: RequestEvent) {
 		logger.debug({ userId: user.id }, 'Suscripción push guardada');
 		return json({ success: true });
 	} catch (error) {
+		if (error instanceof PushSubscriptionLimitError) {
+			logger.warn({ userId: user.id }, 'Límite de suscripciones push alcanzado');
+			return json({ success: false, error: 'LIMIT_REACHED' }, { status: 409 });
+		}
 		logger.error(error, 'Error guardando suscripción push');
 		return json({ success: false, error: 'Internal error' }, { status: 500 });
 	}

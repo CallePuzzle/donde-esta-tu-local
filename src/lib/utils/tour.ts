@@ -1,6 +1,7 @@
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 import { m } from '$lib/paraglide/messages.js';
+import type { Route } from '$lib/routes';
 import type { TourGuideClient, TourGuideOptions, TourGuideStep } from '$lib/types/tourguide';
 
 async function createTourGuideClient(options: TourGuideOptions): Promise<TourGuideClient> {
@@ -23,6 +24,26 @@ function removeStaleTourDom() {
 const GUEST_STORAGE_KEY = 'onboarding-tour-guest-v1';
 const MEMBER_STORAGE_KEY = 'onboarding-tour-member-v1';
 
+// El enlace a estas rutas está duplicado (nav de escritorio / Dock de móvil),
+// y solo uno de los dos elementos es visible según el ancho de pantalla (ver
+// `firstVisible`). Los ids se centralizan aquí para que los componentes que
+// los asignan (DockLink, NavBarList) y los pasos del tour que los buscan
+// (más abajo) no puedan desincronizarse.
+const TOUR_ADD_GANG_DESKTOP_ID = 'tour-add-gang-desktop';
+const TOUR_ADD_GANG_MOBILE_ID = 'tour-add-gang-mobile';
+const TOUR_ACTIVITIES_DESKTOP_ID = 'tour-activities-desktop';
+const TOUR_ACTIVITIES_MOBILE_ID = 'tour-activities-mobile';
+
+export const tourDesktopElementIds: Partial<Record<Route['id'], string>> = {
+	'/gang/add': TOUR_ADD_GANG_DESKTOP_ID,
+	'/activities': TOUR_ACTIVITIES_DESKTOP_ID
+};
+
+export const tourMobileElementIds: Partial<Record<Route['id'], string>> = {
+	'/gang/add': TOUR_ADD_GANG_MOBILE_ID,
+	'/activities': TOUR_ACTIVITIES_MOBILE_ID
+};
+
 type TourState = {
 	activeStep: number;
 	finished: boolean;
@@ -36,7 +57,19 @@ export type AppTourStep = TourGuideStep & {
 type MinimalGang = {
 	id: string | number;
 	status: string;
+	name: string;
 };
+
+// Nombre de la peña usada como ejemplo en el tour cuando está validada; si no
+// existe (u otro entorno no la tiene creada), se cae a la primera validada.
+const EXAMPLE_GANG_NAME = 'kpy';
+
+function findExampleGang(gangs: MinimalGang[]): MinimalGang | undefined {
+	const validatedGangs = gangs.filter((g) => g.status === 'VALIDATED');
+	return (
+		validatedGangs.find((g) => g.name.toLowerCase() === EXAMPLE_GANG_NAME) ?? validatedGangs[0]
+	);
+}
 
 function getState(storageKey: string): TourState | null {
 	if (typeof localStorage === 'undefined') return null;
@@ -80,7 +113,7 @@ const guestTourSteps: AppTourStep[] = [
 	{
 		title: m.tour_activities_title(),
 		content: m.tour_activities_description(),
-		target: '#tour-activities-desktop',
+		target: `#${TOUR_ACTIVITIES_DESKTOP_ID}`,
 		route: '/'
 	},
 	{
@@ -97,7 +130,7 @@ const memberTourSteps: AppTourStep[] = [
 	{
 		title: m.tour_add_gang_title(),
 		content: m.tour_add_gang_description(),
-		target: '#tour-add-gang-desktop',
+		target: `#${TOUR_ADD_GANG_DESKTOP_ID}`,
 		route: '/'
 	},
 	{
@@ -145,7 +178,8 @@ function buildGuestTourSteps(): AppTourStep[] {
 		// aunque hoy solo exista la versión de escritorio.
 		if (index === 1) {
 			clone.target =
-				firstVisible('#tour-activities-desktop', '#tour-activities-mobile') ?? document.body;
+				firstVisible(`#${TOUR_ACTIVITIES_DESKTOP_ID}`, `#${TOUR_ACTIVITIES_MOBILE_ID}`) ??
+				document.body;
 		}
 
 		return clone;
@@ -153,7 +187,7 @@ function buildGuestTourSteps(): AppTourStep[] {
 }
 
 function buildMemberTourSteps(gangs: MinimalGang[]): AppTourStep[] {
-	const validatedGang = gangs.find((g) => g.status === 'VALIDATED');
+	const validatedGang = findExampleGang(gangs);
 
 	return memberTourSteps.map((step, index) => {
 		const clone: AppTourStep = { ...step, stepIndex: index };
@@ -162,7 +196,8 @@ function buildMemberTourSteps(gangs: MinimalGang[]): AppTourStep[] {
 		// de móvil) y solo uno es visible según el ancho de pantalla.
 		if (index === 0) {
 			clone.target =
-				firstVisible('#tour-add-gang-desktop', '#tour-add-gang-mobile') ?? document.body;
+				firstVisible(`#${TOUR_ADD_GANG_DESKTOP_ID}`, `#${TOUR_ADD_GANG_MOBILE_ID}`) ??
+				document.body;
 		}
 
 		// Paso de unirse a una peña: si no hay peñas validadas, se muestra centrado
@@ -240,7 +275,7 @@ async function handleBeforeStepChange(
 
 	if (!nextBaseStep.route) return;
 
-	const validatedGang = gangs.find((g) => g.status === 'VALIDATED');
+	const validatedGang = findExampleGang(gangs);
 	if (nextBaseStep.route.includes('[slug]') && !validatedGang) {
 		finishTour(storageKey, steps.length);
 		unblockClient(client);
@@ -332,18 +367,31 @@ async function runTour(
 	await client.start();
 }
 
+// El `$effect` que llama a esta función en `/` se re-ejecuta con cualquier
+// cambio de `data` (p.ej. el `invalidateAll()` de un login por modal), y no
+// espera a que la llamada anterior termine. Sin este cerrojo, dos llamadas
+// solapadas crearían dos `TourGuideClient`: el `removeStaleTourDom()` de la
+// segunda se llevaría por delante el diálogo que la primera acaba de montar.
+let tourInProgress = false;
+
 export async function continueOnboardingTour(
 	currentPath: string,
 	user: App.Locals['user'] | null,
 	gangs: MinimalGang[] = []
 ) {
 	if (typeof window === 'undefined') return;
+	if (tourInProgress) return;
 
-	removeStaleTourDom();
+	tourInProgress = true;
+	try {
+		removeStaleTourDom();
 
-	if (user) {
-		await runTour(MEMBER_STORAGE_KEY, buildMemberTourSteps(gangs), currentPath, gangs);
-	} else {
-		await runTour(GUEST_STORAGE_KEY, buildGuestTourSteps(), currentPath, []);
+		if (user) {
+			await runTour(MEMBER_STORAGE_KEY, buildMemberTourSteps(gangs), currentPath, gangs);
+		} else {
+			await runTour(GUEST_STORAGE_KEY, buildGuestTourSteps(), currentPath, []);
+		}
+	} finally {
+		tourInProgress = false;
 	}
 }

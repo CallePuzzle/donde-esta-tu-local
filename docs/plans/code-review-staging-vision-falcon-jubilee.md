@@ -160,28 +160,31 @@ pero se rompe el día que bits-ui cambie de motor de posicionamiento.
 
 ## Endurecimiento y menores
 
-- **`/api/notifications/subscriptions` (DELETE) no lo llama nadie.** Existe porque el plan lo pedía
-  (`docs/plans/ms-marvel-orphan-metamorpho.md:554`). O se cablea a algún botón de `/profile`, o se
-  borra.
-- **`endpoint: z.string().url()`** (`subscribe/+server.ts:11`, `unsubscribe/+server.ts:11`) acepta
-  cualquier URL. Un usuario autenticado puede registrar un endpoint arbitrario y el cron hará POST
-  contra él desde el runtime de Vercel. Impacto bajo (cuerpo cifrado, respuesta no observable), pero
-  restringir el host a los push services conocidos (`fcm.googleapis.com`,
-  `*.push.services.mozilla.com`, `web.push.apple.com`, `*.notify.windows.com`) es barato. De paso: en
-  zod 4 `z.string().url()` está deprecado a favor de `z.url()`.
-- **Sin tope de suscripciones por usuario** ni rate limit en `/subscribe`: cada endpoint distinto
-  crea fila nueva.
-- **`src/routes/+page.svelte`: el `$effect` que arranca el tour no tiene guarda de reentrada.** Se
-  re-ejecuta con cualquier cambio de `data` y `continueOnboardingTour` es async sin `await`, así que
-  dos ejecuciones solapadas crearían dos `TourGuideClient` (el `removeStaleTourDom()` de la segunda
-  se lleva por delante el diálogo de la primera). Hoy es difícil de provocar porque el filtro es
-  cliente y `runTour` sale pronto si el tour está `finished`, pero un flag de módulo
-  `let running = false` lo cierra.
-- **URL de blob hardcodeada** — `src/routes/activities/+page.svelte:61`, el cartel de 2026 apunta a
-  `https://aflgjnvgc42iwomt.public.blob.vercel-storage.com/...` en el markup. Cambiar de cartel el
-  año que viene obliga a tocar código.
-- **Ternarios anidados para los `id` del tour** en `DockLink.svelte` y `NavBarList.svelte`. Un
-  `Record<Route['id'], string>` en `tour.ts` mantendría los ids del tour en un solo sitio.
+- ~~**`/api/notifications/subscriptions` (DELETE) no lo llama nadie.**~~ Existía porque el plan lo
+  pedía (`docs/plans/ms-marvel-orphan-metamorpho.md:554`) pero no estaba cableado a ningún botón.
+  **Arreglado**: ahora lo llama el modal de "límite de dispositivos" de `NotificationToggle.svelte`
+  (ver el punto siguiente) a través de `deleteAllSubscriptionsFromServer()`
+  (`push-notifications.ts`).
+- ~~**`endpoint: z.string().url()`**~~ (`subscribe/+server.ts:11`, `unsubscribe/+server.ts:11`)
+  aceptaba cualquier URL. **Arreglado**: nuevo `pushEndpointSchema` en `src/lib/server/push-endpoint.ts`,
+  usa `z.url()` (ya no el `.url()` deprecado en zod 4) y restringe el host a los push services
+  conocidos (`fcm.googleapis.com`, `*.push.services.mozilla.com`, `web.push.apple.com`,
+  `*.notify.windows.com`), aplicado en ambos endpoints.
+- ~~**Sin tope de suscripciones por usuario**~~ ni rate limit en `/subscribe`. **Arreglado**: límite de
+  `MAX_PUSH_SUBSCRIPTIONS_PER_USER = 10` (`src/lib/push-subscription-limit.ts`), aplicado en
+  `savePushSubscription` (`push-subscription.ts`) — solo cuenta dispositivos nuevos, resincronizar un
+  endpoint ya propio no bloquea. Al superarlo, `/subscribe` devuelve `409 { error: 'LIMIT_REACHED' }`
+  y `NotificationToggle.svelte` muestra un modal (`Modal.svelte`) explicando que hay que borrar los
+  dispositivos anteriores, con un botón que llama al DELETE del punto anterior. Sigue sin haber rate
+  limit de peticiones (no pedido).
+- ~~**`src/routes/+page.svelte`: el `$effect` que arranca el tour no tenía guarda de reentrada.**~~
+  **Arreglado**: cerrojo `tourInProgress` en `continueOnboardingTour` (`tour.ts`) que descarta
+  cualquier llamada solapada mientras otra sigue en curso.
+- ~~**URL de blob hardcodeada**~~ — `src/routes/activities/+page.svelte:61`, el cartel de 2026 apunta
+  a `https://aflgjnvgc42iwomt.public.blob.vercel-storage.com/...` en el markup. **Aposta, no es un
+  bug**: confirmado por el usuario, no requiere cambio.
+- ~~**Ternarios anidados para los `id` del tour**~~ en `DockLink.svelte` y `NavBarList.svelte`.
+  **Arreglado**: `tourDesktopElementIds` / `tourMobileElementIds` en `tour.ts` centralizan esos ids.
 
 ---
 

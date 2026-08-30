@@ -34,9 +34,7 @@
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:e2e": "bun run db:test:up && playwright test",
-		"test:e2e:ui": "bun run db:test:up && playwright test --ui",
-		"db:test:up": "podman compose up -d",
-		"db:test:down": "podman compose stop postgres-test"
+		"test:e2e:ui": "bun run db:test:up && playwright test --ui"
 	},
 	"lint-staged": {
 		"**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,vue,astro,svelte}": "oxlint"
@@ -92,11 +90,12 @@
 		"vitest": "^4.1.11"
 	},
 	"dependencies": {
-		"@sjmc11/tourguidejs": "^0.0.27",
 		"@prisma/adapter-pg": "^7.10.0",
 		"@prisma/client": "^7.10.0",
+		"@sjmc11/tourguidejs": "^0.0.27",
 		"@vercel/analytics": "^2.0.1",
 		"@vercel/blob": "^2.8.0",
+		"@vercel/functions": "^3.9.5",
 		"better-auth": "^1.7.2",
 		"leaflet": "^1.9.4",
 		"pino": "^10.3.1",

@@ -69,6 +69,13 @@ export async function unsubscribeFromPush(): Promise<void> {
 	}
 }
 
+export class PushSubscriptionLimitError extends Error {
+	constructor() {
+		super('Push subscription limit reached');
+		this.name = 'PushSubscriptionLimitError';
+	}
+}
+
 export async function sendSubscriptionToServer(
 	subscription: PushSubscription,
 	fetchImpl: typeof fetch = fetch
@@ -79,8 +86,23 @@ export async function sendSubscriptionToServer(
 		body: JSON.stringify(subscription.toJSON())
 	});
 	if (!response.ok) {
+		if (response.status === 409) {
+			const body = (await response.json().catch(() => null)) as { error?: string } | null;
+			if (body?.error === 'LIMIT_REACHED') {
+				throw new PushSubscriptionLimitError();
+			}
+		}
+		throw new Error(`Failed to save subscription: ${response.status}`);
+	}
+}
+
+export async function deleteAllSubscriptionsFromServer(
+	fetchImpl: typeof fetch = fetch
+): Promise<void> {
+	const response = await fetchImpl('/api/notifications/subscriptions', { method: 'DELETE' });
+	if (!response.ok) {
 		const text = await response.text().catch(() => 'unknown error');
-		throw new Error(`Failed to save subscription: ${response.status} ${text}`);
+		throw new Error(`Failed to delete subscriptions: ${response.status} ${text}`);
 	}
 }
 

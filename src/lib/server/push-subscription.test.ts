@@ -3,9 +3,11 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 const upsert = vi.fn();
 const deleteMany = vi.fn();
 const findMany = vi.fn();
+const findUnique = vi.fn();
+const count = vi.fn();
 
 vi.mock('$lib/server/db', () => ({
-	default: { pushSubscription: { upsert, deleteMany, findMany } }
+	default: { pushSubscription: { upsert, deleteMany, findMany, findUnique, count } }
 }));
 
 const {
@@ -13,7 +15,9 @@ const {
 	deletePushSubscription,
 	deletePushSubscriptionForUser,
 	deletePushSubscriptionsByUser,
-	getActivePushSubscriptions
+	getActivePushSubscriptions,
+	PushSubscriptionLimitError,
+	MAX_PUSH_SUBSCRIPTIONS_PER_USER
 } = await import('./push-subscription');
 
 function makeSubscription(endpoint = 'https://push.test/sub/1') {
@@ -30,6 +34,10 @@ beforeEach(() => {
 	upsert.mockReset();
 	deleteMany.mockReset();
 	findMany.mockReset();
+	findUnique.mockReset();
+	findUnique.mockResolvedValue(null);
+	count.mockReset();
+	count.mockResolvedValue(0);
 });
 
 describe('savePushSubscription', () => {
@@ -50,6 +58,35 @@ describe('savePushSubscription', () => {
 				userId: 'user-1'
 			}
 		});
+	});
+
+	it('rechaza un dispositivo nuevo si el usuario ya está al límite', async () => {
+		findUnique.mockResolvedValue(null);
+		count.mockResolvedValue(MAX_PUSH_SUBSCRIPTIONS_PER_USER);
+
+		await expect(savePushSubscription('user-1', makeSubscription())).rejects.toBeInstanceOf(
+			PushSubscriptionLimitError
+		);
+		expect(upsert).not.toHaveBeenCalled();
+	});
+
+	it('permite resincronizar un endpoint ya propio aunque esté al límite', async () => {
+		const subscription = makeSubscription();
+		findUnique.mockResolvedValue({ userId: 'user-1' });
+		count.mockResolvedValue(MAX_PUSH_SUBSCRIPTIONS_PER_USER);
+
+		await savePushSubscription('user-1', subscription);
+
+		expect(upsert).toHaveBeenCalled();
+	});
+
+	it('cuenta como nuevo un endpoint que pertenecía a otro usuario', async () => {
+		findUnique.mockResolvedValue({ userId: 'user-2' });
+		count.mockResolvedValue(MAX_PUSH_SUBSCRIPTIONS_PER_USER);
+
+		await expect(savePushSubscription('user-1', makeSubscription())).rejects.toBeInstanceOf(
+			PushSubscriptionLimitError
+		);
 	});
 });
 
