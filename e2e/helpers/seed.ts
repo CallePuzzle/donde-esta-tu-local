@@ -9,7 +9,7 @@ import type {
 	MembershipGangStatus,
 	PushSubscription,
 	User
-} from '@prisma/client';
+} from '$lib/generated/prisma/client';
 
 // Coordenadas dentro del bounding box que valida addGangSchema: las de
 // coords-monte.ts (Montemayor de Pililla), fuente única de verdad

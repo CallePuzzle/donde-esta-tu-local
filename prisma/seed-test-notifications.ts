@@ -1,6 +1,11 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '$lib/generated/prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
-const prisma = new PrismaClient();
+import { requireDirectDatabaseUrl } from '$lib/server/database-url';
+
+const prisma = new PrismaClient({
+	adapter: new PrismaPg({ connectionString: requireDirectDatabaseUrl() })
+});
 
 const TEST_PREFIX = '[TEST NOTIF]';
 
