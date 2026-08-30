@@ -142,7 +142,12 @@
 	}
 
 	onMount(() => {
-		continueOnboardingTour(page.url.pathname, data.user ?? null, [data.gang]);
+		continueOnboardingTour(
+			page.url.pathname,
+			data.user ?? null,
+			[data.gang],
+			isValidatedMember ? data.gang.id : undefined
+		);
 	});
 
 	onDestroy(() => stopWatchingPosition?.());

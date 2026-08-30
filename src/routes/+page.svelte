@@ -66,7 +66,12 @@
 	// página, solo actualiza `data.user` con invalidateAll(). El tour de
 	// miembro debe poder arrancar justo después, sin esperar a una recarga.
 	$effect(() => {
-		continueOnboardingTour(page.url.pathname, data.user ?? null, data.gangs);
+		continueOnboardingTour(
+			page.url.pathname,
+			data.user ?? null,
+			data.gangs,
+			data.currentUserGangId ?? undefined
+		);
 	});
 
 	const FILTER_DEBOUNCE_MS = 200;

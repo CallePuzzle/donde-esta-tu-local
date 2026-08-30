@@ -186,29 +186,39 @@ function buildGuestTourSteps(): AppTourStep[] {
 	});
 }
 
-function buildMemberTourSteps(gangs: MinimalGang[]): AppTourStep[] {
+function buildMemberTourSteps(
+	gangs: MinimalGang[],
+	currentUserGangId?: MinimalGang['id']
+): AppTourStep[] {
 	const validatedGang = findExampleGang(gangs);
+	// Si la peña de ejemplo es la del propio usuario, el botón #tour-join-gang
+	// no se renderiza en esa página (ya es miembro validado): el paso de
+	// "únete a una peña" no aplica y se omite en vez de mostrarlo roto.
+	const skipJoinStep = validatedGang !== undefined && validatedGang.id === currentUserGangId;
 
-	return memberTourSteps.map((step, index) => {
-		const clone: AppTourStep = { ...step, stepIndex: index };
+	return memberTourSteps
+		.filter((_, index) => index !== 1 || !skipJoinStep)
+		.map((step, index) => {
+			const clone: AppTourStep = { ...step, stepIndex: index };
 
-		// Paso "añadir peña": el enlace está duplicado (nav de escritorio / Dock
-		// de móvil) y solo uno es visible según el ancho de pantalla.
-		if (index === 0) {
-			clone.target =
-				firstVisible(`#${TOUR_ADD_GANG_DESKTOP_ID}`, `#${TOUR_ADD_GANG_MOBILE_ID}`) ??
-				document.body;
-		}
+			// Paso "añadir peña": el enlace está duplicado (nav de escritorio / Dock
+			// de móvil) y solo uno es visible según el ancho de pantalla.
+			if (step === memberTourSteps[0]) {
+				clone.target =
+					firstVisible(`#${TOUR_ADD_GANG_DESKTOP_ID}`, `#${TOUR_ADD_GANG_MOBILE_ID}`) ??
+					document.body;
+			}
 
-		// Paso de unirse a una peña: si no hay peñas validadas, se muestra centrado
-		// explicando la acción sin intentar navegar a una peña inexistente.
-		if (index === 1 && !validatedGang) {
-			clone.target = document.body;
-			clone.content = m.tour_join_gang_no_gangs_description();
-		}
+			// Paso de unirse a una peña: si no hay ninguna peña validada (aparte de
+			// la del propio usuario, ya cubierta por skipJoinStep), se muestra
+			// centrado explicando la acción sin intentar navegar a una peña inexistente.
+			if (step === memberTourSteps[1] && !validatedGang) {
+				clone.target = document.body;
+				clone.content = m.tour_join_gang_no_gangs_description();
+			}
 
-		return clone;
-	});
+			return clone;
+		});
 }
 
 let navigatingBetweenPages = false;
@@ -377,7 +387,8 @@ let tourInProgress = false;
 export async function continueOnboardingTour(
 	currentPath: string,
 	user: App.Locals['user'] | null,
-	gangs: MinimalGang[] = []
+	gangs: MinimalGang[] = [],
+	currentUserGangId?: MinimalGang['id']
 ) {
 	if (typeof window === 'undefined') return;
 	if (tourInProgress) return;
@@ -387,7 +398,12 @@ export async function continueOnboardingTour(
 		removeStaleTourDom();
 
 		if (user) {
-			await runTour(MEMBER_STORAGE_KEY, buildMemberTourSteps(gangs), currentPath, gangs);
+			await runTour(
+				MEMBER_STORAGE_KEY,
+				buildMemberTourSteps(gangs, currentUserGangId),
+				currentPath,
+				gangs
+			);
 		} else {
 			await runTour(GUEST_STORAGE_KEY, buildGuestTourSteps(), currentPath, []);
 		}
