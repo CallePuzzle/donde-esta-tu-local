@@ -1,3 +1,4 @@
+import { waitUntil } from '@vercel/functions';
 import { logger } from '$lib/logger';
 import prisma from '$lib/server/db';
 import { Prisma } from '$lib/generated/prisma/client';
@@ -86,9 +87,11 @@ export const actions = {
 			logger.info({ historyId: historyGang.id }, 'New history entry created');
 
 			// Notificar a los admins sin bloquear la respuesta al usuario.
-			void notifyAdminsPendingGang(newGang).catch((error) => {
-				logger.error(error, 'Error notifying admins about new pending gang');
-			});
+			waitUntil(
+				notifyAdminsPendingGang(newGang).catch((error) => {
+					logger.error(error, 'Error notifying admins about new pending gang');
+				})
+			);
 
 			return message(form, m.form_gang_add_successfully());
 		} catch (error) {

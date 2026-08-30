@@ -2,13 +2,14 @@ import { json } from '@sveltejs/kit';
 import { z } from 'zod/v4';
 import { requireUser } from '$lib/server/membership';
 import { requireSameOrigin } from '$lib/server/csrf';
+import { pushEndpointSchema } from '$lib/server/push-endpoint';
 import { deletePushSubscriptionForUser } from '$lib/server/push-subscription';
 import { logger } from '$lib/logger';
 
 import type { RequestEvent } from './$types';
 
 const unsubscribeSchema = z.object({
-	endpoint: z.string().url()
+	endpoint: pushEndpointSchema
 });
 
 export async function POST(event: RequestEvent) {

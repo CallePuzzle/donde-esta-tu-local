@@ -1,12 +1,37 @@
 import prisma from '$lib/server/db';
+import { MAX_PUSH_SUBSCRIPTIONS_PER_USER } from '$lib/push-subscription-limit';
 import type { PushSubscription } from 'web-push';
 
 export type PushSubscriptionJSON = Pick<PushSubscription, 'endpoint' | 'keys'>;
+
+export { MAX_PUSH_SUBSCRIPTIONS_PER_USER };
+
+export class PushSubscriptionLimitError extends Error {
+	constructor() {
+		super('Push subscription limit reached');
+		this.name = 'PushSubscriptionLimitError';
+	}
+}
 
 export async function savePushSubscription(
 	userId: string,
 	subscription: PushSubscriptionJSON
 ): Promise<void> {
+	const existing = await prisma.pushSubscription.findUnique({
+		where: { endpoint: subscription.endpoint },
+		select: { userId: true }
+	});
+
+	// Solo cuenta contra el límite si es un dispositivo nuevo para este
+	// usuario: resincronizar un endpoint ya suyo (ver NotificationToggle,
+	// onMount) no debe bloquearse aunque ya esté al límite.
+	if (existing?.userId !== userId) {
+		const subscriptionCount = await prisma.pushSubscription.count({ where: { userId } });
+		if (subscriptionCount >= MAX_PUSH_SUBSCRIPTIONS_PER_USER) {
+			throw new PushSubscriptionLimitError();
+		}
+	}
+
 	await prisma.pushSubscription.upsert({
 		where: { endpoint: subscription.endpoint },
 		update: {

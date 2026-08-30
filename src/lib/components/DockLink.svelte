@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Route } from '$lib/routes';
 	import { resolve } from '$app/paths';
+	import { tourMobileElementIds } from '$lib/utils/tour';
 	export type Props = {
 		route: Route;
 		href: Route['id'];
@@ -13,11 +14,7 @@
 <a
 	href={resolve(href)}
 	class={currentPath == route.id ? 'dock-active' : ''}
-	id={route.id === '/gang/add'
-		? 'tour-add-gang-mobile'
-		: route.id === '/activities'
-			? 'tour-activities-mobile'
-			: undefined}
+	id={tourMobileElementIds[route.id]}
 >
 	{#if route.icon}
 		{@const Component = route.icon}

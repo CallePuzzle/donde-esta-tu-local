@@ -50,10 +50,7 @@ tiempo de build**: si no están dadas de alta en Vercel antes de desplegar, el b
 - `bun run check` — type-check (`svelte-check`).
 - `bun run lint` / `bun run format` — comprobar / aplicar formato y lint (Prettier + ESLint).
 - `bun run test` — tests unitarios (Vitest).
-- `bun run test:e2e` — tests E2E (Playwright): levanta un PostgreSQL de test con
-  `docker compose` (puerto 55433, credenciales de `.env.test`) y ejecuta los specs de `e2e/`.
-  Requiere Docker y, la primera vez, `bunx playwright install chromium`. Al terminar, para la BD con
-  `bun run db:test:down`.
+- `bun run test:e2e` — tests E2E (Playwright): ejecuta los specs de `e2e/`. Para la base de datos de test, usa directamente `podman compose up -d` (puerto 55433, credenciales de `.env.test`) y para pararla `podman compose stop`. Requiere Podman y, la primera vez, `bunx playwright install chromium`.
 - `bun run only-build` — build de producción **sin** tocar la base de datos. Úsalo para verificar
   localmente.
 - `bun run build` — build real de despliegue: aplica migraciones pendientes contra la base de datos

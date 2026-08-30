@@ -3,7 +3,7 @@ import { m } from '../paraglide/messages.js';
 
 export const loginSchema = z.object({
 	email: z.email(m.schema_login_email_error()).meta({
-		placeholder: 'pepe@archive.org',
+		placeholder: 'jesus-asejere@kyp.es',
 		description: m.schema_login_email_describe()
 	})
 });

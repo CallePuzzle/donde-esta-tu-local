@@ -2,14 +2,18 @@
 	import { onMount } from 'svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { logger } from '$lib/logger';
+	import Modal from '$lib/components/Modal.svelte';
+	import { MAX_PUSH_SUBSCRIPTIONS_PER_USER } from '$lib/push-subscription-limit';
 	import {
 		isPushSupported,
 		isPushServiceUnavailableError,
+		PushSubscriptionLimitError,
 		getExistingSubscription,
 		subscribeToPush,
 		unsubscribeFromPush,
 		sendSubscriptionToServer,
-		deleteSubscriptionFromServer
+		deleteSubscriptionFromServer,
+		deleteAllSubscriptionsFromServer
 	} from '$lib/utils/push-notifications';
 
 	export type Props = {
@@ -23,6 +27,10 @@
 	let enabled = $state(false);
 	let loading = $state(false);
 	let errorMessage = $state('');
+
+	let limitModal: Modal | undefined = $state();
+	let deletingAllDevices = $state(false);
+	let deleteAllDevicesMessage = $state('');
 
 	onMount(async () => {
 		supported = isPushSupported();
@@ -66,17 +74,35 @@
 				}
 			}
 		} catch (error) {
-			logger.error(error, 'Error cambiando suscripción push');
 			enabled = !targetEnabled;
-			if (targetEnabled && isPushServiceUnavailableError(error)) {
-				errorMessage = m.push_notifications_service_unavailable();
+			if (targetEnabled && error instanceof PushSubscriptionLimitError) {
+				limitModal?.showModal();
 			} else {
-				errorMessage = targetEnabled
-					? m.push_notifications_subscribe_error()
-					: m.push_notifications_unsubscribe_error();
+				logger.error(error, 'Error cambiando suscripción push');
+				if (targetEnabled && isPushServiceUnavailableError(error)) {
+					errorMessage = m.push_notifications_service_unavailable();
+				} else {
+					errorMessage = targetEnabled
+						? m.push_notifications_subscribe_error()
+						: m.push_notifications_unsubscribe_error();
+				}
 			}
 		} finally {
 			loading = false;
+		}
+	}
+
+	async function handleDeleteAllDevices() {
+		deletingAllDevices = true;
+		deleteAllDevicesMessage = '';
+		try {
+			await deleteAllSubscriptionsFromServer();
+			deleteAllDevicesMessage = m.push_notifications_delete_all_success();
+		} catch (error) {
+			logger.error(error, 'Error borrando dispositivos con avisos push activados');
+			deleteAllDevicesMessage = m.push_notifications_delete_all_error();
+		} finally {
+			deletingAllDevices = false;
 		}
 	}
 </script>
@@ -113,4 +139,30 @@
 			</div>
 		{/if}
 	</div>
+
+	<Modal
+		title={m.push_notifications_limit_reached_title()}
+		showButton={false}
+		type="button"
+		bind:this={limitModal}
+	>
+		<h3 class="text-lg font-bold">{m.push_notifications_limit_reached_title()}</h3>
+		<p class="py-4">
+			{m.push_notifications_limit_reached_description({ limit: MAX_PUSH_SUBSCRIPTIONS_PER_USER })}
+		</p>
+		<button
+			type="button"
+			class="btn btn-warning"
+			onclick={handleDeleteAllDevices}
+			disabled={deletingAllDevices}
+		>
+			{#if deletingAllDevices}
+				<span class="loading loading-xs loading-spinner"></span>
+			{/if}
+			{m.push_notifications_delete_all_button()}
+		</button>
+		{#if deleteAllDevicesMessage}
+			<p class="mt-2 text-sm">{deleteAllDevicesMessage}</p>
+		{/if}
+	</Modal>
 {/if}
