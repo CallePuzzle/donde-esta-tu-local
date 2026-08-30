@@ -1,15 +1,15 @@
 import { json } from '@sveltejs/kit';
 import { timingSafeEqual } from 'node:crypto';
-import { CRON_SECRET } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { sendActivityNotifications } from '$lib/server/push-send';
 import { logger } from '$lib/logger';
 
 import type { RequestEvent } from './$types';
 
 function isValidCronSecret(token: string): boolean {
-	if (!CRON_SECRET) return false;
+	if (!env.CRON_SECRET) return false;
 	const tokenBuffer = Buffer.from(token);
-	const secretBuffer = Buffer.from(CRON_SECRET);
+	const secretBuffer = Buffer.from(env.CRON_SECRET);
 	// timingSafeEqual exige buffers de igual longitud; una longitud distinta
 	// ya implica que no coincide.
 	if (tokenBuffer.length !== secretBuffer.length) return false;

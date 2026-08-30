@@ -52,10 +52,8 @@ export async function startFakePushServer(responses: Record<string, number>): Pr
 }> {
 	const requests: { url: string; method: string }[] = [];
 	const server: Server = createServer(generateSelfSignedCert(), (req, res) => {
-		console.log('FAKE PUSH SERVER request:', req.method, req.url);
 		requests.push({ url: req.url ?? '/', method: req.method ?? 'POST' });
 		const status = req.url ? responses[req.url] : undefined;
-		console.log('FAKE PUSH SERVER response:', status ?? 500);
 		res.writeHead(status ?? 500);
 		res.end();
 	});

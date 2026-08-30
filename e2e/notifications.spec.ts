@@ -63,11 +63,6 @@ test('envía a las suscripciones activas y borra las caducadas (410)', async ({ 
 	const user = await createUser({});
 	const server = await startFakePushServer({ '/ok': 201, '/gone': 410 });
 
-	// Sanity check: el servidor de prueba responde desde este proceso
-	const sanity = await fetch(`${server.url}/ok`, { method: 'POST' });
-	console.log('Sanity check status:', sanity.status);
-	console.log('Fake push server requests after sanity:', server.getRequests());
-
 	try {
 		await createPushSubscription({ userId: user.id, endpoint: `${server.url}/ok` });
 		await createPushSubscription({ userId: user.id, endpoint: `${server.url}/gone` });
@@ -82,7 +77,6 @@ test('envía a las suscripciones activas y borra las caducadas (410)', async ({ 
 
 		expect(response.ok()).toBe(true);
 		const body = await response.json();
-		console.log('410 test body:', body);
 		expect(body.sent).toBe(1);
 		expect(body.failed).toBe(0);
 
