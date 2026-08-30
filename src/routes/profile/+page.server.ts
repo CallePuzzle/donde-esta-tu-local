@@ -7,7 +7,7 @@ import { requireUser } from '$lib/server/membership';
 import { m } from '$lib/paraglide/messages';
 import { logger } from '$lib/logger';
 import { uploadImage, deleteImage } from '$lib/server/blob-image';
-import { VAPID_PUBLIC_KEY } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 import type { PageServerLoad, PageServerLoadEvent, Actions } from './$types';
 import type { UserGangDetail } from './type';
@@ -42,7 +42,7 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 			id: userGangDetail?.gang?.id || null,
 			name: userGangDetail?.gang?.name || m.profile_no_gang()
 		} satisfies UserGangDetail,
-		vapidPublicKey: VAPID_PUBLIC_KEY
+		vapidPublicKey: env.VAPID_PUBLIC_KEY
 	};
 };
 

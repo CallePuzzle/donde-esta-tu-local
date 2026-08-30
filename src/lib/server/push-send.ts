@@ -27,7 +27,6 @@ export async function sendPushNotification(
 		await webpush.sendNotification(subscription as PushSubscription, JSON.stringify(payload));
 		return 'sent';
 	} catch (error) {
-		console.log('PUSH SEND ERROR:', error);
 		if (error instanceof WebPushError && (error.statusCode === 410 || error.statusCode === 404)) {
 			logger.debug('Suscripción push caducada, eliminando');
 			await deletePushSubscription(subscription.endpoint);
