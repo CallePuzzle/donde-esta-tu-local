@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/state';
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { coordsMonte } from '$lib/utils/coords-monte';
 	import { showMyPosition } from '$lib/utils/show-my-position';
 	import GangMap from '$lib/components/gangs/GangMap.svelte';
@@ -21,6 +21,8 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { logger } from '$lib/logger';
 	import { isAdmin } from '$lib/utils/roles';
+	import { continueOnboardingTour } from '$lib/utils/tour';
+	import '@sjmc11/tourguidejs/src/scss/tour.scss';
 
 	import type { PageData } from './$types';
 	import type { Map } from 'leaflet';
@@ -139,6 +141,10 @@
 		stopWatchingPosition = showMyPosition(L, map, coordsMonte);
 	}
 
+	onMount(() => {
+		continueOnboardingTour(page.url.pathname, data.user ?? null, [data.gang]);
+	});
+
 	onDestroy(() => stopWatchingPosition?.());
 </script>
 
@@ -146,6 +152,7 @@
 	<div class="hero-content text-center">
 		<div class="flex max-w-md items-center gap-3">
 			<GangImage
+				id="tour-gang-image"
 				name={gang.name}
 				image={gang.image}
 				canUpload={data.canUploadImage}
@@ -183,7 +190,12 @@
 							{joinMessage}
 						</div>
 					{:else}
-						<button type="button" class="btn w-fit btn-accent" onclick={handleJoinClick}>
+						<button
+							type="button"
+							id="tour-join-gang"
+							class="btn w-fit btn-accent"
+							onclick={handleJoinClick}
+						>
 							<UserPlus />{m.request_new_member_title()}
 						</button>
 					{/if}

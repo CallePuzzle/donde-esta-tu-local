@@ -28,7 +28,7 @@
 	});
 </script>
 
-<div class="navbar-end w-auto md:w-[50%]">
+<div class="navbar-end w-auto md:w-[50%]" id="tour-login">
 	<div class="dropdown dropdown-end">
 		{#if userIsLogged && user}
 			<div class="btn avatar btn-circle btn-ghost">

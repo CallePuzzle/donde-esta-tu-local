@@ -1,12 +1,16 @@
 <script lang="ts">
 	// import Cartel from '$lib/assets/actividades/actividades2025.jpg?enhanced';
 	import ActivityCard from '$lib/components/ActivityCard.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 	import { Tabs, TabItem } from 'flowbite-svelte';
 	import { m } from '$lib/paraglide/messages.js';
+	import Megaphone from '@lucide/svelte/icons/megaphone';
 
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+
+	let notificationsModal = $state<Modal | null>(null);
 
 	// Sin eager: los carteles (algunos pesan varios MB) solo se cargan cuando
 	// una ActivityCard realmente necesita mostrar el suyo, no todos de golpe.
@@ -22,17 +26,43 @@
 
 <div class="hero">
 	<div class="hero-content text-center">
-		<div class="flex max-w-md">
+		<div class="flex max-w-md items-center gap-2">
 			<h1 class="text-2xl font-bold">{m.routes_activities()}</h1>
+			<button
+				type="button"
+				class="btn btn-circle btn-ghost btn-sm"
+				aria-label={m.activities_notifications_title()}
+				onclick={() => notificationsModal?.showModal()}
+			>
+				<Megaphone class="h-5 w-5" />
+			</button>
 		</div>
 	</div>
 </div>
 
+<Modal
+	title={m.activities_notifications_title()}
+	bind:this={notificationsModal}
+	type="button"
+	showButton={false}
+>
+	<p>{m.activities_notifications_description()}</p>
+</Modal>
+
 <div class="container mx-auto my-2 pb-20 lg:pb-0">
 	<Tabs tabStyle="underline">
-		<!-- <TabItem open title={m.activities_tab_poster()} class="flex w-full justify-center">
-			<enhanced:img src={Cartel} alt={m.activities_poster_alt()} />
-		</TabItem> -->
+		<TabItem
+			open
+			title={m.activities_tab_poster()}
+			class="flex w-full content-center justify-center"
+		>
+			<div class="flex min-h-screen items-center justify-center">
+				<img
+					src="https://aflgjnvgc42iwomt.public.blob.vercel-storage.com/actividades-2026/actividades2026.jpg"
+					alt={m.activities_poster_alt()}
+				/>
+			</div>
+		</TabItem>
 		<TabItem title={m.activities_tab_upcoming()} class="flex w-full justify-center">
 			{#if data.upcomingActivitiesTruncated}
 				<div class="mb-4 alert alert-warning">

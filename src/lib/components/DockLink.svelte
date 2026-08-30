@@ -10,7 +10,15 @@
 	let { route, href, currentPath }: Props = $props();
 </script>
 
-<a href={resolve(href)} class={currentPath == route.id ? 'dock-active' : ''}>
+<a
+	href={resolve(href)}
+	class={currentPath == route.id ? 'dock-active' : ''}
+	id={route.id === '/gang/add'
+		? 'tour-add-gang-mobile'
+		: route.id === '/activities'
+			? 'tour-activities-mobile'
+			: undefined}
+>
 	{#if route.icon}
 		{@const Component = route.icon}
 		<Component size={20} />
