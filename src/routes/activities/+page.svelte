@@ -1,5 +1,4 @@
 <script lang="ts">
-	// import Cartel from '$lib/assets/actividades/actividades2025.jpg?enhanced';
 	import ActivityCard from '$lib/components/ActivityCard.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import { Tabs, TabItem } from 'flowbite-svelte';
@@ -11,17 +10,6 @@
 	let { data }: { data: PageData } = $props();
 
 	let notificationsModal = $state<Modal | null>(null);
-
-	// Sin eager: los carteles (algunos pesan varios MB) solo se cargan cuando
-	// una ActivityCard realmente necesita mostrar el suyo, no todos de golpe.
-	const activityBannerLoaders = import.meta.glob(
-		'$lib/assets/actividades/*.{avif,gif,heif,jpeg,jpg,png,tiff,webp,svg}',
-		{
-			query: {
-				enhanced: true
-			}
-		}
-	) as Record<string, () => Promise<{ default: string }>>;
 </script>
 
 <div class="hero">
@@ -72,7 +60,7 @@
 			{#if data.upcomingActivities.length > 0}
 				<div class="grid grid-cols-1 justify-center md:grid-cols-2 lg:grid-cols-3">
 					{#each data.upcomingActivities as activity (activity.id)}
-						<ActivityCard {activity} {activityBannerLoaders} />
+						<ActivityCard {activity} />
 					{/each}
 				</div>
 			{:else}
@@ -103,7 +91,7 @@
 			{#if data.pastActivities.length > 0}
 				<div class="grid grid-cols-1 justify-center opacity-75 md:grid-cols-2 lg:grid-cols-3">
 					{#each data.pastActivities as activity (activity.id)}
-						<ActivityCard {activity} {activityBannerLoaders} />
+						<ActivityCard {activity} />
 					{/each}
 				</div>
 			{:else}

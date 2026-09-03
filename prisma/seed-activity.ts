@@ -89,13 +89,19 @@ export async function SeedActivity(prisma: PrismaClient, activity: SeedActivityT
 			return;
 		}
 
-		update = { ...update, placeGang: { connect: { id: placeGang.id } } };
-
 		create = { ...create, placeGang: { connect: { id: placeGang.id } } };
+	} else {
+		// En update hay que limpiar explícitamente: si la actividad ya tenía
+		// peña anfitriona y el seed ya no la trae, sin disconnect se quedaría
+		// la relación vieja.
+		update = { ...update, placeGang: { disconnect: true } };
 	}
 
+	// `set` sustituye la lista completa en update (y la vacía si no hay
+	// colaboradoras); `connect` sería aditivo y acumularía relaciones viejas.
+	update = { ...update, collaboratingGangs: { set: collaboratingGangs } };
+
 	if (collaboratingGangs.length > 0) {
-		update = { ...update, collaboratingGangs: { connect: collaboratingGangs } };
 		create = { ...create, collaboratingGangs: { connect: collaboratingGangs } };
 	}
 

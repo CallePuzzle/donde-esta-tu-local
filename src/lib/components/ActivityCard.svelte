@@ -17,16 +17,9 @@
 
 	interface Props {
 		activity: ActivityCard;
-		activityBannerLoaders: Record<string, () => Promise<{ default: string }>>;
 	}
 
-	let { activity, activityBannerLoaders }: Props = $props();
-
-	let activityBannerSrcPromise = $derived.by(async () => {
-		if (!activity.bannerPath) return undefined;
-		const loadBanner = activityBannerLoaders[activity.bannerPath];
-		return (await loadBanner?.())?.default;
-	});
+	let { activity }: Props = $props();
 
 	function formatActivityDate(activity: Activity) {
 		return formatActivityDateTime(activity.date, activity.dateDesc);
@@ -96,25 +89,18 @@
 			</div>
 		{/if}
 		{#if activity.bannerPath}
-			{#await activityBannerSrcPromise then activityBannerSrc}
-				{#if activityBannerSrc}
-					<div class="mb-3">
-						<p class="flex items-center text-sm text-gray-600">
-							<Image /><span class="mx-1">{m.activity_poster_label()}</span><Modal
-								title={m.activity_poster_modal_title()}
-								type="button"
-								buttonClass="btn btn-dash btn-accent"
-								buttonCloseClass="btn btn-dash btn-accent"
-							>
-								<enhanced:img
-									src={activityBannerSrc}
-									alt={m.activity_poster_alt({ name: activity.name })}
-								/>
-							</Modal>
-						</p>
-					</div>
-				{/if}
-			{/await}
+			<div class="mb-3">
+				<p class="flex items-center text-sm text-gray-600">
+					<Image /><span class="mx-1">{m.activity_poster_label()}</span><Modal
+						title={m.activity_poster_modal_title()}
+						type="button"
+						buttonClass="btn btn-dash btn-accent"
+						buttonCloseClass="btn btn-dash btn-accent"
+					>
+						<img src={activity.bannerPath} alt={m.activity_poster_alt({ name: activity.name })} />
+					</Modal>
+				</p>
+			</div>
 		{/if}
 	</div>
 </div>
