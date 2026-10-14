@@ -1,7 +1,7 @@
-import { createAuthClient } from 'better-auth/svelte';
+import { createCallepuzzleAuthClient } from '@callepuzzle/auth/client';
 import { emailOTPClient, adminClient } from 'better-auth/client/plugins';
 
-export const authClient = createAuthClient({
+export const authClient = createCallepuzzleAuthClient({
 	plugins: [emailOTPClient(), adminClient()]
 });
 
