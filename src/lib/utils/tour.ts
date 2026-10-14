@@ -1,7 +1,7 @@
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
+import type { RouteId } from '$app/types';
 import { m } from '$lib/paraglide/messages.js';
-import type { Route } from '$lib/routes';
 import type { TourGuideClient, TourGuideOptions, TourGuideStep } from '$lib/types/tourguide';
 
 async function createTourGuideClient(options: TourGuideOptions): Promise<TourGuideClient> {
@@ -34,12 +34,12 @@ const TOUR_ADD_GANG_MOBILE_ID = 'tour-add-gang-mobile';
 const TOUR_ACTIVITIES_DESKTOP_ID = 'tour-activities-desktop';
 const TOUR_ACTIVITIES_MOBILE_ID = 'tour-activities-mobile';
 
-export const tourDesktopElementIds: Partial<Record<Route['id'], string>> = {
+export const tourDesktopElementIds: Partial<Record<RouteId, string>> = {
 	'/gang/add': TOUR_ADD_GANG_DESKTOP_ID,
 	'/activities': TOUR_ACTIVITIES_DESKTOP_ID
 };
 
-export const tourMobileElementIds: Partial<Record<Route['id'], string>> = {
+export const tourMobileElementIds: Partial<Record<RouteId, string>> = {
 	'/gang/add': TOUR_ADD_GANG_MOBILE_ID,
 	'/activities': TOUR_ACTIVITIES_MOBILE_ID
 };

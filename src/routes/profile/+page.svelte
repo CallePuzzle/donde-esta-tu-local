@@ -11,7 +11,7 @@
 	import Calendar from '@lucide/svelte/icons/calendar';
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import UserRound from '@lucide/svelte/icons/user-round';
-	import ButtonSignOut from '$lib/components/ButtonSignOut.svelte';
+	import { ButtonSignOut } from '@callepuzzle/svelte-ui';
 	import NotificationToggle from '$lib/components/NotificationToggle.svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
@@ -135,7 +135,11 @@
 			<NotificationToggle vapidPublicKey={data.vapidPublicKey} id="tour-notifications" />
 
 			<div class="flex justify-center">
-				<ButtonSignOut {authClient} classNames="btn w-45 btn-error" />
+				<ButtonSignOut
+					{authClient}
+					class="btn w-45 btn-error"
+					strings={{ signOut: m.form_login_sign_out() }}
+				/>
 			</div>
 
 			<!-- Admin Panel Link -->

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Footer as LibFooter } from '@callepuzzle/svelte-ui';
 	import Heart from '@lucide/svelte/icons/heart';
 	import MailQuestionMark from '@lucide/svelte/icons/mail-question-mark';
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
@@ -15,13 +16,11 @@
 	function restartTour() {
 		startOnboardingTour(!!user);
 	}
-
-	let visibleOnMobileClass = $derived.by(() => {
-		return visibleOnlyOnMobile ? 'flex lg:hidden' : 'hidden lg:flex';
-	});
 </script>
 
-<footer class="bottom-0 container mx-auto justify-center {visibleOnMobileClass}">
+<!-- El contenedor es el Footer de la librería (misma clase de visibilidad por
+     breakpoint que tenía el local); el contenido es de producto. -->
+<LibFooter {visibleOnlyOnMobile}>
 	<p class="mx-4 flex items-center justify-center md:flex-1">
 		<span class="mr-2">{m.footer_made_with()}</span><Heart
 			size="16"
@@ -61,4 +60,4 @@
 			aria-label={m.tour_restart_label()}><RotateCcw size="20" /></button
 		>
 	</p>
-</footer>
+</LibFooter>
