@@ -8,8 +8,8 @@
 	import UserCheck from '@lucide/svelte/icons/user-check';
 	import Upload from '@lucide/svelte/icons/upload';
 	import Image from '@lucide/svelte/icons/image';
-	import FormFields from './FormFields.svelte';
-	import { zodToFieldsJsonSchema } from '$lib/schemas/utils.js';
+	import { FormFields } from '@callepuzzle/svelte-ui';
+	import { zodToFieldsJsonSchema } from '@callepuzzle/core/schema';
 
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { UpdateUserSchema } from '$lib/schemas/user.js';
@@ -107,7 +107,13 @@
 	method="POST"
 	enctype="multipart/form-data"
 >
-	<FormFields {form} {formData} fields={filteredFields} />
+	<!-- Strings en español: la librería tiene defaults en inglés (Obligatorio/Opcional) -->
+	<FormFields
+		{form}
+		{formData}
+		fields={filteredFields}
+		strings={{ required: m.form_required(), optional: m.form_optional() }}
+	/>
 
 	<!-- File Upload Section -->
 	<div class="form-control my-4 w-full">

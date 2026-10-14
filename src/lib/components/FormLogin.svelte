@@ -12,8 +12,8 @@
 	import { invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
-	import FormFields from './FormFields.svelte';
-	import { zodToFieldsJsonSchema } from '../schemas/utils.js';
+	import { FormFields } from '@callepuzzle/svelte-ui';
+	import { zodToFieldsJsonSchema } from '@callepuzzle/core/schema';
 
 	import { PinInput, REGEXP_ONLY_DIGITS, type PinInputRootSnippetProps } from 'bits-ui';
 
