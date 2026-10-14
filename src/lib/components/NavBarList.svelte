@@ -1,25 +1,19 @@
 <script lang="ts">
-	import { type Routes, getMenuRoutes } from '$lib/routes';
+	import { Link } from '@callepuzzle/svelte-ui';
+	import { getMenuRoutes, type RouteMap } from '@callepuzzle/core';
+	import type { RouteId } from '$app/types';
 	import { tourDesktopElementIds } from '$lib/utils/tour';
-	import Link from './Link.svelte';
 
 	export type Props = {
-		type: 'horizontal' | 'drawer';
-		routes: Routes;
+		routes: RouteMap<RouteId>;
 	};
 
-	let { type, routes }: Props = $props();
-
-	function getClass() {
-		if (type === 'horizontal') {
-			return 'menu menu-horizontal';
-		} else if (type === 'drawer') {
-			return 'menu bg-base-200 min-h-full w-80 p-4 py-10';
-		}
-	}
+	let { routes }: Props = $props();
 </script>
 
-<ul class={getClass()}>
+<!-- ul propio (y no el NavBarList de la librería): los Link internos necesitan
+     los id del tour, que el NavBarList de la librería no reparte. -->
+<ul class="menu menu-horizontal">
 	{#each getMenuRoutes(routes) as route (route.id)}
 		<li>
 			<Link {route} href={route.id} id={tourDesktopElementIds[route.id]} />

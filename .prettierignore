@@ -12,6 +12,7 @@ bun.lockb
 # Generated code
 /src/lib/paraglide/
 /src/lib/generated/
+/project.inlang/
 
 # Playwright
 /test-results/

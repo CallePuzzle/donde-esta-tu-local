@@ -50,10 +50,25 @@ export async function waitForHydration(page: Page): Promise<void> {
 	await page.waitForLoadState('networkidle');
 }
 
+// Desactiva el tour guiado para el resto de navegaciones de esta página.
+// El tour invitado arranca en "/" para un perfil nuevo y su backdrop
+// (TourGuideJS pone `tg-no-interaction` en <body>) bloquea los clicks de
+// Playwright sobre el botón de login: la carrera entre la hidratación del
+// tour y el primer click hacía el test no determinista. Las claves son las
+// de GUEST_STORAGE_KEY/MEMBER_STORAGE_KEY en src/lib/utils/tour.ts.
+export function disableOnboardingTour(page: Page): void {
+	page.addInitScript(() => {
+		for (const key of ['onboarding-tour-guest-v1', 'onboarding-tour-member-v1']) {
+			localStorage.setItem(key, JSON.stringify({ activeStep: 0, finished: true }));
+		}
+	});
+}
+
 // Flujo de login real por UI: el OTP no se envía por email en desarrollo,
 // queda en la tabla verification (identifier "sign-in-otp-<email>",
 // value "<otp>:<intentos>").
 export async function loginViaUi(page: Page, email: string): Promise<void> {
+	disableOnboardingTour(page);
 	await page.goto('/');
 	// El mapa se inicializa en onMount: si existe, la página ya está hidratada
 	await page.locator('#map.leaflet-container').waitFor();
@@ -75,8 +90,10 @@ export async function loginViaUi(page: Page, email: string): Promise<void> {
 		(response) => response.url().includes('/api/auth/sign-in/email-otp') && response.ok()
 	);
 	// invalidateAll() tras el login: el navbar sustituye el botón "Iniciar
-	// sesión" por el enlace al perfil (avatar con la inicial del usuario)
-	await page.locator('a[href="/profile"]').first().waitFor();
+	// sesión" por el menú de usuario (dropdown), que contiene el enlace al
+	// perfil. El dropdown está cerrado (display:none hasta el foco), así que se
+	// espera a que el enlace esté en el DOM (attached) y no a que sea visible.
+	await page.locator('a[href="/profile"]').first().waitFor({ state: 'attached' });
 }
 
 // Lee el OTP de la tabla verification con polling (hasta 10 s)

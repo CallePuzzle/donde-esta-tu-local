@@ -5,6 +5,9 @@
     "": {
       "name": "donde-esta-tu-local-v5",
       "dependencies": {
+        "@callepuzzle/auth": "^0.1.0",
+        "@callepuzzle/core": "^0.1.0",
+        "@callepuzzle/svelte-ui": "^0.1.0",
         "@prisma/adapter-pg": "^7.10.0",
         "@prisma/client": "^7.10.0",
         "@sjmc11/tourguidejs": "^0.0.27",
@@ -17,6 +20,7 @@
         "pino-pretty": "^13.1.3",
         "prisma": "^7.10.0",
         "web-push": "^3.6.7",
+        "zod": "^4.6.7",
       },
       "devDependencies": {
         "@eslint/compat": "^2.1.0",
@@ -83,6 +87,7 @@
     "tar": "^7.5.22",
     "validator": "^13.15.35",
     "yaml": "^1.10.3",
+    "zod": "^4.6.7",
   },
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
@@ -110,6 +115,12 @@
     "@better-auth/utils": ["@better-auth/utils@0.4.2", "", { "dependencies": { "@noble/hashes": "^2.0.1" } }, "sha512-AUxrvu+HaaODsUyzDxFgwd/8RZ1yZaYo42LXKSrU2oGgR38pS1ij8nqQKNgtTWoYGpNevNXtCfgTy6loHveW9A=="],
 
     "@better-fetch/fetch": ["@better-fetch/fetch@1.3.1", "", {}, "sha512-ABkD1WhyfPZprKRQI3bhATjeiFuNWC9PXhfGWqL+sg/gKrM977oFrYkdb4msM3hgUGonr7KlOsOFT5TU2rht9g=="],
+
+    "@callepuzzle/auth": ["@callepuzzle/auth@0.1.0", "https://npm.pkg.github.com/download/@callepuzzle/auth/0.1.0/c1be7e2b6aae238509ca1cd7ef5d0a6eacea2b37", { "peerDependencies": { "@sveltejs/kit": "^2.27.0", "better-auth": "^1.3.4" } }, "sha512-rPlOVP4tq+xaDRHat6dVZg/LpOdzLKTpL5Yn5St5n/1AdW1ir2WSraOzYHuo0TtXoQXpVBA0lBPEtjtnQYtBFg=="],
+
+    "@callepuzzle/core": ["@callepuzzle/core@0.1.0", "https://npm.pkg.github.com/download/@callepuzzle/core/0.1.0/80bb7f1a10550458bdaad65ed76ead7c558e6631", { "peerDependencies": { "svelte": "^5.36.0", "zod": "^3.25.0 || ^4.0.0" } }, "sha512-n/4HKaSIh17q+OHJ1pzJG+4D+AvHOO1eE4rt6KnL/5d0t8prXwCo3U0KZ/fZju/C4PPluplbqpWWcEPqyEHtrQ=="],
+
+    "@callepuzzle/svelte-ui": ["@callepuzzle/svelte-ui@0.1.0", "https://npm.pkg.github.com/download/@callepuzzle/svelte-ui/0.1.0/10e4b743152a630516ac993d6c14622418bca0de", { "dependencies": { "@callepuzzle/core": "^0.1.0", "clsx": "^2.1.1", "esm-env": "^1.2.2", "tailwind-merge": "^3.3.1" }, "peerDependencies": { "@lucide/svelte": "^0.488.0 || ^1.0.0", "@sveltejs/kit": "^2.27.0", "bits-ui": "^2.19.0", "daisyui": "^5.0.50", "formsnap": "^2.0.1", "svelte": "^5.36.12", "sveltekit-superforms": "^2.27.1", "tailwindcss": "^4.1.11", "zod": "^3.25.0 || ^4.0.0" } }, "sha512-exxxAsWNlUE9yDSKI+Pc3nex/9zeh/08JPkWTYPwmm27KnzvYD23T5IRu0ePRKnIvLx/y28A7qfR/YbS30vXyQ=="],
 
     "@electric-sql/pglite": ["@electric-sql/pglite@0.4.3", "", {}, "sha512-ichuWTgtd4mOM1G4SpyGJa5trT03lWbMypDV0fUXUCXg5hiHqVAz/bZyV68NqmkLB7WcYmj1RMJVSp8HV/v/ZQ=="],
 
@@ -1449,7 +1460,7 @@
 
     "zimmerframe": ["zimmerframe@1.1.4", "", {}, "sha512-B58NGBEoc8Y9MWWCQGl/gq9xBCe4IiKM0a2x7GZdQKOW5Exr8S1W24J6OgM1njK8xCRGvAJIL/MxXHf6SkmQKQ=="],
 
-    "zod": ["zod@4.5.2", "", {}, "sha512-XkYXCol10+ba/6F/cueWV+TezUeOqXW0hdeJt5CdXjTYeAgAQg5N03RQdJ80mhfFE72+pblvYMW4wy2Qp4Qbrg=="],
+    "zod": ["zod@4.6.7", "", {}, "sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg=="],
 
     "zod-v3-to-json-schema": ["zod-v3-to-json-schema@4.0.0", "", { "peerDependencies": { "zod": "^3.25 || ^4.0.14" } }, "sha512-KixLrhX/uPmRFnDgsZrzrk4x5SSJA+PmaE5adbfID9+3KPJcdxqRobaHU397EfWBqfQircrjKqvEqZ/mW5QH6w=="],
 
@@ -1486,8 +1497,6 @@
     "@tailwindcss/oxide-wasm32-wasi/tslib": ["tslib@2.8.1", "", { "bundled": true }, "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="],
 
     "@typescript-eslint/eslint-plugin/ignore": ["ignore@7.0.6", "", {}, "sha512-BAg6QkE8W+TuQLrrw0Ugr7HegXduRuuj8/ti2kSOc+jz1dmx8/WNcjr6XGnq5YpDWxFwwaavqD0+jIUOKelTsw=="],
-
-    "@vercel/cli-config/zod": ["zod@4.1.11", "", {}, "sha512-WPsqwxITS2tzx1bzhIKsEs19ABD5vmCVa4xBo2tq/SrV4RNZtfws1EnCWQXM6yh8bD08a1idvkB5MZSBiZsjwg=="],
 
     "@vercel/oidc/jose": ["jose@5.10.0", "", {}, "sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg=="],
 

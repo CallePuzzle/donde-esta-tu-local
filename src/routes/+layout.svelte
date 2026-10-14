@@ -1,10 +1,13 @@
 <script lang="ts">
 	import '../app.css';
 	import { page, navigating } from '$app/state';
-	import Header from '$lib/components/Header.svelte';
+	import { resolve } from '$app/paths';
+	import { Header } from '@callepuzzle/svelte-ui';
+	import NavBarEnd from '$lib/components/NavBarEnd.svelte';
+	import NavBarList from '$lib/components/NavBarList.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import Dock from '$lib/components/Dock.svelte';
-	import { routes } from '$lib/routes';
+	import { getRoutes } from '$lib/routes';
 	import Logo from '$lib/assets/logo.png?enhanced';
 	import { m } from '$lib/paraglide/messages.js';
 
@@ -14,17 +17,33 @@
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 
 	let user = $derived(data.user);
+
+	// Factoría en render (nunca en scope de módulo): las etiquetas i18n se
+	// resuelven con el locale activo.
+	const routes = $derived(getRoutes());
 </script>
 
 <div class="main-div h-screen min-w-[348px]">
-	<Header {routes} {user}>
+	<!-- El título NO va por homeHref (la librería envolvería el título en un Link
+	     sin data-sveltekit-reload): el enlace a "/" con reload se conserva aquí. -->
+	<Header showBack strings={{ back: m.common_back() }}>
 		{#snippet title()}
-			<div class="flex items-center">
-				<enhanced:img src={Logo} alt={m.layout_header_icon_alt()} class="w-6 lg:m-1 lg:w-14" />
-				<div class="m-1">
-					<span>Montemayor de Pililla</span>
+			<a href={resolve('/')} data-sveltekit-reload>
+				<div class="flex items-center">
+					<enhanced:img src={Logo} alt={m.layout_header_icon_alt()} class="w-6 lg:m-1 lg:w-14" />
+					<div class="m-1">
+						<span>Montemayor de Pililla</span>
+					</div>
 				</div>
-			</div>
+			</a>
+		{/snippet}
+		{#snippet navCenter()}
+			<nav aria-label={m.layout_nav_label()}>
+				<NavBarList {routes} />
+			</nav>
+		{/snippet}
+		{#snippet navEnd()}
+			<NavBarEnd {user} />
 		{/snippet}
 	</Header>
 

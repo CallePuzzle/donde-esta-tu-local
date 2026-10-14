@@ -1,30 +1,15 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-	import { m } from '../paraglide/messages.js';
+	import { Modal as LibModal, defaultModalStrings } from '@callepuzzle/svelte-ui';
+	import type { ComponentProps } from 'svelte';
+	import { m } from '$lib/paraglide/messages.js';
 
-	export type Props = {
-		title: string;
-		children: Snippet;
-		type?: 'button' | 'X' | 'outside';
-		showButton?: boolean;
-		buttonClass?: string;
-		buttonCloseClass?: string;
-		boxClass?: string;
-	};
+	// Misma API que el Modal local que sustituye: los puntos de uso del código
+	// (title, type, showButton, boxClass, bind:this → showModal()/close()) no cambian.
+	export type Props = Omit<ComponentProps<typeof LibModal>, 'strings'>;
 
-	let {
-		title,
-		children,
-		type = 'outside',
-		showButton = true,
-		buttonClass = 'btn',
-		buttonCloseClass = 'btn',
-		boxClass = 'modal-box'
-	}: Props = $props();
+	let { children, ...rest }: Props = $props();
 
-	let modal: HTMLDialogElement | undefined = $state();
-
-	const uid = $props.id();
+	let modal = $state<ReturnType<typeof LibModal> | null>(null);
 
 	export function showModal() {
 		modal?.showModal();
@@ -35,31 +20,6 @@
 	}
 </script>
 
-{#if showButton}
-	<button type="button" class={buttonClass} onclick={showModal}>{title}</button>
-{/if}
-<dialog bind:this={modal} id="modal-{uid}" class="modal">
-	<div class={boxClass}>
-		{#if type == 'X'}
-			<form method="dialog">
-				<button class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm">✕</button>
-			</form>
-		{/if}
-
-		{@render children()}
-
-		{#if type == 'button'}
-			<div class="modal-action">
-				<form method="dialog">
-					<!-- if there is a button in form, it will close the modal -->
-					<button class={buttonCloseClass}>{m.common_close()}</button>
-				</form>
-			</div>
-		{/if}
-	</div>
-	{#if type == 'outside'}
-		<form method="dialog" class="modal-backdrop">
-			<button>{m.common_close()}</button>
-		</form>
-	{/if}
-</dialog>
+<LibModal bind:this={modal} strings={{ ...defaultModalStrings, close: m.common_close() }} {...rest}>
+	{@render children()}
+</LibModal>

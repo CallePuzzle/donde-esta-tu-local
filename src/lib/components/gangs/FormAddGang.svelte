@@ -3,8 +3,9 @@
 	import SuperDebug from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
-	import FormFields from '$lib/components/FormFields.svelte';
-	import { zodToFieldsJsonSchema } from '$lib/schemas/utils.js';
+	import { FormFields } from '@callepuzzle/svelte-ui';
+	import { zodToFieldsJsonSchema } from '@callepuzzle/core/schema';
+	import { m } from '$lib/paraglide/messages.js';
 	import { addGangSchema } from '$lib/schemas/gang.js';
 
 	import type { SuperValidated } from 'sveltekit-superforms';
@@ -68,7 +69,13 @@
 </script>
 
 <form use:enhance class="mx-auto flex max-w-xs flex-col" method="POST">
-	<FormFields {form} {formData} fields={filteredFields} />
+	<!-- Strings en español: la librería tiene defaults en inglés (Obligatorio/Opcional) -->
+	<FormFields
+		{form}
+		{formData}
+		fields={filteredFields}
+		strings={{ required: m.form_required(), optional: m.form_optional() }}
+	/>
 	<div class="my-2 flex flex-col items-center">
 		{#if $delayed}
 			<span class="loading loading-lg loading-dots"></span>
