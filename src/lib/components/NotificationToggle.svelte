@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { m } from '$lib/paraglide/messages';
-	import { logger } from '$lib/logger';
-	import Modal from '$lib/components/Modal.svelte';
-	import { MAX_PUSH_SUBSCRIPTIONS_PER_USER } from '$lib/push-subscription-limit';
+	import { m } from '#lib/paraglide/messages.js';
+	import { logger } from '#lib/logger.ts';
+	import Modal from '#lib/components/Modal.svelte';
+	import { MAX_PUSH_SUBSCRIPTIONS_PER_USER } from '#lib/push-subscription-limit.ts';
 	import {
 		isPushSupported,
 		isPushServiceUnavailableError,
@@ -14,7 +14,7 @@
 		sendSubscriptionToServer,
 		deleteSubscriptionFromServer,
 		deleteAllSubscriptionsFromServer
-	} from '$lib/utils/push-notifications';
+	} from '#lib/utils/push-notifications.ts';
 
 	export type Props = {
 		vapidPublicKey: string;

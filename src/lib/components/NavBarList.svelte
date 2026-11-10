@@ -2,7 +2,7 @@
 	import { Link } from '@callepuzzle/svelte-ui';
 	import { getMenuRoutes, type RouteMap } from '@callepuzzle/core';
 	import type { RouteId } from '$app/types';
-	import { tourDesktopElementIds } from '$lib/utils/tour';
+	import { tourDesktopElementIds } from '#lib/utils/tour.ts';
 
 	export type Props = {
 		routes: RouteMap<RouteId>;

@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { UserNotLogged as LibUserNotLogged } from '@callepuzzle/svelte-ui';
 	import type { ComponentProps } from 'svelte';
-	import { loginModalStore } from '$lib/stores/loginModal.svelte';
+	import { loginModalStore } from '#lib/stores/loginModal.svelte.ts';
 
 	export type Props = ComponentProps<typeof LibUserNotLogged>;
 

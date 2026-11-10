@@ -1,10 +1,9 @@
-import { json } from '@sveltejs/kit';
 import { waitUntil } from '@vercel/functions';
-import { logger } from '$lib/logger';
-import prisma from '$lib/server/db';
-import { parseMemberRequest } from '$lib/server/member-request';
-import { notifyAdminsPendingMember } from '$lib/server/push-send';
-import { m } from '$lib/paraglide/messages.js';
+import { logger } from '#lib/logger.ts';
+import prisma from '#lib/server/db.ts';
+import { parseMemberRequest } from '#lib/server/member-request.ts';
+import { notifyAdminsPendingMember } from '#lib/server/push-send.ts';
+import { m } from '#lib/paraglide/messages.js';
 import type { RequestHandler, RequestEvent } from './$types';
 
 export const POST: RequestHandler = async (event: RequestEvent) => {
@@ -15,7 +14,7 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 	logger.info({ userId, gangId, confirmed }, 'New member request received');
 
 	if (userLogged.id !== userId) {
-		return json(
+		return Response.json(
 			{
 				success: false,
 				message: m.request_new_member_error_users_not_match()
@@ -33,7 +32,7 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 		});
 
 		if (!gang || gang.status !== 'VALIDATED') {
-			return json(
+			return Response.json(
 				{
 					success: false,
 					message: m.request_new_member_gang_not_validated()
@@ -56,7 +55,7 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 		});
 
 		if (!user) {
-			return json(
+			return Response.json(
 				{
 					success: false,
 					message: m.error_user_not_found()
@@ -67,7 +66,7 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 
 		// Un usuario rechazado no puede volver a solicitar unirse
 		if (user.membershipGangStatus === 'REFUSED') {
-			return json(
+			return Response.json(
 				{
 					success: false,
 					message: m.request_new_member_refused()
@@ -87,7 +86,7 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 						})
 					: null;
 
-				return json(
+				return Response.json(
 					{
 						success: false,
 						message: m.request_new_member_already_in_gang({
@@ -123,13 +122,13 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 			})
 		);
 
-		return json({
+		return Response.json({
 			success: true,
 			message: m.request_new_member_added()
 		});
 	} catch (error) {
 		logger.error(error, 'Error adding member to gang');
-		return json(
+		return Response.json(
 			{
 				success: false,
 				message: m.request_new_member_error()

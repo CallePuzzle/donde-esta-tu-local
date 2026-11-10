@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Modal as LibModal, defaultModalStrings } from '@callepuzzle/svelte-ui';
 	import type { ComponentProps } from 'svelte';
-	import { m } from '$lib/paraglide/messages.js';
+	import { m } from '#lib/paraglide/messages.js';
 
 	// Misma API que el Modal local que sustituye: los puntos de uso del código
 	// (title, type, showButton, boxClass, bind:this → showModal()/close()) no cambian.

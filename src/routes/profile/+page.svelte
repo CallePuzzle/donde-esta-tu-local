@@ -1,8 +1,8 @@
 <script lang="ts">
-	import FormUser from '$lib/components/FormUser.svelte';
-	import { m } from '$lib/paraglide/messages';
-	import { authClient } from '$lib/auth-client';
-	import { continueOnboardingTour } from '$lib/utils/tour';
+	import FormUser from '#lib/components/FormUser.svelte';
+	import { m } from '#lib/paraglide/messages.js';
+	import { authClient } from '#lib/auth-client.ts';
+	import { continueOnboardingTour } from '#lib/utils/tour.ts';
 	import { onMount } from 'svelte';
 	import '@sjmc11/tourguidejs/src/scss/tour.scss';
 	import User from '@lucide/svelte/icons/user';
@@ -12,11 +12,11 @@
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import UserRound from '@lucide/svelte/icons/user-round';
 	import { ButtonSignOut } from '@callepuzzle/svelte-ui';
-	import NotificationToggle from '$lib/components/NotificationToggle.svelte';
+	import NotificationToggle from '#lib/components/NotificationToggle.svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { isAdmin } from '$lib/utils/roles';
-	import { formatDateLong } from '$lib/utils/format-date';
+	import { isAdmin } from '#lib/utils/roles.ts';
+	import { formatDateLong } from '#lib/utils/format-date.ts';
 
 	import type { PageData } from './$types';
 
@@ -146,7 +146,7 @@
 			{#if isAdmin(user)}
 				<div class="divider">{m.profile_admin_divider()}</div>
 				<div class="flex justify-center">
-					<a href={resolve('/admin')} class="btn w-45 btn-primary">{m.admin_title()}</a>
+					<a href={resolve('admin')} class="btn w-45 btn-primary">{m.admin_title()}</a>
 				</div>
 			{/if}
 		</div>

@@ -1,7 +1,7 @@
-import { json, type RequestEvent } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
 import { requireSameOrigin } from './csrf';
 import { memberRequestSchema } from './membership';
-import { m } from '$lib/paraglide/messages.js';
+import { m } from '#lib/paraglide/messages.js';
 
 type ParsedMemberRequest =
 	| {
@@ -31,7 +31,10 @@ export async function parseMemberRequest(event: RequestEvent): Promise<ParsedMem
 	if (!parsed.success) {
 		return {
 			ok: false,
-			response: json({ success: false, message: m.error_missing_parameters() }, { status: 400 })
+			response: Response.json(
+				{ success: false, message: m.error_missing_parameters() },
+				{ status: 400 }
+			)
 		};
 	}
 
@@ -39,7 +42,10 @@ export async function parseMemberRequest(event: RequestEvent): Promise<ParsedMem
 	if (!userLogged) {
 		return {
 			ok: false,
-			response: json({ success: false, message: m.error_user_not_logged_in() }, { status: 401 })
+			response: Response.json(
+				{ success: false, message: m.error_user_not_logged_in() },
+				{ status: 401 }
+			)
 		};
 	}
 

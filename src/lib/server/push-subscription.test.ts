@@ -6,7 +6,7 @@ const findMany = vi.fn();
 const findUnique = vi.fn();
 const count = vi.fn();
 
-vi.mock('$lib/server/db', () => ({
+vi.mock('#lib/server/db.ts', () => ({
 	default: { pushSubscription: { upsert, deleteMany, findMany, findUnique, count } }
 }));
 

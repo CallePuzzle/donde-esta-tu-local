@@ -5,12 +5,12 @@
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { FormFields } from '@callepuzzle/svelte-ui';
 	import { zodToFieldsJsonSchema } from '@callepuzzle/core/schema';
-	import { m } from '$lib/paraglide/messages.js';
-	import { addGangSchema } from '$lib/schemas/gang.js';
+	import { m } from '#lib/paraglide/messages.js';
+	import { addGangSchema } from '#lib/schemas/gang.js';
 
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import type { AddGangSchema } from '$lib/schemas/gang.js';
-	import type { LatLng } from '$lib/components/gangs/types.ts';
+	import type { AddGangSchema } from '#lib/schemas/gang.js';
+	import type { LatLng } from '#lib/components/gangs/types.ts';
 	import type { Snippet } from 'svelte';
 	import type { ResolvedPathname } from '$app/types';
 

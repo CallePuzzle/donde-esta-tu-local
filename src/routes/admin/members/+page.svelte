@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { invalidateAll } from '$app/navigation';
+	import { refreshAll } from '$app/navigation';
 	import CircleCheck from '@lucide/svelte/icons/circle-check';
 	import CircleX from '@lucide/svelte/icons/circle-x';
 	import Users from '@lucide/svelte/icons/users';
@@ -8,10 +8,10 @@
 	import UserX from '@lucide/svelte/icons/user-x';
 	import UserCheck from '@lucide/svelte/icons/user-check';
 	import Building from '@lucide/svelte/icons/building';
-	import ButtonRequest from '$lib/components/ButtonRequest.svelte';
-	import { memberDisplayName, memberInitial } from '$lib/utils/member-display';
-	import { formatDateTimeShort } from '$lib/utils/format-date';
-	import { m } from '$lib/paraglide/messages.js';
+	import ButtonRequest from '#lib/components/ButtonRequest.svelte';
+	import { memberDisplayName, memberInitial } from '#lib/utils/member-display.ts';
+	import { formatDateTimeShort } from '#lib/utils/format-date.ts';
+	import { m } from '#lib/paraglide/messages.js';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -23,7 +23,7 @@
 	// Función para manejar la actualización después de validar/rechazar
 	async function handleActionComplete(memberId: string) {
 		resolvedMemberId = memberId;
-		await invalidateAll();
+		await refreshAll();
 	}
 </script>
 

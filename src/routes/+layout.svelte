@@ -3,13 +3,14 @@
 	import { page, navigating } from '$app/state';
 	import { resolve } from '$app/paths';
 	import { Header } from '@callepuzzle/svelte-ui';
-	import NavBarEnd from '$lib/components/NavBarEnd.svelte';
-	import NavBarList from '$lib/components/NavBarList.svelte';
-	import Footer from '$lib/components/Footer.svelte';
-	import Dock from '$lib/components/Dock.svelte';
-	import { getRoutes } from '$lib/routes';
-	import Logo from '$lib/assets/logo.png?enhanced';
-	import { m } from '$lib/paraglide/messages.js';
+	import { pageview } from '@vercel/analytics';
+	import NavBarEnd from '#lib/components/NavBarEnd.svelte';
+	import NavBarList from '#lib/components/NavBarList.svelte';
+	import Footer from '#lib/components/Footer.svelte';
+	import Dock from '#lib/components/Dock.svelte';
+	import { getRoutes } from '#lib/routes.ts';
+	import Logo from '#lib/assets/logo.png?enhanced';
+	import { m } from '#lib/paraglide/messages.js';
 
 	import type { Snippet } from 'svelte';
 	import type { PageData } from './$types';
@@ -21,6 +22,12 @@
 	// Factoría en render (nunca en scope de módulo): las etiquetas i18n se
 	// resuelven con el locale activo.
 	const routes = $derived(getRoutes());
+
+	// Página vista de Vercel Analytics en cada navegación (ver `+layout.ts`).
+	$effect(() => {
+		const route = page.route.id;
+		if (route) pageview({ route, path: page.url.pathname });
+	});
 </script>
 
 <div class="main-div h-screen min-w-[348px]">

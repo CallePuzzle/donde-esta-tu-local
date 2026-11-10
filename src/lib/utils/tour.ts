@@ -1,8 +1,8 @@
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 import type { RouteId } from '$app/types';
-import { m } from '$lib/paraglide/messages.js';
-import type { TourGuideClient, TourGuideOptions, TourGuideStep } from '$lib/types/tourguide';
+import { m } from '#lib/paraglide/messages.js';
+import type { TourGuideClient, TourGuideOptions, TourGuideStep } from '#lib/types/tourguide.ts';
 
 async function createTourGuideClient(options: TourGuideOptions): Promise<TourGuideClient> {
 	const module = (await import('@sjmc11/tourguidejs')) as unknown as {
@@ -66,6 +66,7 @@ const EXAMPLE_GANG_NAME = 'kpy';
 
 function findExampleGang(gangs: MinimalGang[]): MinimalGang | undefined {
 	const validatedGangs = gangs.filter((g) => g.status === 'VALIDATED');
+
 	return (
 		validatedGangs.find((g) => g.name.toLowerCase() === EXAMPLE_GANG_NAME) ?? validatedGangs[0]
 	);
@@ -261,7 +262,7 @@ async function navigateToStep(
 			await goto(resolve('/gang/[slug]', { slug: String(validatedGang?.id) }));
 			break;
 		case '/profile':
-			await goto(resolve('/profile'));
+			await goto(resolve('profile'));
 			break;
 	}
 }
@@ -365,7 +366,7 @@ async function runTour(
 }
 
 // El `$effect` que llama a esta función en `/` se re-ejecuta con cualquier
-// cambio de `data` (p.ej. el `invalidateAll()` de un login por modal), y no
+// cambio de `data` (p.ej. el `refreshAll()` de un login por modal), y no
 // espera a que la llamada anterior termine. Sin este cerrojo, dos llamadas
 // solapadas crearían dos `TourGuideClient`: el `removeStaleTourDom()` de la
 // segunda se llevaría por delante el diálogo que la primera acaba de montar.

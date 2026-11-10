@@ -1,7 +1,7 @@
 <script lang="ts">
 	import UserRound from '@lucide/svelte/icons/user-round';
-	import { m } from '$lib/paraglide/messages.js';
-	import Modal from '$lib/components/Modal.svelte';
+	import { m } from '#lib/paraglide/messages.js';
+	import Modal from '#lib/components/Modal.svelte';
 
 	export type Props = {
 		image: string | null;

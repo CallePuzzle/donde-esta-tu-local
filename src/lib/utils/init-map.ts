@@ -2,10 +2,10 @@ import 'leaflet/dist/leaflet.css';
 import markerIconUrl from 'leaflet/dist/images/marker-icon.png';
 import markerIcon2xUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import markerShadowUrl from 'leaflet/dist/images/marker-shadow.png';
-import { coordsMonte } from '$lib/utils/coords-monte';
+import { coordsMonte } from '#lib/utils/coords-monte.ts';
 
 import type { Map } from 'leaflet';
-import type { Leaflet } from '$lib/utils/types';
+import type { Leaflet } from '#lib/utils/types.ts';
 
 export async function initMap(elementId: string): Promise<{ L: Leaflet; map: Map }> {
 	const L = await import('leaflet');

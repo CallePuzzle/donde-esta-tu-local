@@ -1,15 +1,14 @@
-import { json } from '@sveltejs/kit';
 import { timingSafeEqual } from 'node:crypto';
-import { env } from '$env/dynamic/private';
-import { sendActivityNotifications } from '$lib/server/push-send';
-import { logger } from '$lib/logger';
+import { CRON_SECRET } from '$app/env/private';
+import { sendActivityNotifications } from '#lib/server/push-send.ts';
+import { logger } from '#lib/logger.ts';
 
 import type { RequestEvent } from './$types';
 
 function isValidCronSecret(token: string): boolean {
-	if (!env.CRON_SECRET) return false;
+	if (!CRON_SECRET) return false;
 	const tokenBuffer = Buffer.from(token);
-	const secretBuffer = Buffer.from(env.CRON_SECRET);
+	const secretBuffer = Buffer.from(CRON_SECRET);
 	// timingSafeEqual exige buffers de igual longitud; una longitud distinta
 	// ya implica que no coincide.
 	if (tokenBuffer.length !== secretBuffer.length) return false;
@@ -22,15 +21,15 @@ export async function POST(event: RequestEvent) {
 
 	if (!isValidCronSecret(token)) {
 		logger.warn('Intento no autorizado al endpoint de envío de notificaciones');
-		return json({ error: 'Unauthorized' }, { status: 401 });
+		return Response.json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
 	try {
 		const result = await sendActivityNotifications();
 		logger.info(result, 'Notificaciones de actividad enviadas');
-		return json(result);
+		return Response.json(result);
 	} catch (error) {
 		logger.error(error, 'Error enviando notificaciones de actividad');
-		return json({ error: 'Internal error' }, { status: 500 });
+		return Response.json({ error: 'Internal error' }, { status: 500 });
 	}
 }

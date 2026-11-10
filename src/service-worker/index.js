@@ -1,11 +1,13 @@
-/// <reference types="@sveltejs/kit" />
-
-import { build, files, version } from '$service-worker';
+import { self } from '$app/service-worker';
+import { version } from '$app/env';
+import { immutable, assets } from '$app/manifest';
 
 const worker = self;
 const CACHE_NAME = `static-cache-${version}`;
 
-const to_cache = build.concat(files);
+// Rutas relativas a la base (sin `/` inicial): el service worker vive en la raíz,
+// así que `cache.addAll` las resuelve contra ella.
+const to_cache = [...immutable, ...assets].map(({ path }) => path);
 
 worker.addEventListener('install', (event) => {
 	event.waitUntil(
@@ -39,8 +41,8 @@ self.addEventListener('fetch', (event) => {
 	}
 	event.respondWith(
 		fetch(event.request).catch(() => {
-			return caches.open(CACHE_NAME).then((cache) => {
-				return cache.match('offline.html');
+			return caches.open(CACHE_NAME).then(async (cache) => {
+				return (await cache.match('offline.html')) ?? Response.error();
 			});
 		})
 	);

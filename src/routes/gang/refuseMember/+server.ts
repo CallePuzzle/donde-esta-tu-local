@@ -1,9 +1,8 @@
-import { json } from '@sveltejs/kit';
-import { logger } from '$lib/logger';
-import prisma from '$lib/server/db';
-import { canManageGangMembers } from '$lib/server/membership';
-import { parseMemberRequest } from '$lib/server/member-request';
-import { m } from '$lib/paraglide/messages.js';
+import { logger } from '#lib/logger.ts';
+import prisma from '#lib/server/db.ts';
+import { canManageGangMembers } from '#lib/server/membership.ts';
+import { parseMemberRequest } from '#lib/server/member-request.ts';
+import { m } from '#lib/paraglide/messages.js';
 import type { RequestHandler, RequestEvent } from './$types';
 
 export const POST: RequestHandler = async (event: RequestEvent) => {
@@ -16,7 +15,7 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 	try {
 		// Solo miembros validados de la peña o admin/system pueden rechazar
 		if (!(await canManageGangMembers(userLogged, gangId))) {
-			return json(
+			return Response.json(
 				{
 					success: false,
 					message: m.gang_refuse_no_permission()
@@ -37,7 +36,7 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 		});
 
 		if (!userToRefuse) {
-			return json(
+			return Response.json(
 				{
 					success: false,
 					message: m.error_user_not_found()
@@ -47,7 +46,7 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 		}
 
 		if (userToRefuse.gangId !== gangId) {
-			return json(
+			return Response.json(
 				{
 					success: false,
 					message: m.gang_refuse_user_not_in_gang()
@@ -79,13 +78,13 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 			'Member refused successfully'
 		);
 
-		return json({
+		return Response.json({
 			success: true,
 			message: m.gang_refuse_success()
 		});
 	} catch (error) {
 		logger.error(error, 'Error refusing member');
-		return json(
+		return Response.json(
 			{
 				success: false,
 				message: m.gang_refuse_error()

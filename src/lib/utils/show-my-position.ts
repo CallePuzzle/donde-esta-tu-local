@@ -1,9 +1,9 @@
-import meIconUrl from '$lib/assets/person-arms-up.svg';
-import { logger } from '$lib/logger';
-import { m } from '$lib/paraglide/messages.js';
+import meIconUrl from '#lib/assets/person-arms-up.svg';
+import { logger } from '#lib/logger.ts';
+import { m } from '#lib/paraglide/messages.js';
 
 import type { Marker, Map, LatLngTuple } from 'leaflet';
-import type { Leaflet } from '$lib/utils/types';
+import type { Leaflet } from '#lib/utils/types.ts';
 
 // Devuelve una función de limpieza que cancela el watchPosition; sin ella,
 // cada llamada (cada onMount, o cada click en "dónde estoy") registraba un

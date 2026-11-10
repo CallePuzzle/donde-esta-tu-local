@@ -1,9 +1,9 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import type { User } from '$lib/generated/prisma/client';
+import type { User } from '#lib/generated/prisma/client.ts';
 
 const findUnique = vi.fn();
 
-vi.mock('$lib/server/db', () => ({
+vi.mock('#lib/server/db.ts', () => ({
 	default: { user: { findUnique } }
 }));
 

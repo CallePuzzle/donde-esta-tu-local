@@ -1,4 +1,4 @@
-import type Modal from '$lib/components/Modal.svelte';
+import type Modal from '#lib/components/Modal.svelte';
 
 let modal = $state<Modal | null>(null);
 

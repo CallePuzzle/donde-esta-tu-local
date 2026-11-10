@@ -1,4 +1,4 @@
-import { PrismaClient } from '$lib/generated/prisma/client';
+import { PrismaClient } from '#lib/generated/prisma/client.ts';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { loadTestEnv } from './env';
 

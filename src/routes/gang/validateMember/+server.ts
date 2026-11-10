@@ -1,9 +1,8 @@
-import { json } from '@sveltejs/kit';
-import { logger } from '$lib/logger';
-import prisma from '$lib/server/db';
-import { canManageGangMembers } from '$lib/server/membership';
-import { parseMemberRequest } from '$lib/server/member-request';
-import { m } from '$lib/paraglide/messages.js';
+import { logger } from '#lib/logger.ts';
+import prisma from '#lib/server/db.ts';
+import { canManageGangMembers } from '#lib/server/membership.ts';
+import { parseMemberRequest } from '#lib/server/member-request.ts';
+import { m } from '#lib/paraglide/messages.js';
 import type { RequestHandler, RequestEvent } from './$types';
 
 export const POST: RequestHandler = async (event: RequestEvent) => {
@@ -16,7 +15,7 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 	try {
 		// Solo miembros validados de la peña o admin/system pueden validar
 		if (!(await canManageGangMembers(userLogged, gangId))) {
-			return json(
+			return Response.json(
 				{
 					success: false,
 					message: m.gang_validate_no_permission()
@@ -37,7 +36,7 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 		});
 
 		if (!userToValidate) {
-			return json(
+			return Response.json(
 				{
 					success: false,
 					message: m.error_user_not_found()
@@ -47,7 +46,7 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 		}
 
 		if (userToValidate.gangId !== gangId) {
-			return json(
+			return Response.json(
 				{
 					success: false,
 					message: m.gang_validate_user_not_in_gang()
@@ -57,7 +56,7 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 		}
 
 		if (userToValidate.membershipGangStatus === 'VALIDATED') {
-			return json(
+			return Response.json(
 				{
 					success: false,
 					message: m.gang_validate_already_validated()
@@ -85,13 +84,13 @@ export const POST: RequestHandler = async (event: RequestEvent) => {
 			'Member validated successfully'
 		);
 
-		return json({
+		return Response.json({
 			success: true,
 			message: m.gang_validate_success()
 		});
 	} catch (error) {
 		logger.error(error, 'Error validating member');
-		return json(
+		return Response.json(
 			{
 				success: false,
 				message: m.gang_validate_error()

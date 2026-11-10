@@ -1,4 +1,4 @@
-import { logger } from '$lib/logger';
+import { logger } from '#lib/logger.ts';
 
 export function isPushSupported(): boolean {
 	return (

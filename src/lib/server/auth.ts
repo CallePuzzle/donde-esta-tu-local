@@ -1,15 +1,15 @@
-import prisma from '$lib/server/db';
-import { logger } from '$lib/logger';
-import { m } from '$lib/paraglide/messages.js';
+import prisma from '#lib/server/db.ts';
+import { logger } from '#lib/logger.ts';
+import { m } from '#lib/paraglide/messages.js';
 import sender from './sender';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { admin } from 'better-auth/plugins';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
-import { dev } from '$app/environment';
+import { dev } from '$app/env';
 import { getBetterAuth, emailOtpPreset } from '@callepuzzle/auth/server';
 import type { SendVerificationOtp } from '@callepuzzle/auth/server';
-import { SMTP_HOST, SMPT_AUTH_USER, SMPT_AUTH_PASS, SMPT_SENDER } from '$env/static/private';
+import { SMTP_HOST, SMPT_AUTH_USER, SMPT_AUTH_PASS, SMPT_SENDER } from '$app/env/private';
 
 const sendVerificationOtp: SendVerificationOtp = async ({ email, otp, type }) => {
 	if (type === 'sign-in') {
@@ -63,5 +63,7 @@ export const auth = getBetterAuth({
 			}
 		}
 	},
-	plugins: [sveltekitCookies(getRequestEvent), emailOtpPreset(sendVerificationOtp), admin()]
+	// `sveltekitCookies` va el último: better-auth avisa de que los plugins con
+	// `hooks.after` posteriores podrían poner cookies que no llegan a SvelteKit.
+	plugins: [emailOtpPreset(sendVerificationOtp), admin(), sveltekitCookies(getRequestEvent)]
 });

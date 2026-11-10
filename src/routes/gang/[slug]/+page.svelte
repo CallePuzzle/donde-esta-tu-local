@@ -1,33 +1,33 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
+	import { browser } from '$app/env';
 	import { page } from '$app/state';
 	import { onDestroy, onMount } from 'svelte';
-	import { coordsMonte } from '$lib/utils/coords-monte';
-	import { showMyPosition } from '$lib/utils/show-my-position';
-	import GangMap from '$lib/components/gangs/GangMap.svelte';
-	import GangImage from '$lib/components/gangs/GangImage.svelte';
+	import { coordsMonte } from '#lib/utils/coords-monte.ts';
+	import { showMyPosition } from '#lib/utils/show-my-position.ts';
+	import GangMap from '#lib/components/gangs/GangMap.svelte';
+	import GangImage from '#lib/components/gangs/GangImage.svelte';
 	import Share2 from '@lucide/svelte/icons/share-2';
 	import UserPlus from '@lucide/svelte/icons/user-plus';
 	import Check from '@lucide/svelte/icons/check';
 	import CircleFadingArrowUp from '@lucide/svelte/icons/circle-fading-arrow-up';
 	import Locate from '@lucide/svelte/icons/locate';
 	import X from '@lucide/svelte/icons/x';
-	import { m } from '$lib/paraglide/messages.js';
-	import Modal from '$lib/components/Modal.svelte';
-	import ButtonRequest from '$lib/components/ButtonRequest.svelte';
-	import MemberDetail from '$lib/components/gangs/MemberDetail.svelte';
-	import { loginModalStore } from '$lib/stores/loginModal.svelte';
+	import { m } from '#lib/paraglide/messages.js';
+	import Modal from '#lib/components/Modal.svelte';
+	import ButtonRequest from '#lib/components/ButtonRequest.svelte';
+	import MemberDetail from '#lib/components/gangs/MemberDetail.svelte';
+	import { loginModalStore } from '#lib/stores/loginModal.svelte.ts';
 	import { resolve } from '$app/paths';
-	import { goto, invalidateAll } from '$app/navigation';
-	import { logger } from '$lib/logger';
-	import { isAdmin } from '$lib/utils/roles';
-	import { continueOnboardingTour } from '$lib/utils/tour';
+	import { goto, refreshAll } from '$app/navigation';
+	import { logger } from '#lib/logger.ts';
+	import { isAdmin } from '#lib/utils/roles.ts';
+	import { continueOnboardingTour } from '#lib/utils/tour.ts';
 	import '@sjmc11/tourguidejs/src/scss/tour.scss';
 
 	import type { PageData } from './$types';
 	import type { Map } from 'leaflet';
 	import type { GangDetailData, Member } from './type';
-	import type { Leaflet } from '$lib/utils/types';
+	import type { Leaflet } from '#lib/utils/types.ts';
 
 	let { data }: { data: PageData } = $props();
 	let L: Leaflet;
@@ -50,7 +50,7 @@
 
 	async function handleActionComplete(memberId: string) {
 		resolvedMemberId = memberId;
-		await invalidateAll();
+		await refreshAll();
 	}
 
 	function handleMapReady(context: { L: Leaflet; map: Map }) {
@@ -219,9 +219,10 @@
 								})}
 							</p>
 							<div class="modal-action">
-								<button type="button" class="btn" onclick={closeConfirmModal}>
-									{m.request_new_member_cancel_button()}
-								</button>
+								<button type="button" class="btn" onclick={closeConfirmModal}
+									>{m.request_new_member_cancel_button()}</button
+								>
+
 								<button
 									type="button"
 									class="btn btn-warning"
@@ -246,9 +247,10 @@
 						type="button"
 						class="btn flex h-full w-48 flex-col text-neutral btn-secondary xl:h-[38px] xl:w-80 xl:flex-row"
 						onclick={handleLogin}
-						><span>{m.gang_login_prompt_start()}</span><span>{m.gang_login_prompt_end()}</span
-						></button
 					>
+						<span>{m.gang_login_prompt_start()}</span>
+						<span>{m.gang_login_prompt_end()}</span>
+					</button>
 				{/if}
 			</div>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { m } from '$lib/paraglide/messages.js';
-	import { logger } from '$lib/logger';
+	import { m } from '#lib/paraglide/messages.js';
+	import { logger } from '#lib/logger.ts';
 
 	import type { Snippet } from 'svelte';
 

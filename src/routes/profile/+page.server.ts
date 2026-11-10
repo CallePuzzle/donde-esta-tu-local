@@ -1,13 +1,13 @@
 import { fail } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { updateUserSchema } from '$lib/schemas/user';
-import prisma from '$lib/server/db';
-import { requireUser, getValidatedGangId } from '$lib/server/membership';
-import { m } from '$lib/paraglide/messages';
-import { logger } from '$lib/logger';
-import { uploadImage, deleteImage } from '$lib/server/blob-image';
-import { env } from '$env/dynamic/private';
+import { updateUserSchema } from '#lib/schemas/user.ts';
+import prisma from '#lib/server/db.ts';
+import { requireUser, getValidatedGangId } from '#lib/server/membership.ts';
+import { m } from '#lib/paraglide/messages.js';
+import { logger } from '#lib/logger.ts';
+import { uploadImage, deleteImage } from '#lib/server/blob-image.ts';
+import { VAPID_PUBLIC_KEY } from '$app/env/private';
 
 import type { PageServerLoad, PageServerLoadEvent, Actions } from './$types';
 import type { UserGangDetail } from './type';
@@ -55,7 +55,7 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 			id: userGangDetail?.gang?.id || null,
 			name: userGangDetail?.gang?.name || m.profile_no_gang()
 		} satisfies UserGangDetail,
-		vapidPublicKey: env.VAPID_PUBLIC_KEY,
+		vapidPublicKey: VAPID_PUBLIC_KEY,
 		gangs,
 		currentUserGangId
 	};

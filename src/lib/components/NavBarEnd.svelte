@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { invalidateAll } from '$app/navigation';
+	import { refreshAll } from '$app/navigation';
 	import { NavBarEnd as LibNavBarEnd } from '@callepuzzle/svelte-ui';
 	import { FormLoginOtp } from '@callepuzzle/svelte-ui/otp';
 	import { createLoginSchema } from '@callepuzzle/core/schema';
 	import Modal from './Modal.svelte';
-	import { loginModalStore } from '$lib/stores/loginModal.svelte';
-	import { authClient } from '$lib/auth-client';
-	import { m } from '$lib/paraglide/messages.js';
+	import { loginModalStore } from '#lib/stores/loginModal.svelte.ts';
+	import { authClient } from '#lib/auth-client.ts';
+	import { m } from '#lib/paraglide/messages.js';
 
 	// El tipo de sesión inferido de better-auth, no el User del cliente Prisma
 	// (que no es lo que viaja en locals.user/data.user).
@@ -26,7 +26,7 @@
 	async function onLoginSuccess() {
 		// La librería no invalida ni navega: aquí invalidamos (el layout repinta la
 		// navbar con el usuario) y cerramos el modal; sin setTimeout(2000).
-		await invalidateAll();
+		await refreshAll();
 		modal?.close();
 	}
 
@@ -66,7 +66,7 @@
 					stepEmail: m.form_login_step_email(),
 					stepOtp: m.form_login_step_otp(),
 					otpLabel: m.form_login_otp_label(),
-					otpDescription: m.form_login_otp_description(),
+					otpDescription: () => m.form_login_otp_description(),
 					success: m.form_login_success(),
 					rateLimited: m.form_login_rate_limited(),
 					invalidCode: m.form_login_invalid_code(),

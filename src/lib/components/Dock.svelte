@@ -2,9 +2,9 @@
 	import { DockLink } from '@callepuzzle/svelte-ui';
 	import { getMenuRoutes, type RouteMap } from '@callepuzzle/core';
 	import type { RouteId } from '$app/types';
-	import { tourMobileElementIds } from '$lib/utils/tour';
-	import { pwaInstallStore } from '$lib/stores/pwaInstall.svelte';
-	import { m } from '$lib/paraglide/messages.js';
+	import { tourMobileElementIds } from '#lib/utils/tour.ts';
+	import { pwaInstallStore } from '#lib/stores/pwaInstall.svelte.ts';
+	import { m } from '#lib/paraglide/messages.js';
 	import Download from '@lucide/svelte/icons/download';
 
 	export type Props = {

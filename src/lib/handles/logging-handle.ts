@@ -1,6 +1,6 @@
-import type { Handle } from '@sveltejs/kit';
-import { logger } from '$lib/logger';
-import { isAssetPathname } from '$lib/utils/is-asset-pathname';
+import type { Handle } from '@sveltejs/kit/hooks';
+import { logger } from '#lib/logger.ts';
+import { isAssetPathname } from '#lib/utils/is-asset-pathname.ts';
 
 export const loggingHandle: Handle = async ({ event, resolve }) => {
 	const { pathname } = event.url;

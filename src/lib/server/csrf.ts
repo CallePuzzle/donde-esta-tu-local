@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { m } from '$lib/paraglide/messages.js';
+import { m } from '#lib/paraglide/messages.js';
 
 // Los endpoints de miembros son POST con cuerpo JSON, así que la comprobación
 // de Origin integrada de SvelteKit (kit.csrf.checkOrigin) no los cubre: solo

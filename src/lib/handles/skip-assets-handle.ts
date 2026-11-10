@@ -1,5 +1,5 @@
-import type { Handle } from '@sveltejs/kit';
-import { isAssetPathname } from '$lib/utils/is-asset-pathname';
+import type { Handle } from '@sveltejs/kit/hooks';
+import { isAssetPathname } from '#lib/utils/is-asset-pathname.ts';
 
 // Salta el handle envuelto en peticiones de assets estáticos: no resuelven sesión
 // y evitan el trabajo innecesario (p. ej. la llamada a `auth.api.getSession`).

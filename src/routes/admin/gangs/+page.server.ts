@@ -1,10 +1,10 @@
 import { fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import prisma from '$lib/server/db';
-import { requireAdmin } from '$lib/server/membership';
-import { logger } from '$lib/logger';
-import { m } from '$lib/paraglide/messages.js';
-import { memberDisplayName } from '$lib/utils/member-display';
+import prisma from '#lib/server/db.ts';
+import { requireAdmin } from '#lib/server/membership.ts';
+import { logger } from '#lib/logger.ts';
+import { m } from '#lib/paraglide/messages.js';
+import { memberDisplayName } from '#lib/utils/member-display.ts';
 
 type GangMember = {
 	id: string;

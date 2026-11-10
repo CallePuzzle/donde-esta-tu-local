@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import type { Snippet } from 'svelte';
-	import { m } from '$lib/paraglide/messages.js';
-	import UserNotLogged from '$lib/components/UserNotLogged.svelte';
+	import { m } from '#lib/paraglide/messages.js';
+	import UserNotLogged from '#lib/components/UserNotLogged.svelte';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 </script>

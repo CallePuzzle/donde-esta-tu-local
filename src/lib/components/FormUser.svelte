@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { superForm, fileProxy } from 'sveltekit-superforms/client';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
-	import { updateUserSchema } from '$lib/schemas/user.js';
-	import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from '$lib/schemas/image.js';
+	import { updateUserSchema } from '#lib/schemas/user.js';
+	import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from '#lib/schemas/image.js';
 	import SuperDebug from 'sveltekit-superforms';
-	import { m } from '$lib/paraglide/messages.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import UserCheck from '@lucide/svelte/icons/user-check';
 	import Upload from '@lucide/svelte/icons/upload';
 	import Image from '@lucide/svelte/icons/image';
@@ -12,7 +12,7 @@
 	import { zodToFieldsJsonSchema } from '@callepuzzle/core/schema';
 
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import type { UpdateUserSchema } from '$lib/schemas/user.js';
+	import type { UpdateUserSchema } from '#lib/schemas/user.js';
 
 	export type Props = {
 		dataForm: SuperValidated<UpdateUserSchema>;

@@ -1,6 +1,6 @@
 import { del, put } from '@vercel/blob';
-import { logger } from '$lib/logger';
-import { isVercelBlobUrl } from '$lib/config/vercel-hosts.js';
+import { logger } from '#lib/logger.ts';
+import { isVercelBlobUrl } from '#lib/config/vercel-hosts.js';
 
 // Extensión del fichero según el tipo MIME permitido por los esquemas de imagen
 const EXTENSION_BY_MIME: Record<string, string> = {

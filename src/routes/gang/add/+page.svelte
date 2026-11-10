@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { onDestroy, onMount } from 'svelte';
-	import { showMyPosition } from '$lib/utils/show-my-position';
-	import { coordsMonte } from '$lib/utils/coords-monte';
-	import GangMap from '$lib/components/gangs/GangMap.svelte';
-	import Modal from '$lib/components/Modal.svelte';
-	import FormAddGang from '$lib/components/gangs/FormAddGang.svelte';
-	import { m } from '$lib/paraglide/messages.js';
+	import { showMyPosition } from '#lib/utils/show-my-position.ts';
+	import { coordsMonte } from '#lib/utils/coords-monte.ts';
+	import GangMap from '#lib/components/gangs/GangMap.svelte';
+	import Modal from '#lib/components/Modal.svelte';
+	import FormAddGang from '#lib/components/gangs/FormAddGang.svelte';
+	import { m } from '#lib/paraglide/messages.js';
 	import CirculePlus from '@lucide/svelte/icons/circle-plus';
 
-	import type { LatLng } from '$lib/components/gangs/types.ts';
+	import type { LatLng } from '#lib/components/gangs/types.ts';
 	import type { Map } from 'leaflet';
-	import type { Leaflet } from '$lib/utils/types';
+	import type { Leaflet } from '#lib/utils/types.ts';
 
 	import type { PageData } from './$types';
 

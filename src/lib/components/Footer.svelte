@@ -3,8 +3,8 @@
 	import Heart from '@lucide/svelte/icons/heart';
 	import MailQuestionMark from '@lucide/svelte/icons/mail-question-mark';
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
-	import { m } from '$lib/paraglide/messages.js';
-	import { startOnboardingTour } from '$lib/utils/tour';
+	import { m } from '#lib/paraglide/messages.js';
+	import { startOnboardingTour } from '#lib/utils/tour.ts';
 
 	export type Props = {
 		visibleOnlyOnMobile?: boolean;
