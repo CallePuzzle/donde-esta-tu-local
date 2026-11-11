@@ -6,10 +6,17 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { admin } from 'better-auth/plugins';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
-import { dev } from '$app/env';
+import { building, dev } from '$app/env';
 import { getBetterAuth, emailOtpPreset } from '@callepuzzle/auth/server';
 import type { SendVerificationOtp } from '@callepuzzle/auth/server';
-import { SMTP_HOST, SMPT_AUTH_USER, SMPT_AUTH_PASS, SMPT_SENDER } from '$app/env/private';
+import {
+	BETTER_AUTH_SECRET,
+	BETTER_AUTH_URL,
+	SMTP_HOST,
+	SMPT_AUTH_USER,
+	SMPT_AUTH_PASS,
+	SMPT_SENDER
+} from '$app/env/private';
 
 const sendVerificationOtp: SendVerificationOtp = async ({ email, otp, type }) => {
 	if (type === 'sign-in') {
@@ -47,23 +54,34 @@ const sendVerificationOtp: SendVerificationOtp = async ({ email, otp, type }) =>
 	}
 };
 
-export const auth = getBetterAuth({
-	database: prismaAdapter(prisma, { provider: 'postgresql' }),
-	rateLimit: {
-		// Límite estricto en las rutas de OTP por email: 3 peticiones por minuto por IP
-		// (por defecto better-auth solo aplica rate limit en producción)
-		customRules: {
-			'/email-otp/send-verification-otp': {
-				window: 60,
-				max: 3
-			},
-			'/sign-in/email-otp': {
-				window: 60,
-				max: 3
+// baseURL y secret van explícitos desde `$app/env/private`: `@callepuzzle/auth` corta el
+// arranque si faltan y no ve el `.env` vía process.env cuando vite corre sobre node.
+function createAuth() {
+	return getBetterAuth({
+		baseURL: BETTER_AUTH_URL,
+		secret: BETTER_AUTH_SECRET,
+		database: prismaAdapter(prisma, { provider: 'postgresql' }),
+		rateLimit: {
+			// Límite estricto en las rutas de OTP por email: 3 peticiones por minuto por IP
+			// (por defecto better-auth solo aplica rate limit en producción)
+			customRules: {
+				'/email-otp/send-verification-otp': {
+					window: 60,
+					max: 3
+				},
+				'/sign-in/email-otp': {
+					window: 60,
+					max: 3
+				}
 			}
-		}
-	},
-	// `sveltekitCookies` va el último: better-auth avisa de que los plugins con
-	// `hooks.after` posteriores podrían poner cookies que no llegan a SvelteKit.
-	plugins: [emailOtpPreset(sendVerificationOtp), admin(), sveltekitCookies(getRequestEvent)]
-});
+		},
+		// `sveltekitCookies` va el último: better-auth avisa de que los plugins con
+		// `hooks.after` posteriores podrían poner cookies que no llegan a SvelteKit.
+		plugins: [emailOtpPreset(sendVerificationOtp), admin(), sveltekitCookies(getRequestEvent)]
+	});
+}
+
+type Auth = ReturnType<typeof createAuth>;
+
+// En build no se construye: no hay variables de entorno y `analyse` evalúa los módulos de servidor.
+export const auth: Auth = building ? ({} as Auth) : createAuth();

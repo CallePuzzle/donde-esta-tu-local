@@ -7,6 +7,10 @@ import { defineEnvVars } from '@sveltejs/kit/env';
 // SMTP siguen siendo estáticas (se incrustan en el build), como con
 // `$env/static/private`.
 export const variables = defineEnvVars({
+	// better-auth (auth.ts): se pasan explícitos porque `@callepuzzle/auth` no ve el
+	// `.env` vía process.env cuando vite corre sobre node (p.ej. `bun run dev`).
+	BETTER_AUTH_URL: { schema: (input) => input ?? '' },
+	BETTER_AUTH_SECRET: { schema: (input) => input ?? '' },
 	VAPID_PUBLIC_KEY: { schema: (input) => input ?? '' },
 	CRON_SECRET: { schema: (input) => input ?? '' },
 	SMTP_HOST: { static: true },
