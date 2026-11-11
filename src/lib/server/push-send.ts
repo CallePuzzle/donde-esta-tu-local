@@ -1,18 +1,18 @@
-import { webpush, type PushSubscription } from '$lib/server/web-push';
-import prisma from '$lib/server/db';
-import { Prisma } from '$lib/generated/prisma/client';
+import { webpush, type PushSubscription } from '#lib/server/web-push.ts';
+import prisma from '#lib/server/db.ts';
+import { Prisma } from '#lib/generated/prisma/client.ts';
 import {
 	deletePushSubscription,
 	getActivePushSubscriptions,
 	getAdminPushSubscriptions,
 	type PushSubscriptionJSON
-} from '$lib/server/push-subscription';
-import { logger } from '$lib/logger';
-import { m } from '$lib/paraglide/messages.js';
-import { formatTimeShort } from '$lib/utils/format-date';
-import { memberDisplayName } from '$lib/utils/member-display';
+} from '#lib/server/push-subscription.ts';
+import { logger } from '#lib/logger.ts';
+import { m } from '#lib/paraglide/messages.js';
+import { formatTimeShort } from '#lib/utils/format-date.ts';
+import { memberDisplayName } from '#lib/utils/member-display.ts';
 import { WebPushError } from 'web-push';
-import type { Activity, Gang, User } from '$lib/generated/prisma/client';
+import type { Activity, Gang, User } from '#lib/generated/prisma/client.ts';
 
 type ActivityWithPlace = Activity & { placeGang: Gang | null };
 type SendResult = 'sent' | 'expired' | 'failed';

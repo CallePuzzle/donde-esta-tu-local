@@ -1,4 +1,4 @@
-import { m } from '$lib/paraglide/messages.js';
+import { m } from '#lib/paraglide/messages.js';
 
 // Nombre visible de un miembro: usa el nombre si existe, si no el email.
 export function memberDisplayName(member: { name: string | null; email: string | null }): string {

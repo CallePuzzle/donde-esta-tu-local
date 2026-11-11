@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { initMap } from '$lib/utils/init-map';
+	import { initMap } from '#lib/utils/init-map.ts';
 
 	import type { Map } from 'leaflet';
-	import type { Leaflet } from '$lib/utils/types';
+	import type { Leaflet } from '#lib/utils/types.ts';
 
 	// Solo cubre lo que era idéntico en las 4 páginas con mapa: el contenedor,
 	// su altura y el initMap() (que T18 ya había extraído, pero seguía

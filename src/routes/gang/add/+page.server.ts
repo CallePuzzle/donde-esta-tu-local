@@ -1,13 +1,13 @@
 import { waitUntil } from '@vercel/functions';
-import { logger } from '$lib/logger';
-import prisma from '$lib/server/db';
-import { Prisma } from '$lib/generated/prisma/client';
-import { requireUser } from '$lib/server/membership';
+import { logger } from '#lib/logger.ts';
+import prisma from '#lib/server/db.ts';
+import { Prisma } from '#lib/generated/prisma/client.ts';
+import { requireUser } from '#lib/server/membership.ts';
 import { superValidate, message, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { addGangSchema } from '$lib/schemas/gang';
-import { m } from '$lib/paraglide/messages.js';
-import { notifyAdminsPendingGang } from '$lib/server/push-send';
+import { addGangSchema } from '#lib/schemas/gang.ts';
+import { m } from '#lib/paraglide/messages.js';
+import { notifyAdminsPendingGang } from '#lib/server/push-send.ts';
 
 import type { PageServerLoad } from './$types';
 

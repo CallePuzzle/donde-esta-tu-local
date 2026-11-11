@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { Prisma } from '$lib/generated/prisma/client';
-import type { Gang, User } from '$lib/generated/prisma/client';
+import { Prisma } from '#lib/generated/prisma/client.ts';
+import type { Gang, User } from '#lib/generated/prisma/client.ts';
 
 const sendNotification = vi.fn();
 
@@ -21,7 +21,7 @@ vi.mock('web-push', () => {
 const findMany = vi.fn();
 const create = vi.fn();
 
-vi.mock('$lib/server/db', () => ({
+vi.mock('#lib/server/db.ts', () => ({
 	default: {
 		activity: { findMany },
 		activityNotificationLog: { create }
@@ -32,7 +32,7 @@ const deletePushSubscription = vi.fn();
 const getActivePushSubscriptions = vi.fn();
 const getAdminPushSubscriptions = vi.fn();
 
-vi.mock('$lib/server/push-subscription', () => ({
+vi.mock('#lib/server/push-subscription.ts', () => ({
 	deletePushSubscription,
 	getActivePushSubscriptions,
 	getAdminPushSubscriptions

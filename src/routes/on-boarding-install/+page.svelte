@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { m } from '$lib/paraglide/messages.js';
-	import { detectBrowser, detectOs } from '$lib/utils/platform';
-	import { pwaInstallStore } from '$lib/stores/pwaInstall.svelte';
+	import { m } from '#lib/paraglide/messages.js';
+	import { detectBrowser, detectOs } from '#lib/utils/platform.ts';
+	import { pwaInstallStore } from '#lib/stores/pwaInstall.svelte.ts';
 	import { resolve } from '$app/paths';
 	import Download from '@lucide/svelte/icons/download';
 	import CircleCheck from '@lucide/svelte/icons/circle-check';

@@ -7,8 +7,8 @@
 	import Building from '@lucide/svelte/icons/building';
 	import TrendingUp from '@lucide/svelte/icons/trending-up';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
-	import { m } from '$lib/paraglide/messages.js';
-	import { formatDateLong, formatDateTimeShort } from '$lib/utils/format-date';
+	import { m } from '#lib/paraglide/messages.js';
+	import { formatDateLong, formatDateTimeShort } from '#lib/utils/format-date.ts';
 
 	import type { PageData } from './$types';
 
@@ -58,10 +58,9 @@
 	<!-- Header -->
 	<div class="mb-8">
 		<div class="mb-4 flex items-center gap-4">
-			<a href={resolve('/admin')} class="btn btn-ghost btn-sm">
-				<ArrowLeft class="h-4 w-4" />
-				{m.common_back()}
-			</a>
+			<a href={resolve('admin')} class="btn btn-ghost btn-sm"
+				><ArrowLeft class="h-4 w-4" /> {m.common_back()}</a
+			>
 		</div>
 
 		<div class="mb-4 flex items-center gap-3">

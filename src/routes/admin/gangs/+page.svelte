@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { enhance } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
+	import { refreshAll } from '$app/navigation';
 	import CircleCheck from '@lucide/svelte/icons/circle-check';
 	import CircleX from '@lucide/svelte/icons/circle-x';
 	import MapPin from '@lucide/svelte/icons/map-pin';
 	import Users from '@lucide/svelte/icons/users';
 	import Clock from '@lucide/svelte/icons/clock';
-	import { m } from '$lib/paraglide/messages.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -158,7 +158,7 @@
 																	};
 																}
 																if (result.type === 'success') {
-																	await invalidateAll();
+																	await refreshAll();
 																}
 																processingGangId = null;
 															};
@@ -192,7 +192,7 @@
 																	};
 																}
 																if (result.type === 'success') {
-																	await invalidateAll();
+																	await refreshAll();
 																}
 																processingGangId = null;
 															};

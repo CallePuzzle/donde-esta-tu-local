@@ -1,4 +1,4 @@
-import { requireUser } from '$lib/server/membership';
+import { requireUser } from '#lib/server/membership.ts';
 
 import type { LayoutServerLoad, LayoutServerLoadEvent } from './$types';
 

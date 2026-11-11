@@ -1,4 +1,4 @@
-import { logger } from '$lib/logger';
+import { logger } from '#lib/logger.ts';
 import type { LayoutServerLoad, LayoutServerLoadEvent } from './$types';
 
 export const load: LayoutServerLoad = async (event: LayoutServerLoadEvent) => {

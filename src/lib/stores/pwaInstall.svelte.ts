@@ -1,4 +1,4 @@
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 
 // No existe un único flag cross-browser para "¿está instalada?": display-mode
 // cubre Chrome/Edge/Android, navigator.standalone es exclusivo de iOS Safari,
@@ -6,6 +6,7 @@ import { browser } from '$app/environment';
 function detectStandalone(): boolean {
 	if (!browser) return false;
 	const nav = navigator as Navigator & { standalone?: boolean };
+
 	return (
 		window.matchMedia('(display-mode: standalone)').matches ||
 		window.matchMedia('(display-mode: fullscreen)').matches ||

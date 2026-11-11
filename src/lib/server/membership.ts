@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
 import { z } from 'zod/v4';
-import prisma from '$lib/server/db';
-import { m } from '$lib/paraglide/messages.js';
-import { isAdmin } from '$lib/utils/roles';
+import prisma from '#lib/server/db.ts';
+import { m } from '#lib/paraglide/messages.js';
+import { isAdmin } from '#lib/utils/roles.ts';
 
 export { isAdmin };
 

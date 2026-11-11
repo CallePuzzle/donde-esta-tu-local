@@ -1,20 +1,20 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { coordsMonte } from '$lib/utils/coords-monte';
-	import { showMyPosition } from '$lib/utils/show-my-position';
-	import GangMap from '$lib/components/gangs/GangMap.svelte';
-	import Modal from '$lib/components/Modal.svelte';
-	import FormAddGang from '$lib/components/gangs/FormAddGang.svelte';
-	import { m } from '$lib/paraglide/messages.js';
+	import { coordsMonte } from '#lib/utils/coords-monte.ts';
+	import { showMyPosition } from '#lib/utils/show-my-position.ts';
+	import GangMap from '#lib/components/gangs/GangMap.svelte';
+	import Modal from '#lib/components/Modal.svelte';
+	import FormAddGang from '#lib/components/gangs/FormAddGang.svelte';
+	import { m } from '#lib/paraglide/messages.js';
 	import CircleFadingArrowUp from '@lucide/svelte/icons/circle-fading-arrow-up';
 	import { resolve } from '$app/paths';
 
 	import type { PageData } from './$types';
 	import type { GangData } from '../type';
-	import type { LatLng } from '$lib/components/gangs/types.ts';
+	import type { LatLng } from '#lib/components/gangs/types.ts';
 	import type { Map } from 'leaflet';
-	import type { Leaflet } from '$lib/utils/types';
+	import type { Leaflet } from '#lib/utils/types.ts';
 
 	let { data }: { data: PageData } = $props();
 

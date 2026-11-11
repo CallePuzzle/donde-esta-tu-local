@@ -1,14 +1,14 @@
 <script lang="ts">
-	import type { Activity, Gang } from '$lib/generated/prisma/client';
+	import type { Activity, Gang } from '#lib/generated/prisma/client.ts';
 	import Clock from '@lucide/svelte/icons/clock';
 	import MapPinned from '@lucide/svelte/icons/map-pinned';
 	import Users from '@lucide/svelte/icons/users';
 	import FileText from '@lucide/svelte/icons/file-text';
 	import Image from '@lucide/svelte/icons/image';
 	import { resolve } from '$app/paths';
-	import Modal from '$lib/components/Modal.svelte';
-	import { m } from '$lib/paraglide/messages.js';
-	import { formatActivityDateTime } from '$lib/utils/format-date';
+	import Modal from '#lib/components/Modal.svelte';
+	import { m } from '#lib/paraglide/messages.js';
+	import { formatActivityDateTime } from '#lib/utils/format-date.ts';
 
 	type ActivityCard = Activity & {
 		placeGang: Pick<Gang, 'id' | 'name'> | null;

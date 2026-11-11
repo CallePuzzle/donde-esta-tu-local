@@ -5,7 +5,7 @@
 	import Shield from '@lucide/svelte/icons/shield';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import History from '@lucide/svelte/icons/history';
-	import { m } from '$lib/paraglide/messages.js';
+	import { m } from '#lib/paraglide/messages.js';
 </script>
 
 <div class="container mx-auto p-4 pb-20 lg:pb-0">
@@ -60,7 +60,7 @@
 				</div>
 
 				<div class="card-actions justify-end">
-					<a href={resolve('/admin/gangs')} class="btn btn-primary">
+					<a href={resolve('admin/gangs')} class="btn btn-primary">
 						{m.admin_go_to_gangs()}
 						<ArrowRight class="h-4 w-4" />
 					</a>
@@ -107,7 +107,7 @@
 				</div>
 
 				<div class="card-actions justify-end">
-					<a href={resolve('/admin/members')} class="btn btn-secondary">
+					<a href={resolve('admin/members')} class="btn btn-secondary">
 						{m.admin_go_to_members()}
 						<ArrowRight class="h-4 w-4" />
 					</a>
@@ -154,7 +154,7 @@
 				</div>
 
 				<div class="card-actions justify-end">
-					<a href={resolve('/admin/history')} class="btn btn-accent">
+					<a href={resolve('admin/history')} class="btn btn-accent">
 						{m.admin_go_to_history()}
 						<ArrowRight class="h-4 w-4" />
 					</a>

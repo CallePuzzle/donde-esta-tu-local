@@ -1,5 +1,5 @@
-import type { Handle } from '@sveltejs/kit';
-import { dev } from '$app/environment';
+import type { Handle } from '@sveltejs/kit/hooks';
+import { dev } from '$app/env';
 
 // Cabeceras de seguridad aplicadas a todas las respuestas
 export const securityHeadersHandle: Handle = async ({ event, resolve }) => {

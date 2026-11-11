@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { m } from '$lib/paraglide/messages.js';
-	import UserNotLogged from '$lib/components/UserNotLogged.svelte';
+	import { m } from '#lib/paraglide/messages.js';
+	import UserNotLogged from '#lib/components/UserNotLogged.svelte';
 
 	import type { PageData } from './$types';
 	import type { Snippet } from 'svelte';

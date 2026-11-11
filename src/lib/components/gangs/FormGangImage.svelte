@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { superForm, fileProxy } from 'sveltekit-superforms/client';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
-	import { gangImageSchema } from '$lib/schemas/gang.js';
-	import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from '$lib/schemas/image.js';
-	import { m } from '$lib/paraglide/messages.js';
+	import { gangImageSchema } from '#lib/schemas/gang.js';
+	import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from '#lib/schemas/image.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import Upload from '@lucide/svelte/icons/upload';
 	import Image from '@lucide/svelte/icons/image';
 
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import type { GangImageSchema } from '$lib/schemas/gang.js';
+	import type { GangImageSchema } from '#lib/schemas/gang.js';
 
 	export type Props = {
 		dataForm: SuperValidated<GangImageSchema>;

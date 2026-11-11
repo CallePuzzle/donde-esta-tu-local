@@ -1,5 +1,5 @@
-import prisma from '$lib/server/db';
-import { getValidatedGangId } from '$lib/server/membership';
+import prisma from '#lib/server/db.ts';
+import { getValidatedGangId } from '#lib/server/membership.ts';
 import type { PageServerLoad, PageServerLoadEvent } from './$types';
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {

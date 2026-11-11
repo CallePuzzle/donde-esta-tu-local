@@ -1,4 +1,4 @@
-import { browser, dev } from '$app/environment';
+import { browser, dev } from '$app/env';
 import pino, { type LoggerOptions } from 'pino';
 
 // Q16: medido el coste real del build de navegador de pino que arrastran
@@ -34,7 +34,10 @@ const devTransport = {
 
 // Final options based on environment
 const options: LoggerOptions = dev
-	? { ...(browser ? browserOptions : baseOptions), transport: devTransport }
+	? {
+			...(browser ? browserOptions : baseOptions),
+			transport: devTransport
+		}
 	: browser
 		? browserOptions
 		: baseOptions;

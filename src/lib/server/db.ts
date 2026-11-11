@@ -1,16 +1,16 @@
-import { PrismaClient } from '$lib/generated/prisma/client';
+import { PrismaClient } from '#lib/generated/prisma/client.ts';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { dev } from '$app/environment';
-import { env } from '$env/dynamic/private';
+import { dev } from '$app/env';
+import { DATABASE_URL } from '$app/env/private';
 
-import { isAccelerateUrl } from '$lib/server/database-url';
+import { isAccelerateUrl } from '#lib/server/database-url.ts';
 
 function createPrismaClient(): PrismaClient {
 	// `$env/dynamic/private` y no `process.env`: en desarrollo es SvelteKit/Vite
 	// quien carga el `.env` (bun no lo propaga a `vite dev`, que es un proceso
 	// hijo de node), y en producción lee el entorno real. Dinámico y no
 	// `$env/static/private` para que el build no exija tener la variable.
-	const url = env.DATABASE_URL;
+	const url = DATABASE_URL;
 	if (!url) {
 		throw new Error('Falta DATABASE_URL. Ver .env.example.');
 	}

@@ -1,5 +1,5 @@
-import prisma from '$lib/server/db';
-import { MAX_PUSH_SUBSCRIPTIONS_PER_USER } from '$lib/push-subscription-limit';
+import prisma from '#lib/server/db.ts';
+import { MAX_PUSH_SUBSCRIPTIONS_PER_USER } from '#lib/push-subscription-limit.ts';
 import type { PushSubscription } from 'web-push';
 
 export type PushSubscriptionJSON = Pick<PushSubscription, 'endpoint' | 'keys'>;

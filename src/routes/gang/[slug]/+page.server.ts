@@ -1,14 +1,14 @@
-import { logger } from '$lib/logger';
-import prisma from '$lib/server/db';
+import { logger } from '#lib/logger.ts';
+import prisma from '#lib/server/db.ts';
 import { error, fail } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { isAdmin } from '$lib/utils/roles';
-import { memberDisplayName } from '$lib/utils/member-display';
-import { requireValidatedMember } from '$lib/server/membership';
-import { gangImageSchema } from '$lib/schemas/gang';
-import { uploadImage, deleteImage } from '$lib/server/blob-image';
-import { m } from '$lib/paraglide/messages.js';
+import { isAdmin } from '#lib/utils/roles.ts';
+import { memberDisplayName } from '#lib/utils/member-display.ts';
+import { requireValidatedMember } from '#lib/server/membership.ts';
+import { gangImageSchema } from '#lib/schemas/gang.ts';
+import { uploadImage, deleteImage } from '#lib/server/blob-image.ts';
+import { m } from '#lib/paraglide/messages.js';
 
 import type { PageServerLoad, PageServerLoadEvent, Actions } from './$types';
 import type { GangDetailData, Member, CurrentGang } from './type';

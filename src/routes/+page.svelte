@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { showMyPosition } from '$lib/utils/show-my-position';
-	import { coordsMonte } from '$lib/utils/coords-monte';
-	import GangMap from '$lib/components/gangs/GangMap.svelte';
+	import { showMyPosition } from '#lib/utils/show-my-position.ts';
+	import { coordsMonte } from '#lib/utils/coords-monte.ts';
+	import GangMap from '#lib/components/gangs/GangMap.svelte';
 	import Locate from '@lucide/svelte/icons/locate';
-	import { m } from '$lib/paraglide/messages.js';
-	import { continueOnboardingTour } from '$lib/utils/tour';
+	import { m } from '#lib/paraglide/messages.js';
+	import { continueOnboardingTour } from '#lib/utils/tour.ts';
 	import { page } from '$app/state';
 	import '@sjmc11/tourguidejs/src/scss/tour.scss';
 
 	import type { PageData } from './$types';
 	import type { Map, Marker } from 'leaflet';
-	import type { Gang } from '$lib/generated/prisma/client';
-	import type { Leaflet } from '$lib/utils/types';
+	import type { Gang } from '#lib/generated/prisma/client.ts';
+	import type { Leaflet } from '#lib/utils/types.ts';
 
 	interface GangInMap {
 		gang: Gang;
@@ -63,7 +63,7 @@
 	onDestroy(() => stopWatchingPosition?.());
 
 	// $effect (no onMount): un login vía modal no navega ni remonta esta
-	// página, solo actualiza `data.user` con invalidateAll(). El tour de
+	// página, solo actualiza `data.user` con refreshAll(). El tour de
 	// miembro debe poder arrancar justo después, sin esperar a una recarga.
 	$effect(() => {
 		continueOnboardingTour(

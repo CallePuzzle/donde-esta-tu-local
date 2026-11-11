@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { requireValidatedMember } from '$lib/server/membership';
-import { m } from '$lib/paraglide/messages.js';
+import { requireValidatedMember } from '#lib/server/membership.ts';
+import { m } from '#lib/paraglide/messages.js';
 
 import type { LayoutServerLoad, LayoutServerLoadEvent } from './$types';
 

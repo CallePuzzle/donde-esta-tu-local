@@ -1,8 +1,8 @@
 <script lang="ts">
-	import ActivityCard from '$lib/components/ActivityCard.svelte';
-	import Modal from '$lib/components/Modal.svelte';
+	import ActivityCard from '#lib/components/ActivityCard.svelte';
+	import Modal from '#lib/components/Modal.svelte';
 	import { Tabs, TabItem } from 'flowbite-svelte';
-	import { m } from '$lib/paraglide/messages.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import Megaphone from '@lucide/svelte/icons/megaphone';
 
 	import type { PageData } from './$types';

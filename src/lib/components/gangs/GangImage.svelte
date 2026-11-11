@@ -1,11 +1,11 @@
 <script lang="ts">
-	import Modal from '$lib/components/Modal.svelte';
+	import Modal from '#lib/components/Modal.svelte';
 	import FormGangImage from './FormGangImage.svelte';
 	import Camera from '@lucide/svelte/icons/camera';
-	import { m } from '$lib/paraglide/messages.js';
+	import { m } from '#lib/paraglide/messages.js';
 
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import type { GangImageSchema } from '$lib/schemas/gang.js';
+	import type { GangImageSchema } from '#lib/schemas/gang.js';
 
 	export type Props = {
 		name: string;

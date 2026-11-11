@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
-import prisma from '$lib/server/db';
-import { memberDisplayName } from '$lib/utils/member-display';
+import prisma from '#lib/server/db.ts';
+import { memberDisplayName } from '#lib/utils/member-display.ts';
 
 // D4: esta lista no tenía take; sin paginación real, al menos un límite
 // explícito y visible (aviso de "solo se muestran los N primeros" en la UI).

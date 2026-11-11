@@ -1,12 +1,12 @@
-import { logger } from '$lib/logger';
-import prisma from '$lib/server/db';
-import { Prisma } from '$lib/generated/prisma/client';
-import { requireValidatedMember } from '$lib/server/membership';
+import { logger } from '#lib/logger.ts';
+import prisma from '#lib/server/db.ts';
+import { Prisma } from '#lib/generated/prisma/client.ts';
+import { requireValidatedMember } from '#lib/server/membership.ts';
 import { error } from '@sveltejs/kit';
 import { superValidate, message, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { addGangSchema } from '$lib/schemas/gang';
-import { m } from '$lib/paraglide/messages.js';
+import { addGangSchema } from '#lib/schemas/gang.ts';
+import { m } from '#lib/paraglide/messages.js';
 
 import type { PageServerLoad, PageServerLoadEvent, Actions, RequestEvent } from './$types';
 import type { GangData } from '../type';

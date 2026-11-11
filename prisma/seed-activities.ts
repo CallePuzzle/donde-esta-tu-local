@@ -1,7 +1,7 @@
-import { PrismaClient } from '$lib/generated/prisma/client';
+import { PrismaClient } from '#lib/generated/prisma/client.ts';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-import { requireDirectDatabaseUrl } from '$lib/server/database-url';
+import { requireDirectDatabaseUrl } from '#lib/server/database-url.ts';
 
 import { SeedActivity, type SeedActivityType } from './seed-activity';
 
